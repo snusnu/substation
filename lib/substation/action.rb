@@ -39,7 +39,8 @@ module Substation
       @params
     end
 
-    extend Forwardable
+    include AbstractType
+    extend  Forwardable
 
     attr_reader :request
     attr_reader :response
@@ -62,11 +63,11 @@ module Substation
       response
     end
 
-    private
+    abstract_method :perform
 
-    def perform(*)
-      raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
-    end
+    private(:perform)
+
+    private
 
     def invoke
       perform
