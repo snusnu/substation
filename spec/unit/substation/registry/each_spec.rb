@@ -22,7 +22,7 @@ describe Substation::Registry, '#each' do
   end
 end
 
-describe Registry do
+describe Substation::Registry do
   subject { object.new }
 
   let(:object) { described_class }
