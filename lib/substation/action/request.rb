@@ -5,6 +5,12 @@ module Substation
 
       extend Forwardable
 
+      def self.new(action, session, params)
+        params_class    = action.params
+        params_instance = params_class ? params_class.new(params) : params
+        super(action, session, params_instance)
+      end
+
       attr_reader :action
       attr_reader :session
       attr_reader :params
@@ -15,8 +21,7 @@ module Substation
       def initialize(action, session, params)
         @action  = action
         @session = session
-        klass    = @action.params
-        @params  = klass ? klass.new(params) : params
+        @params  = params
       end
     end # class Request
   end # class Action
