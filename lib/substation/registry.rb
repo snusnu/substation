@@ -4,6 +4,8 @@ module Substation
   #
   class Registry
 
+    include Enumerable
+
     def initialize(entries = Set.new)
       @entries = entries
     end
