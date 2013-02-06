@@ -22,5 +22,9 @@ module Substation
     def include?(action)
       @entries.include?(action)
     end
+
+    def size
+      @entries.size
+    end
   end # class Registry
 end # module Substation
