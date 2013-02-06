@@ -108,7 +108,7 @@ module Substation
       end
 
       def self.class_name(method)
-        method.to_s.camelize
+        Inflecto.camelize(method.to_s)
       end
 
       def self.controller=(controller)
@@ -204,7 +204,7 @@ module Substation
       end
 
       def presenter_class
-        SafePro::Presenters.const_get(self.class.presenter.to_s.camelize)
+        SafePro::Presenters.const_get(presenter_class_name)
       end
 
       def has_presenter?
@@ -220,7 +220,11 @@ module Substation
       end
 
       def demodulized_action_name
-        @action.to_s.camelize
+        Inflecto.camelize(@action.to_s)
+      end
+
+      def presenter_class_name
+        Inflecto.camelize(self.class.presenter.to_s)
       end
 
       def set_resource_instance_variable(value)
