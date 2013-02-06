@@ -1,23 +1,26 @@
 module Substation
 
+  # TODO make this class immutable or implement finalization
+  #
   class Registry
 
-    def initialize
-      @registry = Set.new
+    def initialize(entries = Set.new)
+      @entries = entries
     end
 
     def register(action)
-      @registry << action
+      @entries << action
+      self
     end
 
     def each
       return to_enum unless block_given?
-      @registry.each { |action| yield(action) }
+      @entries.each { |action| yield(action) }
       self
     end
 
     def include?(action)
-      @registry.include?(action)
+      @entries.include?(action)
     end
   end # class Registry
 end # module Substation
