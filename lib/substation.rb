@@ -1,6 +1,11 @@
 require 'set'
 require 'forwardable'
 
+require 'adamantium'
+require 'equalizer'
+require 'descendants_tracker'
+require 'inflecto'
+
 require 'substation/version'
 require 'substation/utils'
 require 'substation/utils/inflector'

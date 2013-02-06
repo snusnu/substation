@@ -2,6 +2,8 @@ module Substation
 
   class Session
 
+    include Adamantium, Equalizer.new(:actor, :data)
+
     attr_reader :actor
     attr_reader :data
 
