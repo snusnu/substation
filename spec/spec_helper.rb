@@ -1,7 +1,5 @@
-require 'devtools'
 require 'substation'
-
-Devtools.init_spec_helper
+require 'devtools/spec_helper'
 
 include Substation
 
