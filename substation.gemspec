@@ -4,7 +4,7 @@ require File.expand_path('../lib/substation/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name        = "substation"
-  gem.version     = Substation::VERSION
+  gem.version     = Substation::VERSION.dup
   gem.authors     = [ "Martin Gamsjaeger (snusnu)" ]
   gem.email       = [ "gamsnjaga@gmail.com" ]
   gem.description = "Handle rails controller methods with dedicated classes"
