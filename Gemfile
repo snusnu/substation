@@ -9,6 +9,6 @@ gem 'abstract_type',       :git => 'https://github.com/dkubb/abstract_type.git'
 gem 'inflecto',            :git => 'https://github.com/mbj/inflecto.git'
 
 group :development do
-  gem 'devtools', :github => 'datamapper/devtools'
+  gem 'devtools', :git => 'https://github.com/datamapper/devtools.git'
   eval File.read('Gemfile.devtools')
 end
