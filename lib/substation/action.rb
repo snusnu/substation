@@ -1,6 +1,6 @@
 module Substation
 
-  @actions = Registry.new
+  @actions = Action::Registry.new
 
   def self.actions
     @actions

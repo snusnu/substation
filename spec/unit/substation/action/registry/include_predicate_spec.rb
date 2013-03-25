@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Substation::Registry, '#include?' do
+describe Action::Registry, '#include?' do
   subject { object.include?(action) }
 
   let(:action) { mock }

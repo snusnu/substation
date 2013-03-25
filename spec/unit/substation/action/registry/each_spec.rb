@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Substation::Registry, '#each' do
+describe Action::Registry, '#each' do
   subject { object.each { |action| yields << action } }
 
   let(:object) { described_class.new(Set[action]) }
@@ -22,7 +22,7 @@ describe Substation::Registry, '#each' do
   end
 end
 
-describe Substation::Registry do
+describe Action::Registry do
   subject { object.new }
 
   let(:object) { described_class }

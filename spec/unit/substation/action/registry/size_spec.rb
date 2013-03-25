@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Substation::Registry, '#size' do
+describe Action::Registry, '#size' do
   subject { object.size }
 
   context 'when an action is registered' do

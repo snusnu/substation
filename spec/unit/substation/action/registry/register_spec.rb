@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Substation::Registry, '#register' do
+describe Action::Registry, '#register' do
   subject { object.register(action) }
 
   let(:action) { mock }
