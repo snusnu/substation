@@ -63,11 +63,11 @@ module Substation
       response
     end
 
-    abstract_method :perform
-
-    private(:perform)
-
     private
+
+    def perform
+      raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
+    end
 
     def invoke
       perform
