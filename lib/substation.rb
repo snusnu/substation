@@ -8,7 +8,6 @@ require 'abstract_type'
 require 'inflecto'
 
 require 'substation/version'
-require 'substation/utils'
 require 'substation/registry'
 require 'substation/session'
 require 'substation/action'
