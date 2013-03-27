@@ -30,7 +30,7 @@ module Substation
 
     def call
       return response if called?
-      invoke
+      perform
       @called = true
       response
     rescue StandardError => e
@@ -42,10 +42,6 @@ module Substation
 
     def perform
       raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
-    end
-
-    def invoke
-      perform
     end
 
     def called?
