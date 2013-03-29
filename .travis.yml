@@ -1,7 +1,7 @@
 language: ruby
-before_install: gem install bundler --pre
-bundler_args: --without guard metrics
-script: "bundle exec rake spec"
+before_install: gem install bundler
+bundler_args: --without yard guard benchmarks
+script: "bundle exec rake ci"
 rvm:
   - 1.9.3
   - 1.9.2

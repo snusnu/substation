@@ -1,51 +1,133 @@
 module Substation
 
+  # Implements the boundary interface to invoke application use cases
   class Action
 
-    def self.call(session, params)
-      new(Substation::Action::Request.new(self, session, params)).call
+    # Encapsulates an actor and a request model instance
+    class Request
+      include Concord.new(:actor, :data)
+      include Adamantium
     end
 
-    def self.params=(params_klass)
-      @params = params_klass
+    # Encapsulates {Action} response data
+    class Response
+
+      include AbstractType
+      include Adamantium
+
+      abstract_method :success?
+
+      # An errorneous {Action::Response}
+      class Error < self
+        include Concord.new(:error)
+
+        # Tests wether this response was successful
+        #
+        # @return [false]
+        #
+        # @api private
+        def success?
+          false
+        end
+      end
+
+      # A successful {Action::Response}
+      class Success < self
+        include Concord.new(:data)
+
+        # Tests wether this response was successful
+        #
+        # @return [true]
+        #
+        # @api private
+        def success?
+          true
+        end
+      end
     end
 
-    def self.params
-      @params
+    # Instantiate and invoke an {Action} (subclass)
+    #
+    # @param [Request] request
+    #   a request model instance for initializing a new action instance
+    #
+    # @return [Response]
+    #   the response object returned by {#perform}
+    #
+    # @api private
+    def self.call(request)
+      new(request).call
     end
 
     include AbstractType
-    extend  Forwardable
+    include Adamantium
 
-    attr_reader :request
-    attr_reader :response
+    # Read or write the request model class used for this action
+    #
+    # @param [Class]
+    #   a class encapsulating all necessary input for this action
+    #
+    # @return [Class]
+    #   the request model class for this action
+    #
+    # @api private
+    def self.request_model(klass = Undefined)
+      return @request_model if klass.equal?(Undefined)
+      @request_model = klass
+    end
 
-    def_delegator :request, :session
-    def_delegator :session, :actor
+    # The action initiating actor
+    #
+    # @return [Object]
+    #   an instance encapsulating an application actor
+    #
+    # @api private
+    attr_reader :actor
 
+    # The request model instance passed into this action
+    #
+    # @return [Object]
+    #   an object encapsulating all necessary input for this action
+    #
+    # @api private
+    attr_reader :data
+
+    # Initialize a new instance
+    #
+    # @param [Request] request
+    #   a request model instance for initializing a new action instance
+    #
+    # @return [undefined]
+    #
+    # @api private
     def initialize(request)
-      @request  = request
-      @response = self.class::Response.new(@request)
+      @actor = request.actor
+      @data  = request.data
     end
 
+    # Invoke the action
+    #
+    # Delegates work to {#perform}
+    #
+    # @return [Response]
+    #   the response object returned by {#perform}
+    #
+    # @api private
     def call
-      return response if called?
       perform
-      @called = true
-      response
-    rescue StandardError => e
-      raise e if ENV['DEBUG']
-      response
     end
 
-    private
+    memoize :call
 
-    def perform
-      raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
-    end
+    # Perform the action
+    #
+    # @return [Response]
+    #   {Response::Success} if successful, {Response::Error} otherwise
+    #
+    # @api private
+    abstract_method :perform
 
-    def called?
-      @called
-    end
+    private :perform
+
   end # class Action
 end # module Substation

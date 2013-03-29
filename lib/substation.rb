@@ -8,9 +8,12 @@ require 'abstract_type'
 require 'inflecto'
 require 'concord'
 
-require 'substation/version'
-require 'substation/session'
+module Substation
+
+  # Represent an undefined argument
+  Undefined = Object.new.freeze
+
+end
+
 require 'substation/action/registry'
-require 'substation/action/request'
-require 'substation/action/response'
 require 'substation/action'
