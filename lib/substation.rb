@@ -6,6 +6,7 @@ require 'equalizer'
 require 'descendants_tracker'
 require 'abstract_type'
 require 'inflecto'
+require 'concord'
 
 require 'substation/version'
 require 'substation/session'
