@@ -12,6 +12,7 @@ module Substation
     # Encapsulates {Action} response data
     class Response
 
+      include Concord.new(:data)
       include AbstractType
       include Adamantium
 
@@ -19,7 +20,6 @@ module Substation
 
       # An errorneous {Action::Response}
       class Error < self
-        include Concord.new(:error)
 
         # Tests wether this response was successful
         #
@@ -33,7 +33,6 @@ module Substation
 
       # A successful {Action::Response}
       class Success < self
-        include Concord.new(:data)
 
         # Tests wether this response was successful
         #
