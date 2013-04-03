@@ -5,7 +5,6 @@ require 'adamantium'
 require 'equalizer'
 require 'descendants_tracker'
 require 'abstract_type'
-require 'inflecto'
 require 'concord'
 
 module Substation
