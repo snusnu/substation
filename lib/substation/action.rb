@@ -18,7 +18,7 @@ module Substation
 
       abstract_method :success?
 
-      # An errorneous {Action::Response}
+      # An errorneous {Response}
       class Error < self
 
         # Tests wether this response was successful
@@ -31,7 +31,7 @@ module Substation
         end
       end
 
-      # A successful {Action::Response}
+      # A successful {Response}
       class Success < self
 
         # Tests wether this response was successful
