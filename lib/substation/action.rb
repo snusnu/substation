@@ -19,7 +19,7 @@ module Substation
       abstract_method :success?
 
       # An errorneous {Response}
-      class Error < self
+      class Failure < self
 
         # Tests wether this response was successful
         #
@@ -54,26 +54,20 @@ module Substation
     #   the response object returned by {#perform}
     #
     # @api private
-    def self.call(request)
-      new(request).call
+    def self.call(*args)
+      new(*args).call
     end
 
+    include Equalizer.new(:name, :data, :actor, :env)
     include AbstractType
     include Adamantium
 
-    # Read or write the request model class used for this action
+    # The name used to dispatch to this action
     #
-    # @param [Class]
-    #   a class encapsulating all necessary input for this action
-    #
-    # @return [Class]
-    #   the request model class for this action
+    # @return [Symbol]
     #
     # @api private
-    def self.request_model(klass = Undefined)
-      return @request_model if klass.equal?(Undefined)
-      @request_model = klass
-    end
+    attr_reader :name
 
     # The action initiating actor
     #
@@ -91,7 +85,17 @@ module Substation
     # @api private
     attr_reader :data
 
+    # The environment providing access to the logger and the notifier
+    #
+    # @return [Environment]
+    #
+    # @api private
+    attr_reader :env
+
     # Initialize a new instance
+    #
+    # @param [Symbol] name
+    #   the name used to dispatch to this action
     #
     # @param [Request] request
     #   a request model instance for initializing a new action instance
@@ -99,17 +103,20 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(request)
-      @actor = request.actor
-      @data  = request.data
+    def initialize(name, request, env)
+      @name    = name
+      @request = request
+      @env     = env
+      @actor   = @request.actor
+      @data    = @request.data
     end
 
     # Invoke the action
     #
-    # Delegates work to {#perform}
+    # Delegates work to {#perform} and wraps the return value
     #
     # @return [Response]
-    #   the response object returned by {#perform}
+    #   {Response::Success} if successful, {Response::Error} otherwise
     #
     # @api private
     def call
@@ -123,10 +130,38 @@ module Substation
     # @return [Response]
     #   {Response::Success} if successful, {Response::Error} otherwise
     #
+    # @return [Object]
+    #
     # @api private
     abstract_method :perform
 
     private :perform
+
+    private
+
+    # Create a new successful response
+    #
+    # @param [Object] data
+    #   the data associated with the response
+    #
+    # @return [Response::Success]
+    #
+    # @api private
+    def pass(data)
+      Response::Success.new(data)
+    end
+
+    # Create a new failure response
+    #
+    # @param [Object] data
+    #   the data associated with the response
+    #
+    # @return [Response::Failure]
+    #
+    # @api private
+    def fail(data)
+      Response::Failure.new(data)
+    end
 
   end # class Action
 end # module Substation

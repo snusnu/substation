@@ -1,93 +1,112 @@
 ---
-UnusedParameters:
+Attribute:
+  enabled: false
   exclude: []
-UncommunicativeParameterName:
-  accept: []
-  exclude: []
+BooleanParameter:
   enabled: true
-  reject:
-  - !ruby/regexp /^.$/
-  - !ruby/regexp /[0-9]$/
-  - !ruby/regexp /[A-Z]/
-LargeClass:
-  max_methods: 10
   exclude: []
+ClassVariable:
   enabled: true
+  exclude: []
+ControlParameter:
+  enabled: true
+  exclude: []
+DataClump:
+  enabled: true
+  exclude: []
+  max_copies: 2
+  min_clump_size: 2
+DuplicateMethodCall:
+  enabled: true
+  exclude: []
+  max_calls: 1
+  allow_calls: []
+FeatureEnvy:
+  enabled: true
+  exclude: []
+IrresponsibleModule:
+  enabled: true
+  exclude: []
+LongParameterList:
+  enabled: true
+  exclude:
+  - Substation::Action#self.call
+  max_params: 2
+  overrides:
+    initialize:
+      max_params: 3
+LongYieldList:
+  enabled: true
+  exclude: []
+  max_params: 2
+NestedIterators:
+  enabled: true
+  exclude:
+  - Substation::Environment::Observers#self.coerce
+  max_allowed_nesting: 1
+  ignore_iterators: []
+NilCheck:
+  enabled: true
+  exclude: []
+RepeatedConditional:
+  enabled: true
+  exclude: []
+  max_ifs: 1
+TooManyInstanceVariables:
+  enabled: true
+  exclude:
+  - Substation::Event
+  - Substation::Action
   max_instance_variables: 3
-UncommunicativeMethodName:
-  accept: []
-  exclude: []
+TooManyMethods:
   enabled: true
+  exclude: []
+  max_methods: 10
+TooManyStatements:
+  enabled: true
+  exclude:
+  - each
+  - coerce
+  - Substation::Action::Observable#call
+  - Substation::Utils#self.const_get
+  max_statements: 2
+UncommunicativeMethodName:
+  enabled: true
+  exclude: []
   reject:
   - !ruby/regexp /^[a-z]$/
   - !ruby/regexp /[0-9]$/
   - !ruby/regexp /[A-Z]/
-LongParameterList:
-  max_params: 3
-  exclude: []
-  enabled: true
-  overrides: {}
-FeatureEnvy:
-  exclude: []
-  enabled: true
-ClassVariable:
-  exclude: []
-  enabled: true
-BooleanParameter:
-  exclude: []
-  enabled: true
-IrresponsibleModule:
-  exclude: []
-  enabled: true
-UncommunicativeModuleName:
   accept: []
-  exclude: []
+UncommunicativeModuleName:
   enabled: true
+  exclude: []
   reject:
   - !ruby/regexp /^.$/
   - !ruby/regexp /[0-9]$/
-NestedIterators:
-  ignore_iterators: []
-  exclude: []
-  enabled: true
-  max_allowed_nesting: 1
-LongMethod:
-  max_statements: 2
-  exclude:
-  - each
-Duplication:
-  allow_calls: []
-  exclude: []
-  enabled: true
-  max_calls: 1
-UtilityFunction:
-  max_helper_calls: 0
-  exclude: []
-  enabled: true
-Attribute:
-  exclude: []
-  enabled: false
-UncommunicativeVariableName:
   accept: []
-  exclude: []
+UncommunicativeParameterName:
   enabled: true
+  exclude: []
   reject:
   - !ruby/regexp /^.$/
   - !ruby/regexp /[0-9]$/
   - !ruby/regexp /[A-Z]/
-SimulatedPolymorphism:
-  exclude: []
+  accept: []
+UncommunicativeVariableName:
   enabled: true
-  max_ifs: 1
-DataClump:
   exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UnusedParameters:
   enabled: true
-  max_copies: 2
-  min_clump_size: 2
-ControlCouple:
   exclude: []
+UtilityFunction:
   enabled: true
-LongYieldList:
-  max_params: 2
-  exclude: []
-  enabled: true
+  exclude:
+  - Substation::Action#pass
+  - Substation::Action#fail
+  max_helper_calls: 0

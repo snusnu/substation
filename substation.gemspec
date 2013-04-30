@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.version     = Substation::VERSION.dup
   gem.authors     = [ "Martin Gamsjaeger (snusnu)" ]
   gem.email       = [ "gamsnjaga@gmail.com" ]
-  gem.description = "Handle rails controller methods with dedicated classes"
+  gem.description = "Implement application boundary interfaces with dedicated classes"
   gem.summary     = gem.description
   gem.homepage    = "https://github.com/snusnu/substation"
 
@@ -18,7 +18,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'adamantium',          '~> 0.0.7'
   gem.add_dependency 'equalizer',           '~> 0.0.5'
-  gem.add_dependency 'descendants_tracker', '~> 0.0.1'
   gem.add_dependency 'abstract_type',       '~> 0.0.5'
   gem.add_dependency 'concord',             '~> 0.0.3'
 

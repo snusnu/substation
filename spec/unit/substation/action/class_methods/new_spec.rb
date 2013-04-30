@@ -3,11 +3,11 @@
 require 'spec_helper'
 
 describe Action, '.new' do
-  subject { object.new(request) }
+  subject { object.new(name, request, env) }
 
-  let(:request) { mock(:actor => actor, :data => data) }
-  let(:actor)   { mock }
-  let(:data)    { mock }
+  let(:name)    { :test }
+  let(:request) { mock(:actor => mock, :data => mock) }
+  let(:env)     { Environment.new(name => { :action => mock }) }
 
   it_should_behave_like 'an abstract type'
 end

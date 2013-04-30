@@ -9,10 +9,16 @@ require 'concord'
 
 module Substation
 
-  # Represent an undefined argument
-  Undefined = Object.new.freeze
+  # An empty frozen hash
+  EMPTY_HASH = {}.freeze
+
+  # An empty frozen array
+  EMPTY_ARRAY = [].freeze
 
 end
 
-require 'substation/action/registry'
 require 'substation/action'
+require 'substation/action/observable'
+require 'substation/event'
+require 'substation/environment'
+require 'substation/support/utils'

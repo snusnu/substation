@@ -6,17 +6,19 @@ describe Action, '#call' do
 
   subject { object.call }
 
-  let(:object) do
-    Class.new(described_class) {
-      def perform
-        :response
-      end
-    }.new(request)
+  let(:name)    { :test }
+  let(:request) { mock(:actor => mock, :data => mock) }
+  let(:env)     { Environment.new(name => { :action => Spec::Action }) }
+
+  context "when no error occurred" do
+    let(:object) { Spec::Action::Success.new(name, request, env) }
+
+    it { should eql(Spec.success_response) }
   end
 
-  let(:request) { mock(:actor => actor, :data => data) }
-  let(:actor)   { mock }
-  let(:data)    { mock }
+  context "when an error occurred" do
+    let(:object) { Spec::Action::Failure.new(name, request, env) }
 
-  it { should equal(:response) }
+    it { should eql(Spec.failure_response) }
+  end
 end
