@@ -41,7 +41,7 @@ describe Environment::Action, '.coerce' do
     let(:config) { {} }
 
     specify {
-      expect { subject }.to raise_error(KeyError)
+      expect { subject }.to raise_error(described_class::MissingClassError)
     }
   end
 end

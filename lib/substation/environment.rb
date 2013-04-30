@@ -6,6 +6,8 @@ module Substation
     # Encapsulates access to one registered {Substation::Action} instance
     class Action
 
+      MissingClassError = Class.new(StandardError)
+
       # Coerce the given name and config to an {Action} instance
       #
       # @param [#to_sym] name
@@ -19,7 +21,7 @@ module Substation
       #
       # @api private
       def self.coerce(name, config)
-        klass_name = config.fetch('action')
+        klass_name = config.fetch('action') { raise(MissingClassError) }
         observers  = config.fetch('observers', EMPTY_HASH)
 
         new(name.to_sym, Utils.const_get(klass_name), Observers.coerce(observers))
