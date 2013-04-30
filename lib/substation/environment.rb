@@ -97,6 +97,9 @@ module Substation
       end
     end # class Observers
 
+    # Raised when trying to dispatch to an unregistered action
+    UnknownActionError = Class.new(StandardError)
+
     # Coerce the given +config+ to an {Environment} instance
     #
     # @param [Hash] config
@@ -177,7 +180,7 @@ module Substation
     #
     # @api private
     def action(name)
-      actions.fetch(name)
+      actions.fetch(name) { raise(UnknownActionError) }
     end
   end # class Environment
 end # module Substation
