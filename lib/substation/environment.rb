@@ -6,6 +6,7 @@ module Substation
     # Encapsulates access to one registered {Substation::Action} instance
     class Action
 
+      # Raised when no action class name is configured
       MissingClassError = Class.new(StandardError)
 
       # Coerce the given name and config to an {Action} instance
