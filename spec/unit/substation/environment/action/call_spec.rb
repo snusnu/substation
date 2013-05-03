@@ -6,16 +6,17 @@ describe Environment::Action, '#call' do
 
   subject { object.call(name, request, env) }
 
-  let(:object)    { described_class.new(name, klass, observers) }
-  let(:name)      { mock }
-  let(:klass)     { mock }
-  let(:observers) { mock }
-  let(:request)   { mock }
-  let(:env)       { mock }
-  let(:response)  { mock }
+  let(:object)   { described_class.new( klass, observer) }
+  let(:name)     { mock('Name')                          }
+  let(:klass)    { mock('Class')                         }
+  let(:observer) { mock('Observer')                      }
+  let(:request)  { mock('Request')                       }
+  let(:env)      { mock('Env')                           }
+  let(:response) { mock('Response')                      }
 
   before do
     klass.should_receive(:call).with(name, request, env).and_return(response)
+    observer.should_receive(:call).with(response)
   end
 
   it { should eql(response) }

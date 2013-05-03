@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Action, '.new' do
-  subject { object.new(name, request, env) }
+  subject { object.new(env, request) }
 
   let(:name)    { :test }
   let(:request) { mock(:actor => mock, :data => mock) }

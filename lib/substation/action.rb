@@ -58,16 +58,9 @@ module Substation
       new(*args).call
     end
 
-    include Equalizer.new(:name, :data, :actor, :env)
+    include Equalizer.new(:data, :actor, :env)
     include AbstractType
     include Adamantium
-
-    # The name used to dispatch to this action
-    #
-    # @return [Symbol]
-    #
-    # @api private
-    attr_reader :name
 
     # The action initiating actor
     #
@@ -94,8 +87,8 @@ module Substation
 
     # Initialize a new instance
     #
-    # @param [Symbol] name
-    #   the name used to dispatch to this action
+    # @param [Environment] env
+    #   the environment used to dispatch to this action
     #
     # @param [Request] request
     #   a request model instance for initializing a new action instance
@@ -103,12 +96,10 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(name, request, env)
-      @name    = name
-      @request = request
-      @env     = env
-      @actor   = @request.actor
-      @data    = @request.data
+    def initialize(env, request)
+      @env, @request = env, request
+      @actor = @request.actor
+      @data  = @request.data
     end
 
     # Invoke the action
