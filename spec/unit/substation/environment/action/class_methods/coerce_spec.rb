@@ -4,40 +4,32 @@ require 'spec_helper'
 
 describe Environment::Action, '.coerce' do
 
-  subject { described_class.coerce(name, config) }
+  subject { described_class.coerce(config) }
 
-  let(:name)    { 'test' }
   let(:klass)   { Spec::Action::Success }
-  let(:coerced) { Environment::Action.new(name.to_sym, klass, observers) }
+  let(:coerced) { Environment::Action.new(klass, observer) }
 
-  context "with an action and observers" do
-    let(:config)    {
+  context 'with an action and observer' do
+    let(:config) do
       {
-        'action'    => 'Spec::Action::Success',
-        'observers' => {
-          'success' => [ 'Spec::Observer::Success' ],
-          'failure' => [ 'Spec::Observer::Failure' ]
-        }
+        'action'   => 'Spec::Action::Success',
+        'observer' => 'Spec::Observer'
       }
-    }
+    end
 
-    let(:observers) { Environment::Observers.new({
-        :success => [ Spec::Observer::Success ],
-        :failure => [ Spec::Observer::Failure ]
-      })
-    }
+    let(:observer) { Spec::Observer }
 
     it { should eql(coerced) }
   end
 
-  context "with an action and no observers" do
-    let(:config)    { { 'action' => 'Spec::Action::Success' } }
-    let(:observers) { Environment::Observers.new({}) }
+  context 'with an action and no observer' do
+    let(:config)   { { 'action' => 'Spec::Action::Success' } }
+    let(:observer) { Observer::NOOP                          }
 
     it { should eql(coerced) }
   end
 
-  context "with no action" do
+  context 'with no action' do
     let(:config) { {} }
 
     specify {

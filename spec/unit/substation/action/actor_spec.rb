@@ -6,7 +6,7 @@ describe Action, '#actor' do
 
   subject { object.actor }
 
-  let(:object)   { Spec::Action.new(name, request, env) }
+  let(:object)   { Spec::Action.new(env, request) }
   let(:name)     { mock }
   let(:request)  { mock(:actor => actor, :data => mock) }
   let(:actor)    { mock }

@@ -17,7 +17,6 @@ module Substation
 end
 
 require 'substation/action'
-require 'substation/action/observable'
-require 'substation/event'
+require 'substation/observer'
 require 'substation/environment'
 require 'substation/support/utils'

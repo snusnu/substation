@@ -4,13 +4,13 @@ require 'spec_helper'
 
 describe Action, '.call' do
 
-  subject { object.call(name, request, env) }
+  subject { object.call(env, request) }
 
-  let(:name)      { :test }
-  let(:request)   { mock(:actor => mock, :data => mock) }
-  let(:env)       { Environment.new(name => action) }
-  let(:action)    { Environment::Action.new(name, object, observers) }
-  let(:observers) { Environment::Observers.new({}) }
+  let(:name)     { :test                                     }
+  let(:request)  { mock(:actor => mock, :data => mock)       }
+  let(:env)      { Environment.new(name => action)           }
+  let(:action)   { Environment::Action.new(object, observer) }
+  let(:observer) { Observer::NOOP                            }
 
   context "when no error occurred" do
     let(:object) { Spec::Action::Success }

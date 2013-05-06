@@ -6,10 +6,11 @@ describe Environment, '.coerce' do
 
   subject { described_class.coerce(config) }
 
-  let(:name)    { 'test' }
-  let(:config)  { { name => action } }
-  let(:action)  { { 'action' => 'Spec::Action::Success' } }
-  let(:coerced) { { :test  => Environment::Action.coerce(name, action) } }
+  let(:name)     { 'test'                                               }
+  let(:config)   { { name => action }                                   }
+  let(:action)   { { 'action' => 'Spec::Action::Success' }              }
+  let(:observer) { Observer::NOOP                                       }
+  let(:coerced)  { { :test  => described_class::Action.coerce(action) } }
 
   it { should eql(described_class.new(coerced)) }
 end
