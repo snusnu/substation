@@ -8,7 +8,7 @@ module Substation
 
     # Notify observer
     #
-    # @param [Action::Response] response
+    # @param [Response] response
     #
     # @return [self]
     #
@@ -43,7 +43,7 @@ module Substation
 
       # Notify observer
       #
-      # @param [Action::Response] response
+      # @param [Response] response
       #
       # @return [self]
       #
@@ -62,7 +62,7 @@ module Substation
 
       # Notify observer
       #
-      # @param [Action::Response] response
+      # @param [Response] response
       #
       # @return [self]
       #

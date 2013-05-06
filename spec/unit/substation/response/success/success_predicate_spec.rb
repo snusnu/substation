@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Action::Response::Success, '#success?' do
+describe Response::Success, '#success?' do
   subject { object.success? }
 
   let(:object)  { described_class.new(request, data) }

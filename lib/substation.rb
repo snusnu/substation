@@ -16,6 +16,8 @@ module Substation
 
 end
 
+require 'substation/request'
+require 'substation/response'
 require 'substation/action'
 require 'substation/observer'
 require 'substation/environment'

@@ -38,7 +38,7 @@ module Substation
       # @param [*] args
       #   the args passed to {Substation::Action.call]
       #
-      # @return [Substation::Action::Response]
+      # @return [Substation::Response]
       #   the response returned from calling the action
       #
       # @api private
@@ -79,7 +79,7 @@ module Substation
     # @param [Substation::Action::Request] request
     #   the request data to pass to the action
     #
-    # @return [Substation::Action::Response]
+    # @return [Substation::Response]
     #   the response returned from invoking the action
     #
     # @raise [KeyError]
