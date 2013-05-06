@@ -65,11 +65,8 @@ TooManyMethods:
 TooManyStatements:
   enabled: true
   exclude:
-  - each
-  - coerce
-  - Substation::Action::Observable#call
   - Substation::Utils#self.const_get
-  max_statements: 2
+  max_statements: 3
 UncommunicativeMethodName:
   enabled: true
   exclude: []

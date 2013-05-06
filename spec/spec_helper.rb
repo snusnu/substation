@@ -15,21 +15,10 @@ module Spec
     Substation::Action::Response::Failure.new(response_data)
   end
 
-  class Action < Substation::Action
-    class Success < self
-      def perform
-        pass(Spec.response_data)
-      end
-    end
-
-    class Failure < self
-      def perform
-        fail(Spec.response_data)
-      end
-    end
+  class Observer
   end
 
-  class ObservableAction < Substation::Action::Observable
+  class Action < Substation::Action
     class Success < self
       def perform
         pass(Spec.response_data)

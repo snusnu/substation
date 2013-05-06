@@ -21,15 +21,16 @@ module Substation
       #   the coerced {Action} instance
       #
       # @api private
-      def self.coerce(name, config)
+      def self.coerce(config)
         klass_name = config.fetch('action') { raise(MissingClassError) }
-        observers  = config.fetch('observers', EMPTY_HASH)
+        observer   = Observer.coerce(config['observer'])
 
-        new(name.to_sym, Utils.const_get(klass_name), Observers.coerce(observers))
+        new(Utils.const_get(klass_name), observer)
       end
 
+
       include Adamantium
-      include Concord.new(:name, :klass, :observers)
+      include Concord.new(:klass, :observer)
 
       # Call the action
       #
@@ -43,59 +44,12 @@ module Substation
       #
       # @api private
       def call(*args)
-        klass.call(*args)
+        response = klass.call(*args)
+        observer.call(response)
+        response
       end
 
-      # Notify all observers registered for the given event
-      #
-      # @param [Substation::Event] event
-      #   the event to pass to the observers
-      #
-      # @return [self]
-      #
-      # @api private
-      def notify(event)
-        observers.notify(event)
-        self
-      end
     end # class Action
-
-    # Encapsulates access to all observers registered for one {Substation::Action}
-    class Observers
-
-      # Coerce the given +config+ to an {Observers} instance
-      #
-      # @param [Hash] config
-      #   the observer configuration
-      #
-      # @return [Observers]
-      #   the coerced {Observers} instance
-      #
-      # @api private
-      def self.coerce(config)
-        new(config.each_with_object({}) { |(event, observers), hash|
-          hash[event.to_sym] = observers.map { |name| Utils.const_get(name) }
-        })
-      end
-
-      include Adamantium
-      include Concord.new(:entries)
-
-      # Notify all registered observers for the given event
-      #
-      # @param [Substation::Event] event
-      #   the event to pass to the observers
-      #
-      # @return [self]
-      #
-      # @api private
-      def notify(event)
-        entries.fetch(event.kind, EMPTY_ARRAY).each do |observer|
-          observer.call(event)
-        end
-        self
-      end
-    end # class Observers
 
     # Raised when trying to dispatch to an unregistered action
     UnknownActionError = Class.new(StandardError)
@@ -110,8 +64,8 @@ module Substation
     #
     # @api private
     def self.coerce(config)
-      new(config.each_with_object({}) { |(name, action), actions|
-        actions[name.to_sym] = Action.coerce(name, action)
+      new(config.each_with_object({}) { |(name, config), actions|
+        actions[name.to_sym] = Action.coerce(config)
       })
     end
 
@@ -134,23 +88,7 @@ module Substation
     #
     # @api private
     def dispatch(action_name, request)
-      action(action_name).call(action_name, request, self)
-    end
-
-    # Notify all registered observers for the given event
-    #
-    # @param [Substation::Event] event
-    #   the event to pass to the registered observers
-    #
-    # @return [self]
-    #
-    # @raise [KeyError]
-    #   if no action is registered for the given +event+'s action
-    #
-    # @api private
-    def notify(event)
-      action(event.action_name).notify(event)
-      self
+      action(action_name).call(self, request)
     end
 
     # The names of all registered {Substation::Action} instances
@@ -162,7 +100,6 @@ module Substation
     def action_names
       Set.new(actions.keys)
     end
-
     memoize :action_names
 
     private
@@ -182,5 +119,6 @@ module Substation
     def action(name)
       actions.fetch(name) { raise(UnknownActionError) }
     end
+
   end # class Environment
 end # module Substation
