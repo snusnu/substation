@@ -7,12 +7,12 @@ module Spec
     :data
   end
 
-  def self.success_response
-    Substation::Action::Response::Success.new(response_data)
+  def self.success_response(request)
+    Substation::Action::Response::Success.new(request, response_data)
   end
 
-  def self.failure_response
-    Substation::Action::Response::Failure.new(response_data)
+  def self.failure_response(request)
+    Substation::Action::Response::Failure.new(request, response_data)
   end
 
   class Observer

@@ -13,12 +13,12 @@ describe Action, '#call' do
   context "when no error occurred" do
     let(:object) { Spec::Action::Success.new(env, request) }
 
-    it { should eql(Spec.success_response) }
+    it { should eql(Spec.success_response(request)) }
   end
 
   context "when an error occurred" do
     let(:object) { Spec::Action::Failure.new(env, request) }
 
-    it { should eql(Spec.failure_response) }
+    it { should eql(Spec.failure_response(request)) }
   end
 end
