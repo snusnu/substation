@@ -88,7 +88,7 @@ module Substation
     #
     # @api private
     def dispatch(action_name, request)
-      action(action_name).call(self, request)
+      fetch(action_name).call(self, request)
     end
 
     # The names of all registered {Substation::Action} instances
@@ -116,7 +116,7 @@ module Substation
     #   if no action is registered with +name+
     #
     # @api private
-    def action(name)
+    def fetch(name)
       actions.fetch(name) { raise(UnknownActionError) }
     end
 
