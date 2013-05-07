@@ -1,21 +1,25 @@
 module Substation
 
-  # Encapsulates all registered {Action} instances and their observers
+  # Encapsulates all registered actions and their observers
+  #
+  # The only protocol actions must support is +#call(request)+.
+  # Actions are intended to be classes that handle one specific
+  # application use case.
   class Environment
 
-    # Encapsulates access to one registered {Substation::Action} instance
+    # Encapsulates access to one registered action
     class Action
 
       # Raised when no action class name is configured
       MissingClassError = Class.new(StandardError)
 
-      # Coerce the given name and config to an {Action} instance
+      # Coerce the given +name+ and +config+ to an {Action} instance
       #
       # @param [Hash] config
       #   the configuration hash
       #
       # @return [Action]
-      #   the coerced {Action} instance
+      #   the coerced instance
       #
       # @api private
       def self.coerce(config)
@@ -30,13 +34,11 @@ module Substation
 
       # Call the action
       #
-      # @see Substation::Action.call
-      #
       # @param [Substation::Request] request
-      #   the request passed to the registered action class
+      #   the request passed to the registered action
       #
       # @return [Substation::Response]
-      #   the response returned from calling the action
+      #   the response returned when calling the action
       #
       # @api private
       def call(request)
@@ -56,7 +58,7 @@ module Substation
     #   the environment configuration
     #
     # @return [Environment]
-    #   the coerced {Environment} instance
+    #   the coerced instance
     #
     # @api private
     def self.coerce(config)
@@ -68,7 +70,7 @@ module Substation
     include Concord.new(:actions)
     include Adamantium
 
-    # Invoke the action identified by +action_name+
+    # Invoke the action identified by +name+
     #
     # @param [Symbol] name
     #   a registered action name
@@ -77,7 +79,7 @@ module Substation
     #   the input model instance to pass to the action
     #
     # @return [Response]
-    #   the response returned from invoking the action
+    #   the response returned when calling the action
     #
     # @raise [UnknownActionError]
     #   if no action is registered for +name+
@@ -87,7 +89,7 @@ module Substation
       fetch(name).call(Request.new(self, input))
     end
 
-    # The names of all registered {Substation::Action} instances
+    # The names of all registered actions
     #
     # @return [Set<Symbol>]
     #   the set of registered action names
