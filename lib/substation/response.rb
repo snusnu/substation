@@ -6,7 +6,7 @@ module Substation
   class Response
 
     include AbstractType
-    include Equalizer.new(:input, :output)
+    include Equalizer.new(:request, :output)
     include Adamantium
 
     # The environment used to return this response
@@ -57,6 +57,15 @@ module Substation
     #
     # @api private
     abstract_method :success?
+
+    protected
+
+    # The request that lead to this response
+    #
+    # @return [Request]
+    #
+    # @api private
+    attr_reader :request
 
     # An errorneous {Response}
     class Failure < self
