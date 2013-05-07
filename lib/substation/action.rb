@@ -8,7 +8,7 @@ module Substation
     # Instantiate and invoke an {Action} (subclass)
     #
     # @param [*args] args
-    #   the arguments accepted by {Action#initialize}
+    #   the arguments accepted by {#initialize}
     #
     # @return [Response]
     #   the response object returned by {#perform}
