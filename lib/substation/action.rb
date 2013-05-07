@@ -94,8 +94,8 @@ module Substation
 
     # Instantiate and invoke an {Action} (subclass)
     #
-    # @param [Request] request
-    #   a request model instance for initializing a new action instance
+    # @param [*args] args
+    #   the arguments accepted by {Action#initialize}
     #
     # @return [Response]
     #   the response object returned by {#perform}
