@@ -29,7 +29,7 @@ module Substation
     def self.coerce(input)
       case input
       when NilClass
-        Null
+        NULL
       when String
         Utils.const_get(input)
       when Array
@@ -39,23 +39,8 @@ module Substation
       end
     end
 
-    # Noop observer
-    class Null < self
-      private_class_method :new
-
-      # Notify observer
-      #
-      # @param [Response] response
-      #
-      # @return [self]
-      #
-      # @api private
-      #
-      def self.call(_response)
-        self
-      end
-
-    end
+    # Null observer
+    NULL = Class.new(self) { def call(_response); self; end; }.new
 
     # Chain of observers
     class Chain < self

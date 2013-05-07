@@ -9,7 +9,7 @@ describe Observer, '.coerce' do
   context 'with nil input' do
     let(:input) { nil }
 
-    it { should be(described_class::Null) }
+    it { should be(described_class::NULL) }
   end
 
   context 'with string input' do
@@ -21,7 +21,7 @@ describe Observer, '.coerce' do
   context 'with array input' do
     let(:input) { ['Spec::Observer', nil] }
 
-    let(:observers) { [Spec::Observer, described_class::Null] }
+    let(:observers) { [Spec::Observer, described_class::NULL] }
 
     it { should eql(described_class::Chain.new(observers)) }
   end
