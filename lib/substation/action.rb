@@ -185,7 +185,7 @@ module Substation
     # @return [Response::Success]
     #
     # @api private
-    def pass(data)
+    def success(data)
       respond_with(Response::Success, data)
     end
 
@@ -197,7 +197,7 @@ module Substation
     # @return [Response::Failure]
     #
     # @api private
-    def fail(data)
+    def error(data)
       respond_with(Response::Failure, data)
     end
 
