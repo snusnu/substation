@@ -57,9 +57,10 @@ module Substation
     #
     # @api private
     def initialize(env, request)
-      @env, @request = env, request
-      @actor = @request.actor
-      @data  = @request.data
+      @env     = env
+      @request = request
+      @actor   = @request.actor
+      @data    = @request.data
     end
 
     # Invoke the action
