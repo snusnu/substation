@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe Response, '#input' do
+describe Response, '#env' do
 
-  subject { object.input }
+  subject { object.env }
 
   let(:object)   { Class.new(described_class).new(request, output) }
   let(:request)  { Request.new(env, input) }
@@ -12,5 +12,5 @@ describe Response, '#input' do
   let(:input)    { mock }
   let(:output)   { mock }
 
-  it { should equal(input) }
+  it { should equal(env) }
 end

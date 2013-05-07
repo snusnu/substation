@@ -53,7 +53,6 @@ RepeatedConditional:
 TooManyInstanceVariables:
   enabled: true
   exclude:
-  - Substation::Action
   - Substation::Response
   max_instance_variables: 3
 TooManyMethods:

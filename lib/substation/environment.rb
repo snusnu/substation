@@ -11,9 +11,6 @@ module Substation
 
       # Coerce the given name and config to an {Action} instance
       #
-      # @param [#to_sym] name
-      #   the name for this action
-      #
       # @param [Hash] config
       #   the configuration hash
       #
@@ -35,15 +32,15 @@ module Substation
       #
       # @see Substation::Action.call
       #
-      # @param [*] args
-      #   the args passed to {Substation::Action.call]
+      # @param [Substation::Request] request
+      #   the request passed to the registered action class
       #
       # @return [Substation::Response]
       #   the response returned from calling the action
       #
       # @api private
-      def call(*args)
-        response = klass.call(*args)
+      def call(request)
+        response = klass.call(request)
         observer.call(response)
         response
       end
@@ -73,21 +70,21 @@ module Substation
 
     # Invoke the action identified by +action_name+
     #
-    # @param [Symbol] action_name
+    # @param [Symbol] name
     #   a registered action name
     #
-    # @param [Substation::Action::Request] request
-    #   the request data to pass to the action
+    # @param [Object] input
+    #   the input model instance to pass to the action
     #
-    # @return [Substation::Response]
+    # @return [Response]
     #   the response returned from invoking the action
     #
-    # @raise [KeyError]
-    #   if no action is registered with +action_name+
+    # @raise [UnknownActionError]
+    #   if no action is registered for +name+
     #
     # @api private
-    def dispatch(action_name, request)
-      fetch(action_name).call(self, request)
+    def dispatch(name, input)
+      fetch(name).call(Request.new(self, input))
     end
 
     # The names of all registered {Substation::Action} instances
@@ -99,6 +96,7 @@ module Substation
     def action_names
       Set.new(actions.keys)
     end
+
     memoize :action_names
 
     private

@@ -4,29 +4,30 @@ require 'spec_helper'
 
 describe Environment, '#dispatch' do
 
-  subject { object.dispatch(action_name, request) }
+  subject { object.dispatch(action_name, input) }
 
   let(:object)  { described_class.coerce(config)                        }
   let(:config)  { { 'test' => { 'action' => 'Spec::Action::Success' } } }
-  let(:request) { mock(:actor => mock, :data => mock)                   }
+  let(:request) { Request.new(object, input) }
+  let(:input)   { mock }
 
   let(:expected_response) do
-    Spec::Action::Success.call(object, request)
+    Spec::Action::Success.call(request)
   end
 
-  let(:action_name) { :test }
-
   context 'when the action is registered' do
+    let(:action_name) { :test }
+
     context 'without callbacks' do
       it { should eql(expected_response) }
     end
 
     context 'with observers' do
-      let(:config) do
+      let(:config) {
         config = super()
         config['test']['observer'] = 'Spec::Observer'
         config
-      end
+      }
 
       it 'should call callback with response' do
         Spec::Observer.should_receive(:call).with(expected_response)

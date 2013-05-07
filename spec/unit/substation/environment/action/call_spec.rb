@@ -4,18 +4,18 @@ require 'spec_helper'
 
 describe Environment::Action, '#call' do
 
-  subject { object.call(name, request, env) }
+  subject { object.call(request) }
 
-  let(:object)   { described_class.new( klass, observer) }
-  let(:name)     { mock('Name')                          }
-  let(:klass)    { mock('Class')                         }
-  let(:observer) { mock('Observer')                      }
-  let(:request)  { mock('Request')                       }
-  let(:env)      { mock('Env')                           }
-  let(:response) { mock('Response')                      }
+  let(:object)   { described_class.new(klass, observer) }
+  let(:klass)    { mock }
+  let(:observer) { mock }
+  let(:request)  { Request.new(env, input) }
+  let(:env)      { mock }
+  let(:input)    { mock }
+  let(:response) { mock }
 
   before do
-    klass.should_receive(:call).with(name, request, env).and_return(response)
+    klass.should_receive(:call).with(request).and_return(response)
     observer.should_receive(:call).with(response)
   end
 

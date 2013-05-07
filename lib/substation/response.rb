@@ -6,48 +6,48 @@ module Substation
   class Response
 
     include AbstractType
-    include Equalizer.new(:data, :actor, :input)
+    include Equalizer.new(:input, :output)
     include Adamantium
 
-    # The data returned by an action
+    # The environment used to return this response
     #
-    # @return [Object]
-    #
-    # @api private
-    attr_reader :data
-
-    # The action initiating actor
-    #
-    # @return [Object]
+    # @return [Environment]
     #
     # @api private
-    attr_reader :actor
+    attr_reader :env
 
-    # The request model instance passed into the action
+    # The request model instance passed into an action
     #
-    # @see Request#data
+    # @see Request#input
     #
     # @return [Object]
     #
     # @api private
     attr_reader :input
 
+    # The data returned by when invoking an action
+    #
+    # @return [Object]
+    #
+    # @api private
+    attr_reader :output
+
     # Initialize a new instance
     #
     # @param [Request] request
     #   the request passed to the action that returned this response
     #
-    # @param [Object] data
+    # @param [Object] output
     #   the data returned from the action that returned this response
     #
     # @return [undefined]
     #
     # @api private
-    def initialize(request, data)
+    def initialize(request, output)
       @request = request
-      @data    = data
-      @actor   = @request.actor
-      @input   = @request.data
+      @env     = @request.env
+      @input   = @request.input
+      @output  = output
     end
 
     # Indicates wether this is a successful response or not

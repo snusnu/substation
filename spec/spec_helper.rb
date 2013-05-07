@@ -7,42 +7,25 @@ module Spec
     :data
   end
 
-  def self.success_response(request)
-    Substation::Action::Response::Success.new(request, response_data)
-  end
-
-  def self.failure_response(request)
-    Substation::Action::Response::Failure.new(request, response_data)
-  end
-
   class Observer
-  end
-
-  class Action < Substation::Action
-    class Success < self
-      def perform
-        success(Spec.response_data)
-      end
-    end
-
-    class Failure < self
-      def perform
-        error(Spec.response_data)
-      end
+    def self.call(response)
     end
   end
 
-  class Observer
+  class Action
     class Success
-      def self.call(event)
+      def self.call(request)
+        request.success(Spec.response_data)
       end
     end
 
     class Failure
-      def self.call(event)
+      def self.call(request)
+        request.error(Spec.response_data)
       end
     end
   end
+
 end
 
 include Substation

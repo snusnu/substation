@@ -19,9 +19,9 @@ describe Utils, '.const_get' do
   end
 
   context "with a nested constant" do
-    let(:name) { 'Substation::Action' }
+    let(:name) { 'Substation::Request' }
 
-    it { should == Substation::Action }
+    it { should == Substation::Request }
   end
 
   context "with a non-existant nested constant" do
