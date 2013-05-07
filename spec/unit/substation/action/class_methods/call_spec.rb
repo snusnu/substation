@@ -10,7 +10,7 @@ describe Action, '.call' do
   let(:request)  { mock(:actor => mock, :data => mock)       }
   let(:env)      { Environment.new(name => action)           }
   let(:action)   { Environment::Action.new(object, observer) }
-  let(:observer) { Observer::NOOP                            }
+  let(:observer) { Observer::Null                            }
 
   context "when no error occurred" do
     let(:object) { Spec::Action::Success }

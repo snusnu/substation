@@ -24,7 +24,7 @@ describe Environment::Action, '.coerce' do
 
   context 'with an action and no observer' do
     let(:config)   { { 'action' => 'Spec::Action::Success' } }
-    let(:observer) { Observer::NOOP                          }
+    let(:observer) { Observer::Null                          }
 
     it { should eql(coerced) }
   end

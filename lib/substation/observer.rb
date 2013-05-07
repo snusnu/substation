@@ -27,7 +27,7 @@ module Substation
     def self.coerce(input)
       case input
       when NilClass
-        NOOP
+        Null
       when String
         Utils.const_get(input)
       when Array
@@ -38,7 +38,7 @@ module Substation
     end
 
     # Noop observer
-    class NOOP < self
+    class Null < self
       private_class_method :new
 
       # Notify observer

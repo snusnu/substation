@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Observer::NOOP, '.call' do
+describe Observer::Null, '.call' do
   subject { object.call(input) }
 
   let(:object) { described_class }
