@@ -40,7 +40,7 @@ module Substation
     end
 
     # Null observer
-    NULL = Class.new(self) { def call(_response); self; end; }.new
+    NULL = Class.new(self) { def call(_response); self; end; }.new.freeze
 
     # Chain of observers
     class Chain < self
