@@ -1,5 +1,8 @@
 module Substation
-  # {Action} response 
+
+  # {Action} response base class
+  #
+  # @abstract
   class Response
 
     include AbstractType

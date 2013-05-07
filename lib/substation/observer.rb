@@ -1,6 +1,8 @@
 module Substation
 
   # Abstract observer base class
+  #
+  # @abstract
   class Observer
 
     include AbstractType

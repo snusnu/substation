@@ -1,6 +1,8 @@
 module Substation
 
   # Implements the boundary interface to invoke application use cases
+  #
+  # @abstract
   class Action
 
     # Instantiate and invoke an {Action} (subclass)
