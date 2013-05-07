@@ -28,9 +28,8 @@ module Substation
         new(Utils.const_get(klass_name), observer)
       end
 
-
-      include Adamantium
       include Concord.new(:klass, :observer)
+      include Adamantium
 
       # Call the action
       #
@@ -69,8 +68,8 @@ module Substation
       })
     end
 
-    include Adamantium
     include Concord.new(:actions)
+    include Adamantium
 
     # Invoke the action identified by +action_name+
     #

@@ -1,6 +1,8 @@
 module Substation
+
   # Abstract observer base class
-  class Observer 
+  class Observer
+
     include AbstractType
     include Adamantium::Flat
 
@@ -55,6 +57,7 @@ module Substation
 
     # Chain of observers
     class Chain < self
+
       include Concord.new(:observers)
 
       # Notify observer
@@ -64,7 +67,7 @@ module Substation
       # @return [self]
       #
       # @api private
-      def call(response) 
+      def call(response)
         observers.each do |observer|
           observer.call(response)
         end
