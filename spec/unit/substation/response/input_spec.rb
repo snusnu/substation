@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Action::Response, '#input' do
+describe Response, '#input' do
 
   subject { object.input }
 
