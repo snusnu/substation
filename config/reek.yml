@@ -29,8 +29,7 @@ IrresponsibleModule:
   exclude: []
 LongParameterList:
   enabled: true
-  exclude:
-  - Substation::Action#self.call
+  exclude: []
   max_params: 2
   overrides:
     initialize:
@@ -41,8 +40,7 @@ LongYieldList:
   max_params: 2
 NestedIterators:
   enabled: true
-  exclude:
-  - Substation::Environment::Observers#self.coerce
+  exclude: []
   max_allowed_nesting: 1
   ignore_iterators: []
 NilCheck:
@@ -55,7 +53,6 @@ RepeatedConditional:
 TooManyInstanceVariables:
   enabled: true
   exclude:
-  - Substation::Event
   - Substation::Action
   max_instance_variables: 3
 TooManyMethods:
@@ -103,7 +100,5 @@ UnusedParameters:
   exclude: []
 UtilityFunction:
   enabled: true
-  exclude:
-  - Substation::Action#pass
-  - Substation::Action#fail
+  exclude: []
   max_helper_calls: 0
