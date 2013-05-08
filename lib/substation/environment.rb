@@ -54,13 +54,40 @@ module Substation
 
     # Coerce the given +config+ to an {Environment} instance
     #
+    # @example without observers
+    #
+    #   env = Substation::Environment.coerce({
+    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #   })
+    #
+    # @example with a single observer
+    #
+    #   env = Substation::Environment.coerce({
+    #     'some_use_case' => {
+    #       'action' => 'SomeUseCase',
+    #       'observer' => 'SomeObserver'
+    #     }
+    #   })
+    #
+    # @example with multiple observers
+    #
+    #   env = Substation::Environment.coerce({
+    #     'some_use_case' => {
+    #       'action' => 'SomeUseCase',
+    #       'observer' => [
+    #         'SomeObserver',
+    #         'AnotherObserver'
+    #       ]
+    #     }
+    #   })
+    #
     # @param [Hash] config
     #   the environment configuration
     #
     # @return [Environment]
     #   the coerced instance
     #
-    # @api private
+    # @api public
     def self.coerce(config)
       new(config.each_with_object({}) { |(name, config), actions|
         actions[name.to_sym] = Action.coerce(config)
@@ -71,6 +98,22 @@ module Substation
     include Adamantium
 
     # Invoke the action identified by +name+
+    #
+    # @example
+    #
+    #   class SomeUseCase
+    #     def self.call(request)
+    #       data = perform_work
+    #       request.success(data)
+    #     end
+    #   end
+    #
+    #   env = Substation::Environment.coerce({
+    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #   })
+    #
+    #   response = env.dispatch(:some_use_case, :input)
+    #   response.success? # => true
     #
     # @param [Symbol] name
     #   a registered action name
@@ -84,17 +127,32 @@ module Substation
     # @raise [UnknownActionError]
     #   if no action is registered for +name+
     #
-    # @api private
+    # @api public
     def dispatch(name, input)
       fetch(name).call(Request.new(self, input))
     end
 
     # The names of all registered actions
     #
+    # @example
+    #
+    #   class SomeUseCase
+    #     def self.call(request)
+    #       data = perform_work
+    #       request.success(data)
+    #     end
+    #   end
+    #
+    #   env = Substation::Environment.coerce({
+    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #   })
+    #
+    #   env.action_names # => #<Set: {:some_use_case}>
+    #
     # @return [Set<Symbol>]
     #   the set of registered action names
     #
-    # @api private
+    # @api public
     def action_names
       Set.new(actions.keys)
     end
