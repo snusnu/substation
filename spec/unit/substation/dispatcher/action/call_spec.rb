@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Environment::Action, '#call' do
+describe Dispatcher::Action, '#call' do
 
   subject { object.call(request) }
 

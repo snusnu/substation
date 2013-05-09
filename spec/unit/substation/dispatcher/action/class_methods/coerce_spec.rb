@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-describe Environment::Action, '.coerce' do
+describe Dispatcher::Action, '.coerce' do
 
   subject { described_class.coerce(config) }
 
   let(:klass)   { Spec::Action::Success }
-  let(:coerced) { Environment::Action.new(klass, observer) }
+  let(:coerced) { Dispatcher::Action.new(klass, observer) }
 
   context 'with an action and observer' do
     let(:config) do

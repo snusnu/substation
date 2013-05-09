@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Environment, '.coerce' do
+describe Dispatcher, '.coerce' do
 
   subject { described_class.coerce(config) }
 

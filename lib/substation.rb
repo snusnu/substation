@@ -12,5 +12,5 @@ end
 require 'substation/request'
 require 'substation/response'
 require 'substation/observer'
-require 'substation/environment'
+require 'substation/dispatcher'
 require 'substation/support/utils'

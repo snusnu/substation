@@ -5,7 +5,7 @@ module Substation
   # The only protocol actions must support is +#call(request)+.
   # Actions are intended to be classes that handle one specific
   # application use case.
-  class Environment
+  class Dispatcher
 
     # Encapsulates access to one registered action
     class Action
@@ -52,17 +52,17 @@ module Substation
     # Raised when trying to dispatch to an unregistered action
     UnknownActionError = Class.new(StandardError)
 
-    # Coerce the given +config+ to an {Environment} instance
+    # Coerce the given +config+ to a {Dispatcher} instance
     #
     # @example without observers
     #
-    #   env = Substation::Environment.coerce({
+    #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => { 'action' => 'SomeUseCase' }
     #   })
     #
     # @example with a single observer
     #
-    #   env = Substation::Environment.coerce({
+    #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => {
     #       'action' => 'SomeUseCase',
     #       'observer' => 'SomeObserver'
@@ -71,7 +71,7 @@ module Substation
     #
     # @example with multiple observers
     #
-    #   env = Substation::Environment.coerce({
+    #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => {
     #       'action' => 'SomeUseCase',
     #       'observer' => [
@@ -82,9 +82,9 @@ module Substation
     #   })
     #
     # @param [Hash] config
-    #   the environment configuration
+    #   the action configuration
     #
-    # @return [Environment]
+    # @return [Dispatcher]
     #   the coerced instance
     #
     # @api public
@@ -101,18 +101,28 @@ module Substation
     #
     # @example
     #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       data = perform_work
-    #       request.success(data)
+    #   module App
+    #     class Environment
+    #       def initialize(dispatcher, logger)
+    #         @dispatcher, @logger = dispatcher, logger
+    #       end
+    #     end
+    #
+    #     class SomeUseCase
+    #       def self.call(request)
+    #         data = perform_work
+    #         request.success(data)
+    #       end
     #     end
     #   end
     #
-    #   env = Substation::Environment.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     'some_use_case' => { 'action' => 'App::SomeUseCase' }
     #   })
     #
-    #   response = env.dispatch(:some_use_case, :input)
+    #   env = App::Environment.new(dispatcher, Logger.new($stdout))
+    #
+    #   response = dispatcher.call(:some_use_case, :some_input, env)
     #   response.success? # => true
     #
     # @param [Symbol] name
@@ -121,6 +131,9 @@ module Substation
     # @param [Object] input
     #   the input model instance to pass to the action
     #
+    # @param [Object] env
+    #   the application environment
+    #
     # @return [Response]
     #   the response returned when calling the action
     #
@@ -128,8 +141,8 @@ module Substation
     #   if no action is registered for +name+
     #
     # @api public
-    def dispatch(name, input)
-      fetch(name).call(Request.new(self, input))
+    def call(name, input, env)
+      fetch(name).call(Request.new(env, input))
     end
 
     # The names of all registered actions
@@ -143,11 +156,11 @@ module Substation
     #     end
     #   end
     #
-    #   env = Substation::Environment.coerce({
+    #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => { 'action' => 'SomeUseCase' }
     #   })
     #
-    #   env.action_names # => #<Set: {:some_use_case}>
+    #   dispatcher.action_names # => #<Set: {:some_use_case}>
     #
     # @return [Set<Symbol>]
     #   the set of registered action names
@@ -177,5 +190,5 @@ module Substation
       actions.fetch(name) { raise(UnknownActionError) }
     end
 
-  end # class Environment
+  end # class Dispatcher
 end # module Substation

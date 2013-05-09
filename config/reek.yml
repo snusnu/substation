@@ -29,7 +29,8 @@ IrresponsibleModule:
   exclude: []
 LongParameterList:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Dispatcher#call
   max_params: 2
 LongYieldList:
   enabled: true

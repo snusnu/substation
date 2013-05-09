@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Environment, '#action_names' do
+describe Dispatcher, '#action_names' do
 
   subject { object.action_names }
 
