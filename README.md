@@ -251,7 +251,7 @@ module App
     # ...
 
     def db
-      @env.database
+      @env.storage
     end
   end
 
