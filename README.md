@@ -11,8 +11,7 @@ document. The only protocol such actions must support is `#call(request)`.
 
 Actions can be registered under any given name which allows above
 layers to invoke any specific action if respective conditions are met.
-For example, an application could map an http route to a specific named
-`substation` action and pass relevant http params as input data.
+For example, an application could map an http route to a specific named action and pass relevant http params as input data.
 
 The contract for actions specifies that when invoked, actions can
 receive arbitrary input data which will be available in `request.input`.
@@ -29,7 +28,7 @@ wether invoking your action was successful or not.
 
 ## Actions
 
-Here's an example of a valid `substation` action.
+Here's an example of a valid action.
 
 ```ruby
 module App
