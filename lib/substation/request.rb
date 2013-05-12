@@ -11,7 +11,7 @@ module Substation
     # @example
     #
     #   class SomeUseCase
-    #     def call(request)
+    #     def self.call(request)
     #       data = perform_use_case
     #       request.success(data)
     #     end
@@ -32,7 +32,7 @@ module Substation
     # @example
     #
     #   class SomeUseCase
-    #     def call(request)
+    #     def self.call(request)
     #       error = perform_use_case
     #       request.error(error)
     #     end
