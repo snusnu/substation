@@ -234,13 +234,13 @@ shown above:
 module App
   class Environment
     attr_reader :storage
-    attr_reader :logger
     attr_reader :dispatcher
+    attr_reader :logger
 
-    def initialize(storage, logger, dispatcher)
+    def initialize(storage, dispatcher, logger)
       @storage    = storage
-      @logger     = logger
       @dispatcher = dispatcher
+      @logger     = logger
     end
   end
 
@@ -275,7 +275,8 @@ dispatcher = Substation::Dispatcher.coerce({
   'some_use_case' => { 'action' => 'App::SomeUseCase' }
 })
 
-env = App::Environment.new(dispatcher, Logger.new($stdout))
+storage = App::Storage.new # some storage abstraction
+env     = App::Environment.new(dispatcher, storage, Logger.new($stdout))
 
 # :some_input is no person, db.save_person will fail
 response = dispatcher.call(:some_use_case, :some_input, env)
