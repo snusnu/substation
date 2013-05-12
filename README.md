@@ -276,7 +276,7 @@ dispatcher = Substation::Dispatcher.coerce({
 })
 
 storage = App::Storage.new # some storage abstraction
-env     = App::Environment.new(dispatcher, storage, Logger.new($stdout))
+env     = App::Environment.new(storage, dispatcher, Logger.new($stdout))
 
 # :some_input is no person, db.save_person will fail
 response = dispatcher.call(:some_use_case, :some_input, env)
