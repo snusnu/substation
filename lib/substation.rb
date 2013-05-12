@@ -8,8 +8,8 @@ require 'concord'
 
 # Sustation can be thought of as a domain level request router. It assumes
 # that every usecase in your application has a name and is implemented in a
-# dedicated class that will be referred to as an *action* for the purposes of
-# this document. The only protocol such actions must support is `#call(request)`.
+# dedicated class that will be referred to as an *action* in the context of
+# substation. The only protocol such actions must support is `#call(request)`.
 #
 # Actions can be registered under any given name which allows above
 # layers to invoke any specific action if respective conditions are met.
