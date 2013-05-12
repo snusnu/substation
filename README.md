@@ -30,90 +30,86 @@ wether invoking your action was successful or not.
 
 Here's an example of a valid action.
 
-```ruby
-module App
-  class SomeUseCase
+    module App
+      class SomeUseCase
 
-    # Perform the usecase
-    #
-    # @param [Substation::Request] request
-    #   the request passed to the registered action
-    #
-    # @return [Substation::Response]
-    #   the response returned when calling the action
-    #
-    # @api private
-    def self.call(request)
-      data = perform_work
-      if data
-        request.success(data)
-      else
-        request.error("Something went wrong")
+        # Perform the usecase
+        #
+        # @param [Substation::Request] request
+        #   the request passed to the registered action
+        #
+        # @return [Substation::Response]
+        #   the response returned when calling the action
+        #
+        # @api private
+        def self.call(request)
+          data = perform_work
+          if data
+            request.success(data)
+          else
+            request.error("Something went wrong")
+          end
+        end
       end
     end
-  end
-end
-```
 
 It is up to you how to implement the action. Another way of writing an
 action could involve providing an application specific baseclass for all
 your actions, which provides access to methods you frequently use within
 any specific action.
 
-```ruby
-module App
+    module App
 
-  # Base class for all actions
-  #
-  # @abstract
-  class Action
+      # Base class for all actions
+      #
+      # @abstract
+      class Action
 
-    # Perform the usecase
-    #
-    # @param [Substation::Request] request
-    #   the request passed to the registered action
-    #
-    # @return [Substation::Response]
-    #   the response returned when calling the action
-    #
-    # @api private
-    def self.call(request)
-      new(request).call
-    end
+        # Perform the usecase
+        #
+        # @param [Substation::Request] request
+        #   the request passed to the registered action
+        #
+        # @return [Substation::Response]
+        #   the response returned when calling the action
+        #
+        # @api private
+        def self.call(request)
+          new(request).call
+        end
 
-    def initialize(request)
-      @request = request
-      @env     = @request.env
-    end
+        def initialize(request)
+          @request = request
+          @env     = @request.env
+        end
 
-    def call
-      raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
-    end
+        def call
+          raise NotImplementedError, "#{self.class}##{__method__} must be implemented"
+        end
 
-    private
+        private
 
-    def success(data)
-      @request.success(data)
-    end
+        def success(data)
+          @request.success(data)
+        end
 
-    def error(data)
-      @request.error(data)
-    end
-  end
+        def error(data)
+          @request.error(data)
+        end
+      end
 
-  class SomeUseCase < Action
+      class SomeUseCase < Action
 
-    def call
-      data = perform_work
-      if data
-        success(data)
-      else
-        error("Something went wrong")
+        def call
+          data = perform_work
+          if data
+            success(data)
+          else
+            error("Something went wrong")
+          end
+        end
       end
     end
-  end
-end
-```
 
 ## Observers
 
@@ -134,45 +130,41 @@ are made available via `response.input`, `response.env` and
 
 Here's an example of a simple observer:
 
-```ruby
-module App
-  class SomeUseCaseObserver
-    def self.call(response)
-      # your code here
+    module App
+      class SomeUseCaseObserver
+        def self.call(response)
+          # your code here
+        end
+      end
     end
-  end
-end
-```
 
 A more involved observer could dispatch based on the success of the
 invoked action:
 
-```ruby
-module App
-  class SomeUseCaseObserver
-    def self.call(response)
-      klass = response.success? ? Success : Failure
-      klass.new(response).call
-    end
+    module App
+      class SomeUseCaseObserver
+        def self.call(response)
+          klass = response.success? ? Success : Failure
+          klass.new(response).call
+        end
 
-    def initialize(response)
-      @response = response
-    end
+        def initialize(response)
+          @response = response
+        end
 
-    class Success < self
-      def call
-        # your code here
+        class Success < self
+          def call
+            # your code here
+          end
+        end
+
+        class Failure < self
+          def call
+            # your code here
+          end
+        end
       end
     end
-
-    class Failure < self
-      def call
-        # your code here
-      end
-    end
-  end
-end
-```
 
 ## Configuration
 
@@ -186,36 +178,30 @@ on the action response.
 
 An example configuration for an action without any observers:
 
-```ruby
-dispatcher = Substation::Dispatcher.coerce({
-  'some_use_case' => { 'action' => 'App::SomeUseCase' }
-})
-```
+    dispatcher = Substation::Dispatcher.coerce({
+      'some_use_case' => { 'action' => 'App::SomeUseCase' }
+    })
 
 An example configuration for an action with one observer:
 
-```ruby
-dispatcher = Substation::Dispatcher.coerce({
-  'some_use_case' => {
-    'action'   => 'App::SomeUseCase',
-    'observer' => 'App::SomeUseCaseObserver'
-  }
-})
-```
+    dispatcher = Substation::Dispatcher.coerce({
+      'some_use_case' => {
+        'action'   => 'App::SomeUseCase',
+        'observer' => 'App::SomeUseCaseObserver'
+      }
+    })
 
 An example configuration for an action with multiple observers:
 
-```ruby
-dispatcher = Substation::Dispatcher.coerce({
-  'some_use_case' => {
-    'action'   => 'App::SomeUseCase',
-    'observer' => [
-      'App::SomeUseCaseObserver',
-      'App::AnotherObserver'
-    ]
-  }
-})
-```
+    dispatcher = Substation::Dispatcher.coerce({
+      'some_use_case' => {
+        'action'   => 'App::SomeUseCase',
+        'observer' => [
+          'App::SomeUseCaseObserver',
+          'App::AnotherObserver'
+        ]
+      }
+    })
 
 ## Application environments
 
@@ -230,55 +216,53 @@ an artificial storage abstraction object and the dispatcher itself.
 The example builds on top of the application specific action baseclass
 shown above:
 
-```ruby
-module App
-  class Environment
-    attr_reader :storage
-    attr_reader :dispatcher
-    attr_reader :logger
+    module App
+      class Environment
+        attr_reader :storage
+        attr_reader :dispatcher
+        attr_reader :logger
 
-    def initialize(storage, dispatcher, logger)
-      @storage    = storage
-      @dispatcher = dispatcher
-      @logger     = logger
-    end
-  end
+        def initialize(storage, dispatcher, logger)
+          @storage    = storage
+          @dispatcher = dispatcher
+          @logger     = logger
+        end
+      end
 
-  class Action
-    # ...
-    # code from above example
-    # ...
+      class Action
+        # ...
+        # code from above example
+        # ...
 
-    def db
-      @env.storage
-    end
-  end
+        def db
+          @env.storage
+        end
+      end
 
-  class SomeUseCase < Action
+      class SomeUseCase < Action
 
-    def initialize(request)
-      super
-      @person = request.input
-    end
+        def initialize(request)
+          super
+          @person = request.input
+        end
 
-    def call
-      if person = db.save_person(@person)
-        success(person)
-      else
-        error("Something went wrong")
+        def call
+          if person = db.save_person(@person)
+            success(person)
+          else
+            error("Something went wrong")
+          end
+        end
       end
     end
-  end
-end
 
-dispatcher = Substation::Dispatcher.coerce({
-  'some_use_case' => { 'action' => 'App::SomeUseCase' }
-})
+    dispatcher = Substation::Dispatcher.coerce({
+      'some_use_case' => { 'action' => 'App::SomeUseCase' }
+    })
 
-storage = App::Storage.new # some storage abstraction
-env     = App::Environment.new(storage, dispatcher, Logger.new($stdout))
+    storage = App::Storage.new # some storage abstraction
+    env     = App::Environment.new(storage, dispatcher, Logger.new($stdout))
 
-# :some_input is no person, db.save_person will fail
-response = dispatcher.call(:some_use_case, :some_input, env)
-response.success? # => false
-```
+    # :some_input is no person, db.save_person will fail
+    response = dispatcher.call(:some_use_case, :some_input, env)
+    response.success? # => false
