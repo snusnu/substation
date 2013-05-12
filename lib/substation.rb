@@ -14,8 +14,8 @@ require 'concord'
 # The contract for actions specifies that when invoked, actions can
 # receive arbitrary input data which will be available in `request.input`.
 # Additionally, `request.env` will contain an arbitrary object that
-# represents your application environment and provides access to typically
-# useful things like a logger or a storage engine abstraction.
+# represents your application environment and will typically provide access
+# to useful things like a logger or a storage engine abstraction.
 #
 # The contract further specifies that every action must return an instance
 # of either `Substation::Response::Success` or `Substation::Response::Failure`.
