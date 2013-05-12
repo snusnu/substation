@@ -11,7 +11,7 @@ document. The only protocol such actions must support is `#call(request)`.
 
 The contract for actions specifies that when invoked, actions can
 receive arbitrary input data which will be available in `request.input`.
-Additionally, `request.env` will contain an arbitrary object that
+Additionally, `request.env` contains an arbitrary object that
 represents your application environment and will typically provide access
 to useful things like a logger or a storage engine abstraction.
 
