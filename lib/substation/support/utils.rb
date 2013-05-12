@@ -1,4 +1,6 @@
 module Substation
+
+  # A collection of utility methods
   module Utils
 
     # Get the constant for the given FQN

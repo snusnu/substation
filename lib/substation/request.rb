@@ -1,6 +1,6 @@
 module Substation
 
-  # Encapsulates the {#env} and an {#input} model instance
+  # Encapsulates the application environment and an input model instance
   class Request
 
     include Concord.new(:env, :input)

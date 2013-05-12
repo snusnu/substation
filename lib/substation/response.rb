@@ -1,6 +1,6 @@
 module Substation
 
-  # {Action} response base class
+  # Base class for action responses
   #
   # @abstract
   class Response
