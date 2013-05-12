@@ -4,7 +4,7 @@
 [![Dependency Status](https://gemnasium.com/snusnu/substation.png)](https://gemnasium.com/snusnu/substation)
 [![Code Climate](https://codeclimate.com/github/snusnu/substation.png)](https://codeclimate.com/github/snusnu/substation)
 
-Sustation can be thought of as a domain level request router. It assumes
+`substation` can be thought of as a domain level request router. It assumes
 that every usecase in your application has a name and is implemented in a dedicated
 class that will be referred to as an *action* for the purposes of this
 document. The only protocol such actions must support is `#call(request)`.

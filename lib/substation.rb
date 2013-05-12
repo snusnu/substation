@@ -6,7 +6,7 @@ require 'equalizer'
 require 'abstract_type'
 require 'concord'
 
-# Sustation can be thought of as a domain level request router. It assumes
+# Substation can be thought of as a domain level request router. It assumes
 # that every usecase in your application has a name and is implemented in a
 # dedicated class that will be referred to as an *action* in the context of
 # substation. The only protocol such actions must support is `#call(request)`.
