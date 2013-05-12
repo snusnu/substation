@@ -63,7 +63,7 @@ any specific action.
 ```ruby
 module App
 
-  # Base class for all actions in {App}
+  # Base class for all actions
   #
   # @abstract
   class Action
