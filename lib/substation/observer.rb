@@ -23,8 +23,8 @@ module Substation
     # @param [NilClass, String, Array<String>] input
     #   0..n observer class names
     #
-    # @return [Observer::NULL, Observer::Chain]
-    #   a null observer or a chain of observers
+    # @return [Observer::NULL, Object, Observer::Chain]
+    #   a null observer, an observer object, or a chain of observers
     #
     # @api private
     def self.coerce(input)
