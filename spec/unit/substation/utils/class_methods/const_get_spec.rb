@@ -36,9 +36,11 @@ describe Utils, '.const_get' do
     let(:name) { 'Substation::Foo' }
 
     before do
-      Substation.should_receive(:const_missing).with('Foo')
+      Substation.should_receive(:const_missing).with('Foo').and_raise(NameError)
     end
 
-    it { should be(nil) }
+    specify do
+      expect { subject }.to raise_error(NameError)
+    end
   end
 end
