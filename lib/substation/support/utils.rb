@@ -28,5 +28,21 @@ module Substation
       obj
     end
 
+    # Converts string keys into symbol keys
+    #
+    # @param [Hash<#to_sym, Object>] hash
+    #   a hash with keys that respond to `#to_sym`
+    #
+    # @return [Hash<Symbol, Object>]
+    #   a hash with symbol keys
+    #
+    # @api private
+    def self.symbolize_keys(hash)
+      hash.each_with_object({}) { |(key, value), normalized_hash|
+        normalized_value = value.is_a?(Hash) ? symbolize_keys(value) : value
+        normalized_hash[key.to_sym] = normalized_value
+      }
+    end
+
   end # module Utils
 end # module Substation

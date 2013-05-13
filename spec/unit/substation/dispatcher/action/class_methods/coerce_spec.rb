@@ -12,8 +12,8 @@ describe Dispatcher::Action, '.coerce' do
   context 'with an action and observer' do
     let(:config) do
       {
-        'action'   => 'Spec::Action::Success',
-        'observer' => 'Spec::Observer'
+        :action   => 'Spec::Action::Success',
+        :observer => 'Spec::Observer'
       }
     end
 
@@ -23,7 +23,7 @@ describe Dispatcher::Action, '.coerce' do
   end
 
   context 'with an action and no observer' do
-    let(:config)   { { 'action' => 'Spec::Action::Success' } }
+    let(:config)   { { :action => 'Spec::Action::Success' } }
     let(:observer) { Observer::NULL                          }
 
     it { should eql(coerced) }

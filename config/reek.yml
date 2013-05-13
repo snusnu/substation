@@ -61,6 +61,7 @@ TooManyStatements:
   enabled: true
   exclude:
   - Substation::Utils#self.const_get
+  - Substation::Utils#self.symbolize_keys
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true

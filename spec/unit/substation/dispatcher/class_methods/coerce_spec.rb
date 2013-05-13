@@ -6,11 +6,13 @@ describe Dispatcher, '.coerce' do
 
   subject { described_class.coerce(config) }
 
-  let(:name)     { 'test'                                               }
-  let(:config)   { { name => action }                                   }
-  let(:action)   { { 'action' => 'Spec::Action::Success' }              }
-  let(:observer) { Observer::NOOP                                       }
-  let(:coerced)  { { :test  => described_class::Action.coerce(action) } }
+  let(:config) {{
+    'test' => { 'action' => 'Spec::Action::Success' }
+  }}
+
+  let(:coerced) {{
+    :test => described_class::Action.coerce(:action => 'Spec::Action::Success')
+  }}
 
   it { should eql(described_class.new(coerced)) }
 end

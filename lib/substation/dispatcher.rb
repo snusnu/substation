@@ -15,7 +15,7 @@ module Substation
 
       # Coerce the given +name+ and +config+ to an {Action} instance
       #
-      # @param [Hash] config
+      # @param [Hash<Symbol, Object>] config
       #   the configuration hash
       #
       # @return [Action]
@@ -23,8 +23,8 @@ module Substation
       #
       # @api private
       def self.coerce(config)
-        klass_name = config.fetch('action') { raise(MissingClassError) }
-        observer   = Observer.coerce(config['observer'])
+        klass_name = config.fetch(:action) { raise(MissingClassError) }
+        observer   = Observer.coerce(config[:observer])
 
         new(Utils.const_get(klass_name), observer)
       end
@@ -81,7 +81,7 @@ module Substation
     #     }
     #   })
     #
-    # @param [Hash] config
+    # @param [Hash<#to_sym, Object>] config
     #   the action configuration
     #
     # @return [Dispatcher]
@@ -89,10 +89,25 @@ module Substation
     #
     # @api public
     def self.coerce(config)
-      new(config.each_with_object({}) { |(name, config), actions|
-        actions[name.to_sym] = Action.coerce(config)
-      })
+      new(normalize_config(config))
     end
+
+    # Normalize the given +config+
+    #
+    # @param [Hash<#to_sym, Object>] config
+    #   the action configuration
+    #
+    # @return [Hash<Symbol, Action>]
+    #   the normalized config hash
+    #
+    # @api private
+    def self.normalize_config(config)
+      Utils.symbolize_keys(config).each_with_object({}) { |(name, hash), actions|
+        actions[name] = Action.coerce(hash)
+      }
+    end
+
+    private_class_method :normalize_config
 
     include Concord.new(:actions)
     include Adamantium
