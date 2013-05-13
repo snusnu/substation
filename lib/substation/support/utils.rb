@@ -5,14 +5,14 @@ module Substation
 
     # Get the constant for the given FQN
     #
-    # @param [String] name
+    # @param [#to_s] name
     #   the FQN denoting a constant
     #
     # @return [Class, nil]
     #
     # @api private
     def self.const_get(name)
-      list = name.split("::")
+      list = name.to_s.split("::")
       list.shift if list.first.empty?
       obj = Object
       list.each do |const|

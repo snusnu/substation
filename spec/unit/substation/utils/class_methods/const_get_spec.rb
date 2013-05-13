@@ -7,9 +7,17 @@ describe Utils, '.const_get' do
   subject { described_class.const_get(name) }
 
   context "with a toplevel constant" do
-    let(:name) { 'Substation' }
+    context "given as String" do
+      let(:name) { 'Substation' }
 
-    it { should == Substation }
+      it { should == Substation }
+    end
+
+    context "given as Symbol" do
+      let(:name) { :Substation }
+
+      it { should == Substation }
+    end
   end
 
   context "with a FQN toplevel constant" do
