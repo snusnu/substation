@@ -12,12 +12,6 @@ describe Observer, '.coerce' do
     it { should be(described_class::NULL) }
   end
 
-  context 'with string input' do
-    let(:input) { 'Spec::Observer' }
-
-    it { should be(Spec::Observer) }
-  end
-
   context 'with array input' do
     let(:input) { ['Spec::Observer', nil] }
 
@@ -26,11 +20,14 @@ describe Observer, '.coerce' do
     it { should eql(described_class::Chain.new(observers)) }
   end
 
-  context 'with uncoercible input' do
-    let(:input) { :foo }
+  context 'with other input' do
+    let(:input)   { mock }
+    let(:coerced) { mock }
 
-    it 'should raise error' do
-      expect { subject }.to raise_error(ArgumentError, 'Uncoercible input: :foo')
+    before do
+      Utils.should_receive(:coerce_callable).with(input).and_return(coerced)
     end
+
+    it { should eql(coerced) }
   end
 end

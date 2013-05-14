@@ -44,5 +44,25 @@ module Substation
       }
     end
 
+    # Coerce the given +handler+ object
+    #
+    # @param [Symbol, String, Proc] handler
+    #   a name denoting a const that responds to `#call(object)`, or a proc
+    #
+    # @return [Class, Proc]
+    #   the callable action handler
+    #
+    # @api private
+    def self.coerce_callable(handler)
+      case handler
+      when Symbol, String
+        Utils.const_get(handler)
+      when Proc
+        handler
+      else
+        raise(ArgumentError)
+      end
+    end
+
   end # module Utils
 end # module Substation

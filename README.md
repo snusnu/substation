@@ -220,6 +220,35 @@ dispatcher = Substation::Dispatcher.coerce({
 })
 ```
 
+The above configuration examples are tailored towards being read from a
+(yaml) config file and therefore accept strings as keys and values. It's
+also possible to use symbols as keys and values. Values correspond to
+action or observer "handlers" and can also be given as either constants
+or procs. In any case, handlers must respond to `call(object)`.
+
+An example configuration using symbol keys and constants for handlers:
+
+```ruby
+dispatcher = Substation::Dispatcher.coerce({
+  :some_use_case => {
+    :action   => App::SomeUseCase,
+    :observer => App::SomeUseCaseObserver
+  }
+})
+```
+
+An example configuration using symbol keys and procs for handlers:
+
+```ruby
+dispatcher = Substation::Dispatcher.coerce({
+  :some_use_case => {
+    :action   => Proc.new { |request| request.success(:foo) },
+    :observer => Proc.new { |response| do_something }
+  }
+})
+```
+
+
 ## Application environments
 
 In order to provide your actions with objects typically needed during

@@ -23,13 +23,13 @@ module Substation
       #
       # @api private
       def self.coerce(config)
-        klass_name = config.fetch(:action) { raise(MissingClassError) }
-        observer   = Observer.coerce(config[:observer])
+        handler  = config.fetch(:action) { raise(MissingClassError) }
+        observer = Observer.coerce(config[:observer])
 
-        new(Utils.const_get(klass_name), observer)
+        new(Utils.coerce_callable(handler), observer)
       end
 
-      include Concord.new(:klass, :observer)
+      include Concord.new(:handler, :observer)
       include Adamantium
 
       # Call the action
@@ -42,7 +42,7 @@ module Substation
       #
       # @api private
       def call(request)
-        response = klass.call(request)
+        response = handler.call(request)
         observer.call(response)
         response
       end
@@ -78,6 +78,39 @@ module Substation
     #         'SomeObserver',
     #         'AnotherObserver'
     #       ]
+    #     }
+    #   })
+    #
+    # @example with Symbol keys and const handlers
+    #
+    #   module App
+    #     class SomeUseCase
+    #       def self.call(request)
+    #         data = perform_work
+    #         request.success(data)
+    #       end
+    #     end
+    #
+    #     class SomeObserver
+    #       def self.call(response)
+    #         # do something
+    #       end
+    #     end
+    #   end
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => {
+    #       :action   => App::SomeUseCase,
+    #       :observer => App::SomeObserver
+    #     }
+    #   })
+    #
+    # @example with Symbol keys and proc handlers
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => {
+    #       :action   => Proc.new { |request| request.success(:foo) },
+    #       :observer => Proc.new { |response| do_something }
     #     }
     #   })
     #
@@ -132,7 +165,7 @@ module Substation
     #   end
     #
     #   dispatcher = Substation::Dispatcher.coerce({
-    #     'some_use_case' => { 'action' => 'App::SomeUseCase' }
+    #     :some_use_case => { :action => App::SomeUseCase }
     #   })
     #
     #   env = App::Environment.new(dispatcher, Logger.new($stdout))
@@ -164,15 +197,17 @@ module Substation
     #
     # @example
     #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       data = perform_work
-    #       request.success(data)
+    #   module App
+    #     class SomeUseCase
+    #       def self.call(request)
+    #         data = perform_work
+    #         request.success(data)
+    #       end
     #     end
     #   end
     #
     #   dispatcher = Substation::Dispatcher.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #     :some_use_case => { :action => App::SomeUseCase }
     #   })
     #
     #   dispatcher.action_names # => #<Set: {:some_use_case}>

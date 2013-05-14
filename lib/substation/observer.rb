@@ -31,12 +31,10 @@ module Substation
       case input
       when NilClass
         NULL
-      when String
-        Utils.const_get(input)
       when Array
         Chain.new(input.map { |item| coerce(item) })
       else
-        raise ArgumentError, "Uncoercible input: #{input.inspect}"
+        Utils.coerce_callable(input)
       end
     end
 

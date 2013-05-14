@@ -6,27 +6,34 @@ describe Dispatcher::Action, '.coerce' do
 
   subject { described_class.coerce(config) }
 
-  let(:klass)   { Spec::Action::Success }
-  let(:coerced) { Dispatcher::Action.new(klass, observer) }
+  let(:action)  { Spec::Action::Success }
+  let(:coerced) { Dispatcher::Action.new(action, observer) }
 
-  context 'with an action and observer' do
-    let(:config) do
-      {
-        :action   => 'Spec::Action::Success',
-        :observer => 'Spec::Observer'
-      }
+  context "when coercion is possible" do
+
+    let(:config) {{
+        :action   => action,
+        :observer => observer_value
+    }}
+
+    before do
+      Observer.should_receive(:coerce).with(observer_value).and_return(observer)
+      Utils.should_receive(:coerce_callable).with(action).and_return(action)
     end
 
-    let(:observer) { Spec::Observer }
+    context 'with an action and an observer' do
+      let(:observer_value) { observer }
+      let(:observer)       { Spec::Observer }
 
-    it { should eql(coerced) }
-  end
+      it { should eql(coerced) }
+    end
 
-  context 'with an action and no observer' do
-    let(:config)   { { :action => 'Spec::Action::Success' } }
-    let(:observer) { Observer::NULL                          }
+    context 'with an action and no observer' do
+      let(:observer_value) { nil }
+      let(:observer)       { Observer::NULL }
 
-    it { should eql(coerced) }
+      it { should eql(coerced) }
+    end
   end
 
   context 'with no action' do
