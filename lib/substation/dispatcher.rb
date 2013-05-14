@@ -11,7 +11,7 @@ module Substation
     class Action
 
       # Raised when no action class name is configured
-      MissingClassError = Class.new(StandardError)
+      MissingHandlerError = Class.new(StandardError)
 
       # Coerce the given +name+ and +config+ to an {Action} instance
       #
@@ -21,9 +21,15 @@ module Substation
       # @return [Action]
       #   the coerced instance
       #
+      # @raise [MissingHandlerError]
+      #   if no action handler is configured
+      #
+      # @raise [ArgumentError]
+      #   if action or observer handlers are not coercible
+      #
       # @api private
       def self.coerce(config)
-        handler  = config.fetch(:action) { raise(MissingClassError) }
+        handler  = config.fetch(:action) { raise(MissingHandlerError) }
         observer = Observer.coerce(config[:observer])
 
         new(Utils.coerce_callable(handler), observer)
@@ -120,6 +126,12 @@ module Substation
     # @return [Dispatcher]
     #   the coerced instance
     #
+    # @raise [Action::MissingHandlerError]
+    #   if no action handler is configured
+    #
+    # @raise [ArgumentError]
+    #   if action or observer handlers are not coercible
+    #
     # @api public
     def self.coerce(config)
       new(normalize_config(config))
@@ -132,6 +144,12 @@ module Substation
     #
     # @return [Hash<Symbol, Action>]
     #   the normalized config hash
+    #
+    # @raise [Action::MissingHandlerError]
+    #   if no action handler is configured
+    #
+    # @raise [ArgumentError]
+    #   if action or observer handlers are not coercible
     #
     # @api private
     def self.normalize_config(config)

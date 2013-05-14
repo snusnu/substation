@@ -40,7 +40,7 @@ describe Dispatcher::Action, '.coerce' do
     let(:config) { {} }
 
     specify {
-      expect { subject }.to raise_error(described_class::MissingClassError)
+      expect { subject }.to raise_error(described_class::MissingHandlerError)
     }
   end
 end
