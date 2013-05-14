@@ -4,11 +4,13 @@
 [![Build Status](https://secure.travis-ci.org/snusnu/substation.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/snusnu/substation.png)][gemnasium]
 [![Code Climate](https://codeclimate.com/github/snusnu/substation.png)][codeclimate]
+[![Coverage Status](https://coveralls.io/repos/snusnu/substation/badge.png?branch=master)][coveralls]
 
 [gem]: https://rubygems.org/gems/substation
 [travis]: https://travis-ci.org/snusnu/substation
 [gemnasium]: https://gemnasium.com/snusnu/substation
 [codeclimate]: https://codeclimate.com/github/snusnu/substation
+[coveralls]: https://coveralls.io/r/snusnu/substation
 
 `substation` can be thought of as a domain level request router. It assumes
 that every usecase in your application has a name and is implemented in a dedicated
