@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.authors     = [ "Martin Gamsjaeger (snusnu)" ]
   gem.email       = [ "gamsnjaga@gmail.com" ]
   gem.description = "Implement application boundary interfaces with dedicated classes"
-  gem.summary     = gem.description
+  gem.summary     = "Think of it as a domain level request router. It assumes that every usecase in your application has a name and is implemented in a dedicated action handler (class)."
   gem.homepage    = "https://github.com/snusnu/substation"
 
   gem.require_paths    = [ "lib" ]
