@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'adamantium',          '~> 0.0.7'
   gem.add_dependency 'equalizer',           '~> 0.0.5'
   gem.add_dependency 'abstract_type',       '~> 0.0.5'
-  gem.add_dependency 'concord',             '~> 0.0.3'
+  gem.add_dependency 'concord',             '~> 0.1.0'
 
   gem.add_development_dependency 'bundler', '~> 1.3.5'
 end

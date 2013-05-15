@@ -6,6 +6,36 @@ module Substation
     include Concord.new(:env, :input)
     include Adamantium::Flat
 
+    # The application environment
+    #
+    # @example
+    #
+    #   class SomeUseCase
+    #     def self.call(request)
+    #       request.env
+    #     end
+    #   end
+    #
+    # @return [Object]
+    #
+    # @api public
+    attr_reader :env
+
+    # The input passed to an action
+    #
+    # @example
+    #
+    #   class SomeUseCase
+    #     def self.call(request)
+    #       request.input
+    #     end
+    #   end
+    #
+    # @return [Object]
+    #
+    # @api public
+    attr_reader :input
+
     # Create a new successful response
     #
     # @example
