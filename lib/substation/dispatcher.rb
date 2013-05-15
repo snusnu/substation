@@ -201,7 +201,7 @@ module Substation
     #   config     = { :some_use_case => { :action => App::SomeUseCase } }
     #   dispatcher = Substation::Dispatcher.coerce(config, env)
     #
-    #   response = dispatcher.call(:some_use_case, :some_input, env)
+    #   response = dispatcher.call(:some_use_case, :some_input)
     #   response.success? # => true
     #
     # @param [Symbol] name

@@ -2,6 +2,38 @@ module Substation
 
   # Base class for action responses
   #
+  # The following code illustrates context and serves as setup for all
+  # instance method doc examples
+  #
+  #   module App
+  #     class Environment
+  #       def initialize(storage, logger)
+  #         @storage, @logger = storage, logger
+  #       end
+  #     end
+  #
+  #     class SuccessfulAction
+  #       def self.call(request)
+  #         data = perform_work
+  #         request.success(data)
+  #       end
+  #     end
+  #
+  #     class FailingAction
+  #       def self.call(request)
+  #         error = perform_work
+  #         request.error(error)
+  #       end
+  #     end
+  #   end
+  #
+  #   storage    = SomeStorageAbstraction.new
+  #   env        = App::Environment.new(storage, Logger.new($stdout))
+  #   dispatcher = Substation::Dispatcher.coerce({
+  #     :successful_action => { :action => App::SuccessfulAction },
+  #     :failing_action    => { :action => App::FailingAction }
+  #   }, env)
+  #
   # @abstract
   class Response
 
@@ -9,30 +41,24 @@ module Substation
     include Equalizer.new(:request, :output)
     include Adamantium::Flat
 
-    # The environment used to return this response
+    # The application environment used within an action
     #
-    # @return [Environment]
+    # @example
     #
-    # @api private
+    #   response = dispatcher.call(:successful_action, :some_input)
+    #   response.env # => env passed to Substation::Dispatcher.coerce(config, env)
+    #
+    # @return [Object]
+    #
+    # @api public
     attr_reader :env
 
     # The request model instance passed into an action
     #
     # @example
     #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       data = perform_work
-    #       request.success(data)
-    #     end
-    #   end
-    #
-    #   env = Substation::Environment.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
-    #   })
-    #
-    #   response = env.dispatch(:some_use_case, :input)
-    #   response.input # => :input
+    #   response = dispatcher.call(:successful_action, :some_input)
+    #   response.input # => :some_input
     #
     # @see Request#input
     #
@@ -45,18 +71,8 @@ module Substation
     #
     # @example
     #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       request.success(:output)
-    #     end
-    #   end
-    #
-    #   env = Substation::Environment.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
-    #   })
-    #
-    #   response = env.dispatch(:some_use_case, :input)
-    #   response.output # => :output
+    #   response = dispatcher.call(:successful_action, :some_input)
+    #   response.output # => data passed to request.success(data)
     #
     # @return [Object]
     #
@@ -90,18 +106,7 @@ module Substation
     #
     # @example
     #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       request.success(:data)
-    #     end
-    #   end
-    #
-    #   env = Substation::Environment.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
-    #   })
-    #
-    #   response = env.dispatch(:some_use_case, :input)
-    #   response.class    # Substation::Response::Success
+    #   response = dispatcher.call(:successful_action, :some_input)
     #   response.success? # => true
     #
     # @return [Boolean]
@@ -126,17 +131,7 @@ module Substation
       #
       # @example
       #
-      #   class SomeUseCase
-      #     def self.call(request)
-      #       request.error(:output)
-      #     end
-      #   end
-      #
-      #   env = Substation::Environment.coerce({
-      #     'some_use_case' => { 'action' => 'SomeUseCase' }
-      #   })
-      #
-      #   response = env.dispatch(:some_use_case, :input)
+      #   response = dispatcher.call(:failing_action, :some_input)
       #   response.success? # => false
       #
       # @return [false]
@@ -154,17 +149,7 @@ module Substation
       #
       # @example
       #
-      #   class SomeUseCase
-      #     def self.call(request)
-      #       request.success(:data)
-      #     end
-      #   end
-      #
-      #   env = Substation::Environment.coerce({
-      #     'some_use_case' => { 'action' => 'SomeUseCase' }
-      #   })
-      #
-      #   response = env.dispatch(:some_use_case, :input)
+      #   response = dispatcher.call(:successful_action, :some_input)
       #   response.success? # => true
       #
       # @return [true]
