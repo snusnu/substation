@@ -4,7 +4,7 @@ module Substation
   class Request
 
     include Concord.new(:env, :input)
-    include Adamantium
+    include Adamantium::Flat
 
     # Create a new successful response
     #

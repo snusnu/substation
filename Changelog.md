@@ -1,3 +1,9 @@
+# v0.0.3 2013-05-15
+
+* [changed] Stop (deep) freezing objects coming from client code (snusnu)
+
+[Compare v0.0.2..v0.0.3](https://github.com/snusnu/substation/compare/v0.0.2...v0.0.3)
+
 # v0.0.2 2013-05-15
 
 * [BREAKING CHANGE] Creating a dispatcher requires an application env (snusnu)

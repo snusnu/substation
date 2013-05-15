@@ -36,7 +36,7 @@ module Substation
       end
 
       include Concord.new(:handler, :observer)
-      include Adamantium
+      include Adamantium::Flat
 
       # Call the action
       #
@@ -175,7 +175,7 @@ module Substation
     private_class_method :normalize_config
 
     include Concord.new(:actions, :env)
-    include Adamantium
+    include Adamantium::Flat
 
     # Invoke the action identified by +name+
     #

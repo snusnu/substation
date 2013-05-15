@@ -7,7 +7,7 @@ module Substation
 
     include AbstractType
     include Equalizer.new(:request, :output)
-    include Adamantium
+    include Adamantium::Flat
 
     # The environment used to return this response
     #
