@@ -318,6 +318,6 @@ dispatcher = Substation::Dispatcher.coerce({
 }, env)
 
 # :some_input is no person, db.save_person will fail
-response = dispatcher.call(:some_use_case, :some_input, env)
+response = dispatcher.call(:some_use_case, :some_input)
 response.success? # => false
 ```
