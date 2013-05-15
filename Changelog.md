@@ -1,3 +1,11 @@
+# v0.0.4 2013-05-15
+
+* [changed] Bump concord dependency to ~> 0.1.0 (snusnu)
+
+  * concord generated attribute readers are now `protected` by default
+
+[Compare v0.0.3..v0.0.4](https://github.com/snusnu/substation/compare/v0.0.3...v0.0.4)
+
 # v0.0.3 2013-05-15
 
 * [changed] Stop (deep) freezing objects coming from client code (snusnu)
