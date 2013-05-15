@@ -6,8 +6,9 @@ describe Dispatcher, '#action_names' do
 
   subject { object.action_names }
 
-  let(:object) { described_class.new(config) }
+  let(:object) { described_class.new(config, env) }
   let(:config) { { :test => { :action => Spec::Action::Success } } }
+  let(:env)    { mock }
 
   it { should eql(Set[ :test ]) }
 end

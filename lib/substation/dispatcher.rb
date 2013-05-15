@@ -60,36 +60,15 @@ module Substation
 
     # Coerce the given +config+ to a {Dispatcher} instance
     #
-    # @example without observers
-    #
-    #   dispatcher = Substation::Dispatcher.coerce({
-    #     'some_use_case' => { 'action' => 'SomeUseCase' }
-    #   })
-    #
-    # @example with a single observer
-    #
-    #   dispatcher = Substation::Dispatcher.coerce({
-    #     'some_use_case' => {
-    #       'action' => 'SomeUseCase',
-    #       'observer' => 'SomeObserver'
-    #     }
-    #   })
-    #
-    # @example with multiple observers
-    #
-    #   dispatcher = Substation::Dispatcher.coerce({
-    #     'some_use_case' => {
-    #       'action' => 'SomeUseCase',
-    #       'observer' => [
-    #         'SomeObserver',
-    #         'AnotherObserver'
-    #       ]
-    #     }
-    #   })
-    #
-    # @example with Symbol keys and const handlers
+    # @example setup code for all the other examples
     #
     #   module App
+    #     class Environment
+    #       def initialize(storage, logger)
+    #         @storage, @logger = storage, logger
+    #       end
+    #     end
+    #
     #     class SomeUseCase
     #       def self.call(request)
     #         data = perform_work
@@ -104,12 +83,44 @@ module Substation
     #     end
     #   end
     #
+    #   storage = SomeStorageAbstraction.new
+    #   env     = App::Environment.new(storage, Logger.new($stdout))
+    #
+    # @example without observers
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     'some_use_case' => { 'action' => 'SomeUseCase' }
+    #   }, env)
+    #
+    # @example with a single observer
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     'some_use_case' => {
+    #       'action' => 'SomeUseCase',
+    #       'observer' => 'SomeObserver'
+    #     }
+    #   }, env)
+    #
+    # @example with multiple observers
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     'some_use_case' => {
+    #       'action' => 'SomeUseCase',
+    #       'observer' => [
+    #         'SomeObserver',
+    #         'AnotherObserver'
+    #       ]
+    #     }
+    #   }, env)
+    #
+    # @example with Symbol keys and const handlers
+    #
     #   dispatcher = Substation::Dispatcher.coerce({
     #     :some_use_case => {
     #       :action   => App::SomeUseCase,
     #       :observer => App::SomeObserver
     #     }
-    #   })
+    #   }, env)
     #
     # @example with Symbol keys and proc handlers
     #
@@ -118,10 +129,13 @@ module Substation
     #       :action   => Proc.new { |request| request.success(:foo) },
     #       :observer => Proc.new { |response| do_something }
     #     }
-    #   })
+    #   }, env)
     #
     # @param [Hash<#to_sym, Object>] config
     #   the action configuration
+    #
+    # @param [Object] env
+    #   the application environment
     #
     # @return [Dispatcher]
     #   the coerced instance
@@ -133,8 +147,8 @@ module Substation
     #   if action or observer handlers are not coercible
     #
     # @api public
-    def self.coerce(config)
-      new(normalize_config(config))
+    def self.coerce(config, env)
+      new(normalize_config(config), env)
     end
 
     # Normalize the given +config+
@@ -160,7 +174,7 @@ module Substation
 
     private_class_method :normalize_config
 
-    include Concord.new(:actions)
+    include Concord.new(:actions, :env)
     include Adamantium
 
     # Invoke the action identified by +name+
@@ -169,8 +183,8 @@ module Substation
     #
     #   module App
     #     class Environment
-    #       def initialize(dispatcher, logger)
-    #         @dispatcher, @logger = dispatcher, logger
+    #       def initialize(storage, logger)
+    #         @storage, @logger = storage, logger
     #       end
     #     end
     #
@@ -182,11 +196,10 @@ module Substation
     #     end
     #   end
     #
-    #   dispatcher = Substation::Dispatcher.coerce({
-    #     :some_use_case => { :action => App::SomeUseCase }
-    #   })
-    #
-    #   env = App::Environment.new(dispatcher, Logger.new($stdout))
+    #   storage    = SomeStorageAbstraction.new
+    #   env        = App::Environment.new(storage, Logger.new($stdout))
+    #   config     = { :some_use_case => { :action => App::SomeUseCase } }
+    #   dispatcher = Substation::Dispatcher.coerce(config, env)
     #
     #   response = dispatcher.call(:some_use_case, :some_input, env)
     #   response.success? # => true
@@ -197,9 +210,6 @@ module Substation
     # @param [Object] input
     #   the input model instance to pass to the action
     #
-    # @param [Object] env
-    #   the application environment
-    #
     # @return [Response]
     #   the response returned when calling the action
     #
@@ -207,7 +217,7 @@ module Substation
     #   if no action is registered for +name+
     #
     # @api public
-    def call(name, input, env)
+    def call(name, input)
       fetch(name).call(Request.new(env, input))
     end
 
@@ -216,6 +226,12 @@ module Substation
     # @example
     #
     #   module App
+    #     class Environment
+    #       def initialize(storage, logger)
+    #         @storage, @logger = storage, logger
+    #       end
+    #     end
+    #
     #     class SomeUseCase
     #       def self.call(request)
     #         data = perform_work
@@ -224,9 +240,10 @@ module Substation
     #     end
     #   end
     #
-    #   dispatcher = Substation::Dispatcher.coerce({
-    #     :some_use_case => { :action => App::SomeUseCase }
-    #   })
+    #   storage    = SomeStorageAbstraction.new
+    #   env        = App::Environment.new(storage, Logger.new($stdout))
+    #   config     = { :some_use_case => { :action => App::SomeUseCase } }
+    #   dispatcher = Substation::Dispatcher.coerce(config, env)
     #
     #   dispatcher.action_names # => #<Set: {:some_use_case}>
     #

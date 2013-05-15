@@ -31,9 +31,9 @@ addition to that, `response.success?` is available and will indicate
 wether invoking the action was successful or not.
 
 `Substation::Dispatcher` stores a mapping of action names to the actual
-objects implementing the action. Clients can use
-`Substation::Dispatcher#call(name, input, env)` to dispatch to any
-registered action. For example, a web application could map an http
+objects implementing the action, as well as the application environment.
+Clients can use `Substation::Dispatcher#call(name, input)` to dispatch to
+any registered action. For example, a web application could map an http
 route to a specific action name and pass relevant http params on to the
 action.
 
@@ -193,14 +193,16 @@ For this purpose, we can instantiate a `Substation::Dispatcher` and hand
 it a configuration hash that describes the various actions by giving
 them a name, a class that's responsible for implementing the actual
 usecase, and a list of `0..n` observers that should be invoked depending
-on the action response.
+on the action response. In addition to that, we must pass an instance of
+the application's environment. More about application environments can
+be found in the next paragraph.
 
 An example configuration for an action without any observers:
 
 ```ruby
 dispatcher = Substation::Dispatcher.coerce({
   'some_use_case' => { 'action' => 'App::SomeUseCase' }
-})
+}, env)
 ```
 
 An example configuration for an action with one observer:
@@ -211,7 +213,7 @@ dispatcher = Substation::Dispatcher.coerce({
     'action'   => 'App::SomeUseCase',
     'observer' => 'App::SomeUseCaseObserver'
   }
-})
+}, env)
 ```
 
 An example configuration for an action with multiple observers:
@@ -225,7 +227,7 @@ dispatcher = Substation::Dispatcher.coerce({
       'App::AnotherObserver'
     ]
   }
-})
+}, env)
 ```
 
 The above configuration examples are tailored towards being read from a
@@ -242,7 +244,7 @@ dispatcher = Substation::Dispatcher.coerce({
     :action   => App::SomeUseCase,
     :observer => App::SomeUseCaseObserver
   }
-})
+}, env)
 ```
 
 An example configuration using symbol keys and procs for handlers:
@@ -253,7 +255,7 @@ dispatcher = Substation::Dispatcher.coerce({
     :action   => Proc.new { |request| request.success(:foo) },
     :observer => Proc.new { |response| do_something }
   }
-})
+}, env)
 ```
 
 
@@ -264,8 +266,8 @@ the course of performing a usecase (like a logger or a storage engine
 abstraction), you can encapsulate these objects within an application
 specific environment object, and send that along to every action.
 
-Here's a simple example with an environment that encapsulates a logger,
-an artificial storage abstraction object and the dispatcher itself.
+Here's a simple example with an environment that encapsulates a logger
+and an artificial storage abstraction object.
 
 The example builds on top of the application specific action baseclass
 shown above:
@@ -274,13 +276,10 @@ shown above:
 module App
   class Environment
     attr_reader :storage
-    attr_reader :dispatcher
     attr_reader :logger
 
-    def initialize(storage, dispatcher, logger)
-      @storage    = storage
-      @dispatcher = dispatcher
-      @logger     = logger
+    def initialize(storage, logger)
+      @storage, @logger = storage, logger
     end
   end
 
@@ -311,12 +310,12 @@ module App
   end
 end
 
+storage = App::Storage.new # some storage abstraction
+env     = App::Environment.new(storage, Logger.new($stdout))
+
 dispatcher = Substation::Dispatcher.coerce({
   'some_use_case' => { 'action' => 'App::SomeUseCase' }
-})
-
-storage = App::Storage.new # some storage abstraction
-env     = App::Environment.new(storage, dispatcher, Logger.new($stdout))
+}, env)
 
 # :some_input is no person, db.save_person will fail
 response = dispatcher.call(:some_use_case, :some_input, env)

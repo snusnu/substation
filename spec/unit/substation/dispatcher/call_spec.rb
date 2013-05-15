@@ -4,9 +4,9 @@ require 'spec_helper'
 
 describe Dispatcher, '#call' do
 
-  subject { object.call(action_name, input, env) }
+  subject { object.call(action_name, input) }
 
-  let(:object)  { described_class.coerce(config)                        }
+  let(:object)  { described_class.coerce(config, env) }
   let(:config)  { { 'test' => { 'action' => 'Spec::Action::Success' } } }
   let(:request) { Request.new(env, input) }
   let(:input)   { mock }
