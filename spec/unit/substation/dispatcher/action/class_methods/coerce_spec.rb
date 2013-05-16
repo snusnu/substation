@@ -9,38 +9,53 @@ describe Dispatcher::Action, '.coerce' do
   let(:action)  { Spec::Action::Success }
   let(:coerced) { Dispatcher::Action.new(action, observer) }
 
-  context "when coercion is possible" do
+  context "when config is a hash" do
+    context "and coercion is possible" do
 
-    let(:config) {{
-        :action   => action,
-        :observer => observer_value
-    }}
+      let(:config) {{
+          :action   => action,
+          :observer => observer_value
+      }}
 
-    before do
-      Observer.should_receive(:coerce).with(observer_value).and_return(observer)
-      Utils.should_receive(:coerce_callable).with(action).and_return(action)
+      before do
+        Observer.should_receive(:coerce).with(observer_value).and_return(observer)
+        Utils.should_receive(:coerce_callable).with(action).and_return(action)
+      end
+
+      context 'with an action and an observer' do
+        let(:observer_value) { observer }
+        let(:observer)       { Spec::Observer }
+
+        it { should eql(coerced) }
+      end
+
+      context 'with an action and no observer' do
+        let(:observer_value) { nil }
+        let(:observer)       { Observer::NULL }
+
+        it { should eql(coerced) }
+      end
     end
 
-    context 'with an action and an observer' do
-      let(:observer_value) { observer }
-      let(:observer)       { Spec::Observer }
+    context 'with no action' do
+      let(:config) { {} }
 
-      it { should eql(coerced) }
-    end
-
-    context 'with an action and no observer' do
-      let(:observer_value) { nil }
-      let(:observer)       { Observer::NULL }
-
-      it { should eql(coerced) }
+      specify {
+        expect { subject }.to raise_error(described_class::MissingHandlerError)
+      }
     end
   end
 
-  context 'with no action' do
-    let(:config) { {} }
+  context "when config is no hash" do
+    let(:config)         { action }
+    let(:observer_value) { nil }
+    let(:observer)       { Observer::NULL }
 
-    specify {
-      expect { subject }.to raise_error(described_class::MissingHandlerError)
-    }
+    before do
+      Observer.should_receive(:coerce).with(observer_value).and_return(observer)
+      Utils.should_receive(:coerce_callable).with(config).and_return(action)
+    end
+
+    it { should eql(coerced) }
   end
 end

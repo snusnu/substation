@@ -15,8 +15,8 @@ module Substation
 
       # Coerce the given +name+ and +config+ to an {Action} instance
       #
-      # @param [Hash<Symbol, Object>] config
-      #   the configuration hash
+      # @param [#call, Hash<Symbol, Object>] config
+      #   the action configuration object
       #
       # @return [Action]
       #   the coerced instance
@@ -29,10 +29,17 @@ module Substation
       #
       # @api private
       def self.coerce(config)
-        handler  = config.fetch(:action) { raise(MissingHandlerError) }
-        observer = Observer.coerce(config[:observer])
+        if config.respond_to?(:fetch)
+          action   = config.fetch(:action) { raise(MissingHandlerError) }
+          observer = config[:observer]
+        else
+          action = config
+        end
 
-        new(Utils.coerce_callable(handler), observer)
+        action_handler   = Utils.coerce_callable(action)
+        observer_handler = Observer.coerce(observer)
+
+        new(action_handler, observer_handler)
       end
 
       include Concord.new(:handler, :observer)
@@ -81,12 +88,36 @@ module Substation
     #         # do something
     #       end
     #     end
+    #
+    #     class AnotherObserver
+    #       def self.call(response)
+    #         # do something
+    #       end
+    #     end
     #   end
     #
     #   storage = SomeStorageAbstraction.new
     #   env     = App::Environment.new(storage, Logger.new($stdout))
     #
-    # @example without observers
+    # @example without observers (short form, symbol keys)
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => App::SomeUseCase
+    #   }, env)
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => 'App::SomeUseCase'
+    #   }, env)
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => :App::SomeUseCase
+    #   }, env)
+    #
+    #   dispatcher = Substation::Dispatcher.coerce({
+    #     :some_use_case => Proc.new { |request| request.success(:data) }
+    #   }, env)
+    #
+    # @example without observers (long form, string keys)
     #
     #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => { 'action' => 'SomeUseCase' }
@@ -96,8 +127,8 @@ module Substation
     #
     #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => {
-    #       'action' => 'SomeUseCase',
-    #       'observer' => 'SomeObserver'
+    #       'action' => 'App::SomeUseCase',
+    #       'observer' => 'App::SomeObserver'
     #     }
     #   }, env)
     #
@@ -105,10 +136,10 @@ module Substation
     #
     #   dispatcher = Substation::Dispatcher.coerce({
     #     'some_use_case' => {
-    #       'action' => 'SomeUseCase',
+    #       'action' => 'App::SomeUseCase',
     #       'observer' => [
-    #         'SomeObserver',
-    #         'AnotherObserver'
+    #         'App::SomeObserver',
+    #         'App::AnotherObserver'
     #       ]
     #     }
     #   }, env)
@@ -167,8 +198,8 @@ module Substation
     #
     # @api private
     def self.normalize_config(config)
-      Utils.symbolize_keys(config).each_with_object({}) { |(name, hash), actions|
-        actions[name] = Action.coerce(hash)
+      Utils.symbolize_keys(config).each_with_object({}) { |(name, action), actions|
+        actions[name] = Action.coerce(action)
       }
     end
 

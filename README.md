@@ -200,6 +200,12 @@ be found in the next paragraph.
 An example configuration for an action without any observers:
 
 ```ruby
+# short form
+dispatcher = Substation::Dispatcher.coerce({
+  'some_use_case' => 'App::SomeUseCase'
+}, env)
+
+# long form
 dispatcher = Substation::Dispatcher.coerce({
   'some_use_case' => { 'action' => 'App::SomeUseCase' }
 }, env)
@@ -232,13 +238,19 @@ dispatcher = Substation::Dispatcher.coerce({
 
 The above configuration examples are tailored towards being read from a
 (yaml) config file and therefore accept strings as keys and values. It's
-also possible to use symbols as keys and values. Values correspond to
-action or observer "handlers" and can also be given as either constants
-or procs. In any case, handlers must respond to `call(object)`.
+also possible to use symbols as keys (and values). Values correspond to
+action or observer "handlers" and can also be given as either constants,
+symbols, or procs. In any case, handlers must respond to `call(object)`.
 
 An example configuration using symbol keys and constants for handlers:
 
 ```ruby
+# short form (without observers)
+dispatcher = Substation::Dispatcher.coerce({
+  :some_use_case => App::SomeUseCase
+}, env)
+
+# long form
 dispatcher = Substation::Dispatcher.coerce({
   :some_use_case => {
     :action   => App::SomeUseCase,
@@ -250,6 +262,11 @@ dispatcher = Substation::Dispatcher.coerce({
 An example configuration using symbol keys and procs for handlers:
 
 ```ruby
+# short form (without observers)
+dispatcher = Substation::Dispatcher.coerce({
+  :some_use_case => Proc.new { |request| request.success(:data) }
+}, env)
+
 dispatcher = Substation::Dispatcher.coerce({
   :some_use_case => {
     :action   => Proc.new { |request| request.success(:foo) },
@@ -257,7 +274,6 @@ dispatcher = Substation::Dispatcher.coerce({
   }
 }, env)
 ```
-
 
 ## Application environments
 
