@@ -5,10 +5,10 @@ require 'spec_helper'
 module App
 
   class Database
-    include Concord.new(:entries)
+    include Concord.new(:relations)
 
     def [](relation_name)
-      Relation.new(entries[relation_name])
+      Relation.new(relations[relation_name])
     end
 
     class Relation
