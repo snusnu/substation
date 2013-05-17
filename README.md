@@ -474,3 +474,17 @@ response = App::APP.call(:list_companies)
 response.success? # => true
 response.output   # => [#<App::Models::Person attributes={:id=>1, :name=>"John"}>]
 ```
+
+## Credits
+
+* [snusnu](https://github.com/snusnu)
+* [mbj](https://github.com/mbj)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## Copyright
+
+Copyright &copy; 2013 Martin Gamsjaeger
+([snusnu](https:://github.com/snusnu)). See [LICENSE](LICENSE) for details.
