@@ -486,5 +486,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Copyright
 
-Copyright &copy; 2013 Martin Gamsjaeger
-([snusnu](https:://github.com/snusnu)). See [LICENSE](LICENSE) for details.
+Copyright &copy; 2013 Martin Gamsjaeger (snusnu). See [LICENSE](LICENSE) for details.
