@@ -282,58 +282,195 @@ the course of performing a usecase (like a logger or a storage engine
 abstraction), you can encapsulate these objects within an application
 specific environment object, and send that along to every action.
 
-Here's a simple example with an environment that encapsulates a logger
-and an artificial storage abstraction object.
-
-The example builds on top of the application specific action baseclass
-shown above:
+Here's a complete example with an environment that encapsulates a very
+primitive storage abstraction object, one simple business entity, and a
+few simple actions.
 
 ```ruby
 module App
-  class Environment
-    attr_reader :storage
-    attr_reader :logger
 
-    def initialize(storage, logger)
-      @storage, @logger = storage, logger
+  class Database
+    include Concord.new(:entries)
+
+    def [](relation_name)
+      Relation.new(entries[relation_name])
+    end
+
+    class Relation
+      include Concord.new(:tuples)
+      include Enumerable
+
+      def each(&block)
+        return to_enum unless block_given?
+        tuples.each(&block)
+        self
+      end
+
+      def all
+        tuples
+      end
+
+      def insert(tuple)
+        self.class.new(tuples + [tuple])
+      end
     end
   end
 
+  module Models
+
+    class Person
+      include Concord.new(:attributes)
+
+      def id
+        attributes[:id]
+      end
+
+      def name
+        attributes[:name]
+      end
+    end
+  end # module Models
+
+  class Environment
+    include Concord.new(:storage)
+    include Adamantium::Flat
+
+    attr_reader :storage
+  end
+
+  class Storage
+    include Concord.new(:db)
+    include Adamantium::Flat
+
+    include Models
+
+    def list_people
+      db[:people].all.map { |tuple| Person.new(tuple) }
+    end
+
+    def load_person(id)
+      Person.new(db[:people].select { |tuple| tuple[:id] == id }.first)
+    end
+
+    def create_person(person)
+      relation = db[:people].insert(:id => person.id, :name => person.name)
+      relation.map { |tuple| Person.new(tuple) }
+    end
+  end
+
+  class App
+    include Concord.new(:dispatcher)
+    include Adamantium::Flat
+
+    def call(name, input = nil)
+      dispatcher.call(name, input)
+    end
+  end
+
+  # Base class for all actions
+  #
+  # @abstract
   class Action
-    # ...
-    # code from above example
-    # ...
+
+    include AbstractType
+    include Adamantium::Flat
+
+    def self.call(request)
+      new(request).call
+    end
+
+    def initialize(request)
+      @request = request
+      @env     = @request.env
+      @input   = @request.input
+    end
+
+    abstract_method :call
+
+    private
+
+    attr_reader :request
+    attr_reader :env
+    attr_reader :input
 
     def db
       @env.storage
     end
-  end
 
-  class SomeUseCase < Action
-
-    def initialize(request)
-      super
-      @person = request.input
+    def success(data)
+      @request.success(data)
     end
 
-    def call
-      if person = db.save_person(@person)
-        success(person)
-      else
-        error("Something went wrong")
+    def error(data)
+      @request.error(data)
+    end
+  end
+
+  module Actions
+    class ListPeople < Action
+
+      def call
+        success(db.list_people)
       end
     end
+
+    class LoadPerson < Action
+      def initialize(request)
+        super
+        @id = input
+      end
+
+      def call
+        success(db.load_person(@id))
+      end
+    end
+
+    class CreatePerson < Action
+
+      def initialize(request)
+        super
+        @person = input
+      end
+
+      def call
+        success(db.create_person(@person))
+      end
+    end
+
+  end # module Actions
+
+  module Observers
+    LogEvent  = Class.new { def self.call(response); end }
+    SendEmail = Class.new { def self.call(response); end }
   end
+
+  DB = Database.new({
+    :people => [{
+      :id   => 1,
+      :name => 'John'
+    }]
+  })
+
+  actions = {
+    :list_people   => Actions::ListPeople,
+    :load_person   => Actions::LoadPerson,
+    :create_person => {
+      :action   => Actions::CreatePerson,
+      :observer => [
+        Observers::LogEvent,
+        Observers::SendEmail
+      ]
+    }
+  }
+
+  storage    = Storage.new(DB)
+  env        = Environment.new(storage)
+  dispatcher = Substation::Dispatcher.coerce(actions, env)
+
+  APP = App.new(dispatcher)
 end
 
-storage = App::Storage.new # some storage abstraction
-env     = App::Environment.new(storage, Logger.new($stdout))
-
-dispatcher = Substation::Dispatcher.coerce({
-  'some_use_case' => { 'action' => 'App::SomeUseCase' }
-}, env)
-
-# :some_input is no person, db.save_person will fail
-response = dispatcher.call(:some_use_case, :some_input)
-response.success? # => false
+response = App::APP.call(:list_companies)
+response.success? # => true
+response.output   # => [#<App::Models::Person attributes={:id=>1, :name=>"John"}>]
 ```
