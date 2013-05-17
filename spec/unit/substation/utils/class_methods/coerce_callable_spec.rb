@@ -18,6 +18,12 @@ describe Utils, '.coerce_callable' do
     it { should be(Spec::Action::Success) }
   end
 
+  context "with a const handler" do
+    let(:handler) { Spec::Action::Success }
+
+    it { should be(Spec::Action::Success) }
+  end
+
   context "with a Proc handler" do
     let(:handler) { Proc.new { |response| respone } }
 

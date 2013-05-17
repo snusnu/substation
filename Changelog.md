@@ -1,3 +1,9 @@
+# v0.0.6 2013-05-17
+
+* [fixed] Fixed bug for actions configured with a const handler (snusnu)
+
+[Compare v0.0.5..v0.0.6](https://github.com/snusnu/substation/compare/v0.0.5...v0.0.6)
+
 # v0.0.5 2013-05-17
 
 * [feature] Shorter action config when no observers are needed (snusnu)
@@ -11,7 +17,6 @@ dispatcher = Substation::Dispatcher.coerce({
   :some_use_case => Proc.new { |request| request.success(:data) }
 }, env)
 ```
-
 [Compare v0.0.4..v0.0.5](https://github.com/snusnu/substation/compare/v0.0.4...v0.0.5)
 
 # v0.0.4 2013-05-15
