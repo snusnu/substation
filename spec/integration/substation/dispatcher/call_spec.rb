@@ -5,15 +5,27 @@ require 'spec_helper'
 module App
 
   class Database
-    include Concord.new(:relations)
+    include Equalizer.new(:relations)
+
+    def initialize(relations)
+      @relations = relations
+    end
 
     def [](relation_name)
       Relation.new(relations[relation_name])
     end
 
+    protected
+
+    attr_reader :relations
+
     class Relation
-      include Concord.new(:tuples)
+      include Equalizer.new(:tuples)
       include Enumerable
+
+      def initialize(tuples)
+        @tuples = tuples
+      end
 
       def each(&block)
         return to_enum unless block_given?
@@ -28,36 +40,44 @@ module App
       def insert(tuple)
         self.class.new(tuples + [tuple])
       end
+
+      protected
+
+      attr_reader :tuples
     end
   end
 
   module Models
 
     class Person
-      include Concord.new(:attributes)
+      include Equalizer.new(:id, :name)
 
-      def id
-        attributes[:id]
-      end
+      attr_reader :id
+      attr_reader :name
 
-      def name
-        attributes[:name]
+      def initialize(attributes)
+        @id, @name = attributes.values_at(:id, :name)
       end
     end
   end # module Models
 
   class Environment
-    include Concord.new(:storage)
-    include Adamantium::Flat
+    include Equalizer.new(:storage)
 
     attr_reader :storage
+
+    def initialize(storage)
+      @storage = storage
+    end
   end
 
   class Storage
-    include Concord.new(:db)
-    include Adamantium::Flat
-
+    include Equalizer.new(:db)
     include Models
+
+    def initialize(db)
+      @db = db
+    end
 
     def list_people
       db[:people].all.map { |tuple| Person.new(tuple) }
@@ -71,14 +91,21 @@ module App
       relation = db[:people].insert(:id => person.id, :name => person.name)
       relation.map { |tuple| Person.new(tuple) }
     end
+
+    protected
+
+    attr_reader :db
   end
 
   class App
-    include Concord.new(:dispatcher)
-    include Adamantium::Flat
+    include Equalizer.new(:dispatcher)
+
+    def initialize(dispatcher)
+      @dispatcher = dispatcher
+    end
 
     def call(name, input = nil)
-      dispatcher.call(name, input)
+      @dispatcher.call(name, input)
     end
   end
 
@@ -88,7 +115,6 @@ module App
   class Action
 
     include AbstractType
-    include Adamantium::Flat
 
     def self.call(request)
       new(request).call
@@ -155,8 +181,8 @@ module App
   end # module Actions
 
   module Observers
-    LogEvent  = Class.new { def self.call(response); end }
-    SendEmail = Class.new { def self.call(response); end }
+    LogEvent  = Proc.new { |response| response }
+    SendEmail = Proc.new { |response| response }
   end
 
   DB = Database.new({
