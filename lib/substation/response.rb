@@ -41,6 +41,18 @@ module Substation
     include Equalizer.new(:request, :output)
     include Adamantium::Flat
 
+    # The request that lead to this response
+    #
+    # @example
+    #
+    #   response = dispatcher.call(:successful_action, :some_input)
+    #   response.request # => request passed to action named :successful_action
+    #
+    # @return [Request]
+    #
+    # @api public
+    attr_reader :request
+
     # The application environment used within an action
     #
     # @example
@@ -114,15 +126,6 @@ module Substation
     #
     # @api public
     abstract_method :success?
-
-    protected
-
-    # The request that lead to this response
-    #
-    # @return [Request]
-    #
-    # @api private
-    attr_reader :request
 
     # An errorneous {Response}
     class Failure < self

@@ -1,3 +1,9 @@
+# v0.0.7 (not yet released)
+
+* [feature] Make `Substation::Response#request` part of the public API (snusnu)
+
+[Compare v0.0.6..master](https://github.com/snusnu/substation/compare/v0.0.6...master)
+
 # v0.0.6 2013-05-17
 
 * [fixed] Fixed bug for actions configured with a const handler (snusnu)
