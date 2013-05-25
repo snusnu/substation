@@ -12,9 +12,9 @@
 [codeclimate]: https://codeclimate.com/github/snusnu/substation
 [coveralls]: https://coveralls.io/r/snusnu/substation
 
-`substation` can be thought of as a domain level request router. It assumes
+Think of `substation` as some sort of domain level request router. It assumes
 that every usecase in your application has a name and is implemented in a dedicated
-class that will be referred to as an *action*. The only protocol such actions must
+object that will be referred to as an *action*. The only protocol such actions must
 support is `#call(request)`.
 
 The contract for actions specifies that when invoked, they can
