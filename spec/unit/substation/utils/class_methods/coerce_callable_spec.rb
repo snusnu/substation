@@ -30,6 +30,12 @@ describe Utils, '.coerce_callable' do
     it { should be(handler) }
   end
 
+  context "with a Chain handler" do
+    let(:handler) { Chain.new([]) }
+
+    it { should be(handler) }
+  end
+
   context "with an unsupported handler" do
     let(:handler) { mock }
 

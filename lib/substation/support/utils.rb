@@ -57,7 +57,7 @@ module Substation
       case handler
       when Symbol, String
         Utils.const_get(handler)
-      when Proc, Class
+      when Proc, Class, Chain
         handler
       else
         raise(ArgumentError)

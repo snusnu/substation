@@ -1,6 +1,9 @@
 # v0.0.7 (not yet released)
 
 * [feature] Make `Substation::Response#request` part of the public API (snusnu)
+* [feature] Introduce `Substation::Chain` to process an action as a chain of
+            incoming handlers, followed by the pivot handler and some outgoing
+            handlers.
 
 [Compare v0.0.6..master](https://github.com/snusnu/substation/compare/v0.0.6...master)
 
