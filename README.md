@@ -14,21 +14,23 @@
 
 `substation` can be thought of as a domain level request router. It assumes
 that every usecase in your application has a name and is implemented in a dedicated
-class that will be referred to as an *action* for the purposes of this
-document. The only protocol such actions must support is `#call(request)`.
+class that will be referred to as an *action*. The only protocol such actions must
+support is `#call(request)`.
 
-The contract for actions specifies that when invoked, actions can
+The contract for actions specifies that when invoked, they can
 receive arbitrary input data which will be available in `request.input`.
 Additionally, `request.env` contains an arbitrary object that
 represents your application environment and will typically provide access
-to useful things like a logger or a storage engine abstraction.
+to useful things like a logger and probably some sort of storage engine
+abstraction object.
 
 The contract further specifies that every action must return an instance
 of either `Substation::Response::Success` or
 `Substation::Response::Failure`. Again, arbitrary data can be associated
-with any kind of response, and will be available in `response.data`. In
-addition to that, `response.success?` is available and will indicate
-wether invoking the action was successful or not.
+with any kind of response, and will be available in `response.data`. To
+indicate wether invoking the action was successful or not, you can use
+`response.success?`. In addition to that, `response.request` contains
+the request object used to invoke the action.
 
 `Substation::Dispatcher` stores a mapping of action names to the actual
 objects implementing the action, as well as the application environment.
