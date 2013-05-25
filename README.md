@@ -27,7 +27,7 @@ abstraction object.
 The contract further specifies that every action must return an instance
 of either `Substation::Response::Success` or
 `Substation::Response::Failure`. Again, arbitrary data can be associated
-with any kind of response, and will be available in `response.data`. To
+with any kind of response, and will be available in `response.output`. To
 indicate wether invoking the action was successful or not, you can use
 `response.success?`. In addition to that, `response.request` contains
 the request object used to invoke the action.
