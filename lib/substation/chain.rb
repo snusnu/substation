@@ -72,8 +72,6 @@ module Substation
 
       # The request passed on to the next handler in a {Chain}
       #
-      # @example
-      #
       # @param [Response] response
       #   the response returned from the previous handler in a {Chain}
       #
