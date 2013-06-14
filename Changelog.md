@@ -1,3 +1,9 @@
+# v0.0.8 (not yet released)
+
+*
+
+[Compare v0.0.7..master](https://github.com/snusnu/substation/compare/v0.0.7...master)
+
 # v0.0.7 2013-06-14
 
 * [feature] Make `Substation::Response#request` part of the public API (snusnu)
