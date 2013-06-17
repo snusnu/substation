@@ -72,8 +72,6 @@ module Substation
 
       # The request passed on to the next handler in a {Chain}
       #
-      # @example
-      #
       # @param [Response] response
       #   the response returned from the previous handler in a {Chain}
       #
@@ -101,14 +99,35 @@ module Substation
       def result(response)
         response
       end
+
+      private
+
+      # Build a new {Response} based on +response+ and +output+
+      #
+      # @param [Response] response
+      #   the original response
+      #
+      # @param [Object] output
+      #   the data to be wrapped within the new {Response}
+      #
+      # @return [Response]
+      #
+      # @api private
+      def respond_with(response, output)
+        response.class.new(response.request, output)
+      end
     end
 
     # Supports chaining the {Pivot} handler
     Pivot = Outgoing
 
+    include Enumerable
     include Concord.new(:handlers)
     include Adamantium::Flat
     include Pivot # allow nesting of chains
+
+    # Empty chain
+    EMPTY = Class.new(self).new([])
 
     # Call the chain
     #
@@ -160,5 +179,23 @@ module Substation
       }
     end
 
+    # Iterate over all processors
+    #
+    # @param [Proc] block
+    #   a block passed to {#handlers} each method
+    #
+    # @yield [handler]
+    #
+    # @yieldparam [#call] handler
+    #   each handler in the chain
+    #
+    # @return [self]
+    #
+    # @api private
+    def each(&block)
+      return to_enum unless block
+      handlers.each(&block)
+      self
+    end
   end # class Chain
 end # module Substation
