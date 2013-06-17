@@ -99,6 +99,12 @@ module Substation
       def result(response)
         response
       end
+
+      private
+
+      def respond_with(response, output)
+        response.class.new(response.request, output)
+      end
     end
 
     # Supports chaining the {Pivot} handler
