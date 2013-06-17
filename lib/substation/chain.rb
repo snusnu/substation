@@ -102,6 +102,17 @@ module Substation
 
       private
 
+      # Build a new {Response} based on +response+ and +output+
+      #
+      # @param [Response] response
+      #   the original response
+      #
+      # @param [Object] output
+      #   the data to be wrapped within the new {Response}
+      #
+      # @return [Response]
+      #
+      # @api private
       def respond_with(response, output)
         response.class.new(response.request, output)
       end
@@ -168,6 +179,19 @@ module Substation
       }
     end
 
+    # Iterate over all processors
+    #
+    # @param [Proc] block
+    #   a block passed to {#handlers} each method
+    #
+    # @yield [handler]
+    #
+    # @yieldparam [#call] handler
+    #   each handler in the chain
+    #
+    # @return [self]
+    #
+    # @api private
     def each(&block)
       return to_enum unless block
       handlers.each(&block)
