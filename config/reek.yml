@@ -26,6 +26,7 @@ FeatureEnvy:
   exclude:
   - Substation::Chain#call # loops over instance state
   - Substation::Chain::Incoming#result # defined in a module
+  - Substation::Chain::Outgoing#respond_with #defined in a module
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -33,6 +34,7 @@ LongParameterList:
   enabled: true
   exclude:
   - Substation::Dispatcher#call
+  - Substation::Chain::DSL::Builder#define_dsl_method
   max_params: 2
 LongYieldList:
   enabled: true
@@ -40,7 +42,8 @@ LongYieldList:
   max_params: 2
 NestedIterators:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Chain::DSL::Builder#define_dsl_method
   max_allowed_nesting: 1
   ignore_iterators: []
 NilCheck:
@@ -106,4 +109,5 @@ UtilityFunction:
   enabled: true
   exclude:
   - Substation::Chain::Incoming#result # defined in a module
+  - Substation::Chain::Outgoing#respond_with # defined in a module
   max_helper_calls: 0
