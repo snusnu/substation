@@ -5,12 +5,12 @@ require 'spec_helper'
 describe Chain::DSL, '#processors' do
   subject { object.processors }
 
-  let(:processor) { Spec::Processor.new(Spec::FAKE_HANDLER) }
+  let(:processor) { Spec::FAKE_PROCESSOR }
 
   context "and a block is given" do
     let(:object)    { described_class.new(chain, &block) }
     let(:chain) { Chain::EMPTY }
-    let(:block)     { lambda { |_| use(Spec::Processor.new(Spec::FAKE_HANDLER)) } }
+    let(:block)     { lambda { |_| use(Spec::FAKE_PROCESSOR) } }
 
     it { should include(processor) }
 

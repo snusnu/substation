@@ -8,7 +8,7 @@ describe Chain, '.build' do
     let(:dsl)       { Chain::DSL::Builder.call(registry) }
     let(:registry)  { { :test => Spec::Processor } }
     let(:other)     { [ processor ] }
-    let(:processor) { Spec::Processor.new(Spec::FAKE_HANDLER) }
+    let(:processor) { Spec::FAKE_PROCESSOR }
     let(:block)     { lambda { |_| test(Spec::FAKE_HANDLER) } }
 
     let(:expected)  { Chain.new(dsl.processors(other, &block)) }
@@ -22,7 +22,7 @@ describe Chain, '.build' do
     let(:dsl)       { Chain::DSL::Builder.call(registry) }
     let(:registry)  { { :test => Spec::Processor } }
     let(:other)     { [ processor ] }
-    let(:processor) { Spec::Processor.new(Spec::FAKE_HANDLER) }
+    let(:processor) { Spec::FAKE_PROCESSOR }
 
     let(:expected)  { Chain.new(dsl.processors(other)) }
 

@@ -31,7 +31,8 @@ module Spec
     include Concord.new(:handler)
   end
 
-  FAKE_HANDLER = Object.new
+  FAKE_HANDLER   = Object.new
+  FAKE_PROCESSOR = Processor.new(FAKE_HANDLER)
 
 end
 

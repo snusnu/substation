@@ -10,7 +10,7 @@ describe Chain::DSL::Builder, '#dsl' do
   let(:registry)   { { :test => Spec::Processor } }
   let(:processors) { [] }
   let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER) } }
-  let(:processor)  { Spec::Processor.new(Spec::FAKE_HANDLER) }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
 
   its(:processors) { should include(processor) }
 

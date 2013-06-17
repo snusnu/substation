@@ -7,7 +7,7 @@ describe Chain, '#each' do
 
   let(:object)     { described_class.new(processors) }
   let(:processors) { [ processor ] }
-  let(:processor)  { Spec::Processor.new(Spec::FAKE_HANDLER) }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
   let(:yields)     { [] }
 
   before do
@@ -32,7 +32,7 @@ describe Chain do
   subject { described_class.new(processors) }
 
   let(:processors) { [ processor ] }
-  let(:processor)  { Spec::Processor.new(Spec::FAKE_HANDLER) }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
 
   before do
     subject.should be_instance_of(described_class)

@@ -8,7 +8,7 @@ describe Chain::DSL, '#chain' do
   let(:object)    { described_class.new(chain) }
   let(:chain)     { Chain::EMPTY }
   let(:other)     { [ processor ] }
-  let(:processor) { Spec::Processor.new(Spec::FAKE_HANDLER) }
+  let(:processor) { Spec::FAKE_PROCESSOR }
 
   its(:processors) { should include(processor) }
 end
