@@ -1,5 +1,7 @@
 require 'devtools/spec_helper'
 
+require 'concord' # makes spec setup easier
+
 module Spec
 
   def self.response_data
@@ -24,6 +26,12 @@ module Spec
       end
     end
   end
+
+  class Processor
+    include Concord.new(:handler)
+  end
+
+  FAKE_HANDLER = Object.new
 
 end
 
