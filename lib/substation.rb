@@ -33,6 +33,7 @@ require 'concord'
 module Substation
 end
 
+require 'substation/utils'
 require 'substation/request'
 require 'substation/response'
 require 'substation/observer'
@@ -40,4 +41,3 @@ require 'substation/chain'
 require 'substation/chain/dsl'
 require 'substation/environment'
 require 'substation/dispatcher'
-require 'substation/support/utils'
