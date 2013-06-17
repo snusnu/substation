@@ -12,7 +12,9 @@ describe Chain::DSL::Builder, '#dsl' do
   let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER) } }
   let(:processor)  { Spec::Processor.new(Spec::FAKE_HANDLER) }
 
-  it { should be_a(Chain::DSL) }
-
   its(:processors) { should include(processor) }
+
+  it "should create a subclass of Chain::DSL" do
+    subject.class.should be < Chain::DSL
+  end
 end
