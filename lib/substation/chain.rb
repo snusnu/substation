@@ -110,9 +110,13 @@ module Substation
     # Supports chaining the {Pivot} handler
     Pivot = Outgoing
 
+    include Enumerable
     include Concord.new(:handlers)
     include Adamantium::Flat
     include Pivot # allow nesting of chains
+
+    # Empty chain
+    EMPTY = Class.new(self).new([])
 
     # Call the chain
     #
@@ -164,5 +168,10 @@ module Substation
       }
     end
 
+    def each(&block)
+      return to_enum unless block
+      handlers.each(&block)
+      self
+    end
   end # class Chain
 end # module Substation
