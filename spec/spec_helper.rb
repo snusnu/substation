@@ -31,6 +31,54 @@ module Spec
     include Concord.new(:handler)
   end
 
+  module Handler
+
+    class Evaluator
+      class Result
+
+        include Concord::Public.new(:output)
+
+        class Success < self
+          def success?
+            true
+          end
+        end
+
+        class Failure < self
+          def success?
+            false
+          end
+        end
+      end
+
+      def call(data)
+        if data == :success
+          Result::Success.new(data)
+        else
+          Result::Failure.new(:failure)
+        end
+      end
+    end
+
+    class Pivot
+      def call(request)
+        request.success(request.input)
+      end
+    end
+
+    class Wrapper
+      class Presenter
+        include Concord.new(:data)
+      end
+
+      include Concord.new(:data)
+
+      def call(data)
+        Presenter.new(data)
+      end
+    end
+  end
+
   FAKE_HANDLER   = Object.new
   FAKE_PROCESSOR = Processor.new(FAKE_HANDLER)
 

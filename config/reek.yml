@@ -27,6 +27,7 @@ FeatureEnvy:
   - Substation::Chain#call # loops over instance state
   - Substation::Chain::Incoming#result # defined in a module
   - Substation::Chain::Outgoing#respond_with #defined in a module
+  - Substation::Processor::Evaluator#call # method object
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -70,6 +71,7 @@ TooManyStatements:
   - Substation::Dispatcher::Action#self.coerce
   - Substation::Chain#call
   - Substation::Utils#self.coerce_callable
+  - Substation::Processor::Evaluator#call
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true
