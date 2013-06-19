@@ -1,8 +1,42 @@
-# v0.0.8 (not yet released)
+# v0.0.9 (not yet released)
 
 *
 
-[Compare v0.0.7..master](https://github.com/snusnu/substation/compare/v0.0.7...master)
+[Compare v0.0.8..master](https://github.com/snusnu/substation/compare/v0.0.8...master)
+
+# v0.0.8 2013-06-19
+
+* [feature] Add the following chain processors
+  * `Substation::Processor::Evaluator`
+  * `Substation::Processor::Pivot`
+  * `Substation::Processor::Wrapper`
+
+* [feature] Add `Substation::Environment` for registering processors by name
+
+        env = Substation::Environment.build do
+          register :authenticate, My::Authenticator # implemented by you
+          register :authorize,    My::Authorizer    # implemented by you
+          register :evaluate,     Substation::Processor::Evaluator
+          register :call,         Substation::Processor::Pivot
+          register :wrap,         Substation::Processor::Wrapper
+        end
+
+* [feature] Add a DSL for constructing `Substation::Chain` instances
+
+        AUTHENTICATED = env.chain { authenticate }
+        AUTHORIZED    = env.chain(AUTHENTICATED) { authorize }
+
+        CREATE_PERSON = env.chain(AUTHORIZED) do
+          evaluate Sanitizers::NEW_PERSON
+          evaluate Validators::NEW_PERSON
+
+          call Actions::CreatePerson
+
+          wrap Presenters::Person
+          wrap Views::Person
+        end
+
+[Compare v0.0.7..v0.0.8](https://github.com/snusnu/substation/compare/v0.0.7...v0.0.8)
 
 # v0.0.7 2013-06-14
 
@@ -23,15 +57,14 @@
 
 * [feature] Shorter action config when no observers are needed (snusnu)
 
-```ruby
-dispatcher = Substation::Dispatcher.coerce({
-  :some_use_case => App::SomeUseCase
-}, env)
+        dispatcher = Substation::Dispatcher.coerce({
+          :some_use_case => App::SomeUseCase
+        }, env)
 
-dispatcher = Substation::Dispatcher.coerce({
-  :some_use_case => Proc.new { |request| request.success(:data) }
-}, env)
-```
+        dispatcher = Substation::Dispatcher.coerce({
+          :some_use_case => Proc.new { |request| request.success(:data) }
+        }, env)
+
 [Compare v0.0.4..v0.0.5](https://github.com/snusnu/substation/compare/v0.0.4...v0.0.5)
 
 # v0.0.4 2013-05-15
