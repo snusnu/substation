@@ -33,6 +33,10 @@ describe Chain, '#call' do
 
     let(:response) { Response::Success.new(request, request.input) }
 
+    before do
+      handler_2.should_receive(:call).with(request).and_return(response)
+    end
+
     it { should eql(response) }
   end
 
