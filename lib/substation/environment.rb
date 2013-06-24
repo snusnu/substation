@@ -43,7 +43,7 @@ module Substation
     #
     # @api private
     def chain(other = Chain::EMPTY, &block)
-      Chain.build(@chain_dsl, other, &block)
+      Chain.new(processors(other, &block))
     end
 
     protected
@@ -54,6 +54,23 @@ module Substation
     #
     # @api private
     attr_reader :registry
+
+    private
+
+    # The processors collected via the chain dsl instance
+    #
+    # @param [Chain] other
+    #   another chain to build upon
+    #
+    # @param [Proc] block
+    #   the block to pass to {Chain::DSL#processors}
+    #
+    # @return [Hash<Symbol, #call>]
+    #
+    # @api private
+    def processors(other, &block)
+      @chain_dsl.processors(self, other, &block)
+    end
 
   end # class Environment
 end # module Substation

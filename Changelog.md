@@ -1,6 +1,38 @@
 # v0.0.9 (not yet released)
 
-*
+* [feature] Support definining failure chains
+
+        env = Substation::Environment.build do
+          register :evaluate, Substation::Processor::Evaluator
+          register :wrap,     Substation::Processor::Wrapper
+        end
+
+        class Error
+          attr_reader :data
+          def initialize(data)
+            @data = data
+          end
+
+          class ValidationError < self
+          end
+        end
+
+        chain = env.chain do
+          evaluate Vanguard::Validator do
+            wrap Errors::ValidationError
+          end
+          call Some::Action
+          wrap Some::Presenter
+        end
+
+        env             = Object.new
+        invalid_request = Substation::Requet.new(env, :invalid)
+        response        = chain.call(invalid_request)
+
+        response.data.instance_of?(Errors::ValidationError)
+        # => true
+
+        response.data.data # => the actual vanguard violation set
 
 [Compare v0.0.8..master](https://github.com/snusnu/substation/compare/v0.0.8...master)
 

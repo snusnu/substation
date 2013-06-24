@@ -31,6 +31,10 @@ require 'concord'
 # action.
 
 module Substation
+
+  # Represent an undefined argument
+  Undefined = Object.new.freeze
+
 end
 
 require 'substation/utils'

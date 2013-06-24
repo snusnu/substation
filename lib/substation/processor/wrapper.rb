@@ -5,7 +5,7 @@ module Substation
     class Wrapper
 
       include Outgoing
-      include Concord.new(:handler)
+      include Concord.new(:env, :handler)
 
       # Wrap response data in an instance of {#handler}
       #
@@ -16,7 +16,7 @@ module Substation
       #
       # @api private
       def call(response)
-        respond_with(response, handler.new(response.output))
+        respond_with(response, handler.new(response.data))
       end
 
     end # class Wrapper

@@ -6,7 +6,7 @@ module Substation
 
       include Processor
       include Chain::Pivot
-      include Concord.new(:handler)
+      include Concord.new(:env, :handler)
 
       # Invoke a chain's pivot handler
       #

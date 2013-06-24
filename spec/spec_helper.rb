@@ -28,7 +28,11 @@ module Spec
   end
 
   class Processor
-    include Concord.new(:handler)
+    include Concord::Public.new(:env, :handler)
+  end
+
+  class Presenter
+    include Concord.new(:data)
   end
 
   module Handler
@@ -51,6 +55,10 @@ module Spec
         end
       end
 
+      def self.call(data)
+        new.call(data)
+      end
+
       def call(data)
         if data == :success
           Result::Success.new(data)
@@ -66,21 +74,11 @@ module Spec
       end
     end
 
-    class Wrapper
-      class Presenter
-        include Concord.new(:data)
-      end
-
-      include Concord.new(:data)
-
-      def call(data)
-        Presenter.new(data)
-      end
-    end
   end
 
   FAKE_HANDLER   = Object.new
-  FAKE_PROCESSOR = Processor.new(FAKE_HANDLER)
+  FAKE_ENV       = Object.new
+  FAKE_PROCESSOR = Processor.new(FAKE_ENV, FAKE_HANDLER)
 
 end
 

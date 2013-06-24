@@ -91,6 +91,8 @@ module Substation
     # @api public
     attr_reader :output
 
+    alias_method :data, :output
+
     # Initialize a new instance
     #
     # @param [Request] request

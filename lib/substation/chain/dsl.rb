@@ -1,24 +1,5 @@
 module Substation
-
   class Chain
-
-    # Build a new chain instance
-    #
-    # @param [DSL] dsl
-    #   the dsl klass to use for defining the chain
-    #
-    # @param [Chain] other
-    #   another chain to build on top of
-    #
-    # @param [Proc] block
-    #   a block to instance_eval in the context of +dsl+
-    #
-    # @return [Chain]
-    #
-    # @api private
-    def self.build(dsl, other, &block)
-      new(dsl.processors(other, &block))
-    end
 
     # The DSL class used to define chains in an {Environment}
     class DSL
@@ -89,7 +70,9 @@ module Substation
         # @api private
         def define_dsl_method(name, processor, dsl)
           dsl.class_eval do
-            define_method(name) { |*args| use(processor.new(*args)) }
+            define_method(name) do |*args, &block|
+              use(processor.new(env, *args, &block))
+            end
           end
         end
 
@@ -104,6 +87,9 @@ module Substation
 
       # The processors to be used within a {Chain}
       #
+      # @param [Environment] env
+      #   the substation environment used to build chains
+      #
       # @param [Chain] chain
       #   the chain to build on top of
       #
@@ -113,11 +99,14 @@ module Substation
       # @return [Array<#call>]
       #
       # @api private
-      def self.processors(chain, &block)
-        new(chain, &block).processors
+      def self.processors(env, chain, &block)
+        new(env, chain, &block).processors
       end
 
       # Initialize a new instance
+      #
+      # @param [Environment] env
+      #   the substation environment used to build chains
       #
       # @param [#each<#call>] processors
       #   an enumerable of processors to build on top of
@@ -128,8 +117,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(processors, &block)
-        @processors = []
+      def initialize(env, processors, &block)
+        @env, @processors = env, []
         chain(processors)
         instance_eval(&block) if block
       end
@@ -159,6 +148,15 @@ module Substation
         other.each { |handler| use(handler) }
         self
       end
+
+      private
+
+      # The substation environment used to build chains
+      #
+      # @return [Environment]
+      #
+      # @api private
+      attr_reader :env
 
     end # class DSL
   end # class Chain

@@ -5,7 +5,8 @@ require 'spec_helper'
 describe Processor::Wrapper, '#call' do
   subject { object.call(response) }
 
-  let(:object)   { described_class.new(Spec::Handler::Wrapper::Presenter) }
+  let(:object)   { described_class.new(s_env, Spec::Presenter) }
+  let(:s_env)    { mock }
   let(:response) { Response::Success.new(request, output) }
   let(:request)  { Request.new(env, input) }
   let(:env)      { mock }
@@ -13,7 +14,7 @@ describe Processor::Wrapper, '#call' do
   let(:output)   { mock }
 
   let(:wrapped) { Response::Success.new(request, data) }
-  let(:data)    { Spec::Handler::Wrapper::Presenter.new(output) }
+  let(:data)    { Spec::Presenter.new(output) }
 
   it { should eql(wrapped) }
 end

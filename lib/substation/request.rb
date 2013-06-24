@@ -36,6 +36,8 @@ module Substation
     # @api public
     attr_reader :input
 
+    alias_method :data, :input
+
     # Create a new successful response
     #
     # @example
