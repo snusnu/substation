@@ -21,6 +21,8 @@ describe Chain, '#call' do
     }.new
   }
 
+  let(:response) { response_class.new(request, request.input) }
+
   context "when all handlers are successful" do
     let(:handler_1) {
       Class.new {
@@ -31,7 +33,7 @@ describe Chain, '#call' do
       }.new
     }
 
-    let(:response) { Response::Success.new(request, request.input) }
+    let(:response_class) { Response::Success }
 
     before do
       handler_2.should_receive(:call).with(request).and_return(response)
@@ -50,7 +52,7 @@ describe Chain, '#call' do
       }.new
     }
 
-    let(:response) { Response::Failure.new(request, request.input) }
+    let(:response_class) { Response::Failure }
 
     before do
       handler_2.should_not_receive(:call)
