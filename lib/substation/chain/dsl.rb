@@ -71,7 +71,7 @@ module Substation
         def define_dsl_method(name, processor, dsl)
           dsl.class_eval do
             define_method(name) do |*args, &block|
-              use(processor.new(env, *args, &block))
+              use(processor.new(env.failure_chain(&block), *args))
             end
           end
         end

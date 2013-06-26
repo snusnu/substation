@@ -31,10 +31,6 @@ require 'concord'
 # action.
 
 module Substation
-
-  # Represent an undefined argument
-  Undefined = Object.new.freeze
-
 end
 
 require 'substation/utils'
@@ -45,7 +41,6 @@ require 'substation/chain'
 require 'substation/chain/dsl'
 require 'substation/processor'
 require 'substation/processor/evaluator'
-require 'substation/processor/pivot'
 require 'substation/processor/wrapper'
 require 'substation/environment'
 require 'substation/environment/dsl'

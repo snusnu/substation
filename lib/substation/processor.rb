@@ -3,11 +3,8 @@ module Substation
   # Namespace for chain processors
   module Processor
 
-    include AbstractType
     include Adamantium::Flat
-
-    abstract_method :call
-    abstract_method :result
+    include Concord.new(:failure_chain, :handler)
 
     module Incoming
       include Processor

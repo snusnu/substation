@@ -7,7 +7,7 @@ describe "Initializing a processor's failure chain" do
 
   let(:env) {
     Environment.build {
-      register :evaluate, Processor::Evaluator
+      register :evaluate, Processor::Evaluator::Data
       register :wrap,     Processor::Wrapper
     }
   }

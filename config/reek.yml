@@ -28,6 +28,7 @@ FeatureEnvy:
   - Substation::Chain::Incoming#result # defined in a module
   - Substation::Chain::Outgoing#respond_with #defined in a module
   - Substation::Processor::Evaluator#call # method object
+  - Substation::Processor::Evaluator#on_success # method object
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -113,4 +114,5 @@ UtilityFunction:
   exclude:
   - Substation::Chain::Incoming#result # defined in a module
   - Substation::Chain::Outgoing#respond_with # defined in a module
+  - Substation::Processor::Evaluator#on_success # inside a method object
   max_helper_calls: 0

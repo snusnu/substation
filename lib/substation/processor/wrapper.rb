@@ -4,8 +4,7 @@ module Substation
     # A processor that wraps output data in a new handler instance
     class Wrapper
 
-      include Outgoing
-      include Concord.new(:env, :handler)
+      include Processor::Outgoing
 
       # Wrap response data in an instance of {#handler}
       #

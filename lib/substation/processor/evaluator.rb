@@ -1,29 +1,57 @@
 module Substation
   module Processor
 
-    # A processor to evaluate a chain's request input data
+    # Abstract processor to evaluate a request coming into a chain
     class Evaluator
 
-      include Incoming
+      # Processor to evaluate request input data
+      class Data < self
+        include Incoming
 
-      # Initialize a new instance
-      #
-      # @param [Environment] env
-      #   the substation environment used to build chains
-      #
-      # @param [#call] handler
-      #   the handler to perform evaluation
-      #
-      # @param [Proc] block
-      #   a block to construct a failure chain
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def initialize(env, handler, &block)
-        @env, @handler = env, handler
-        @failure_chain = block ? @env.chain(&block) : Undefined
+        private
+
+        # Invoke the handler
+        #
+        # @param [Request] request
+        #   the request to evaluate
+        #
+        # @return [Response]
+        #
+        # @api private
+        def invoke(request)
+          handler.call(request.input)
+        end
+
       end
+
+      # Processor to evaluate an incoming request
+      class Request < self
+        include Incoming
+      end
+
+      # Processor to evaluate a pivot chain handler
+      class Pivot < self
+        include Outgoing
+
+        private
+
+        # Return a successful response
+        #
+        # @param [Request] _request
+        #   the evaluated request
+        #
+        # @param [#output] result
+        #   the evaluation result
+        #
+        # @return [Response::Success]
+        #
+        # @api private
+        def on_success(_request, response)
+          response
+        end
+      end
+
+      include AbstractType
 
       # Evaluate a chain's request input data
       #
@@ -34,46 +62,56 @@ module Substation
       #
       # @api private
       def call(request)
-        result = handler.call(request.input)
-        output = result.output
+        result = invoke(request)
         if result.success?
-          request.success(output)
+          on_success(request, result)
         else
-          response = request.error(output)
-          if fail_safe?
-            failure_chain.call(response)
-          else
-            response
-          end
+          on_failure(request, result)
         end
       end
 
-      protected
-
-      # The handler used to perform evaluation
-      #
-      # @return [#call]
-      #
-      # @api private
-      attr_reader :handler
-
       private
 
-      # The chain to invoke if evaluation returned an error
+      # Invoke the handler
       #
-      # @return [Chain]
+      # @param [Request] request
+      #   the request to evaluate
+      #
+      # @return [Response]
       #
       # @api private
-      attr_reader :failure_chain
+      def invoke(request)
+        handler.call(request)
+      end
 
-      # Test wether this evaluator has a failure chain
+      # Return a successful response
       #
-      # @return [TrueClass] if a failure chain is registered
-      # @return [FalseClass] otherwise
+      # @param [Request] request
+      #   the evaluated request
+      #
+      # @param [#output] result
+      #   the evaluation result
+      #
+      # @return [Response::Success]
       #
       # @api private
-      def fail_safe?
-        !@failure_chain.equal?(Undefined)
+      def on_success(request, result)
+        request.success(result.output)
+      end
+
+      # Return a failure response by invoking a failure chain
+      #
+      # @param [Request] request
+      #   the evaluated request
+      #
+      # @param [#output] result
+      #   the evaluation result
+      #
+      # @return [Response::Failure]
+      #
+      # @api private
+      def on_failure(request, result)
+        failure_chain.call(request.error(result.output))
       end
     end # class Evaluator
   end # module Processor
