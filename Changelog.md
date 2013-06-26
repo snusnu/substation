@@ -1,11 +1,19 @@
 # v0.0.9 (not yet released)
 
+* [BREAKING CHANGE] Refactor `Substation::Processor` classes.
+
+  * Renamed `Substation::Processor::Evaluator` to `Substation::Processor::Evaluator::Data`.
+  * Renamed `Substation::Processor::Pivot` to `Substation::Processor::Evaluator::Pivot`.
+  * Added `Substation::Processor::Evaluator::Request` which passes the complete `Request` instance on to the handler.
+  * Added `Substation::Processor::Transformer` to transform response output into any other object.
+
 * [feature] Make the dispatched name available in Request#name
-* [feature] Support definining failure chains
+
+* [feature] Support definining failure chains for incoming processors
 
         env = Substation::Environment.build do
-          register :evaluate, Substation::Processor::Evaluator
-          register :wrap,     Substation::Processor::Wrapper
+          register :validate, Substation::Processor::Evaluator::Data
+          register :call,     Substation::Processor::Evaluator::Pivot
         end
 
         class Error
@@ -14,20 +22,18 @@
             @data = data
           end
 
-          class ValidationError < self
-          end
+          ValidationError = Class.new(self)
+          InternalError   = Class.new(self)
         end
 
         chain = env.chain do
-          evaluate Vanguard::Validator do
-            wrap Errors::ValidationError
-          end
-          call Some::Action
-          wrap Some::Presenter
+          validate(Vanguard::Validator) { wrap Error::ValidationError }
+          call(Some::Action) { wrap Error::InternalError }
         end
 
         env             = Object.new
-        invalid_request = Substation::Requet.new(env, :invalid)
+        name            = :some_name
+        invalid_request = Substation::Request.new(name, env, :invalid)
         response        = chain.call(invalid_request)
 
         response.data.instance_of?(Errors::ValidationError)
