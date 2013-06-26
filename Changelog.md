@@ -1,5 +1,6 @@
 # v0.0.9 (not yet released)
 
+* [feature] Make the dispatched name available in Request#name
 * [feature] Support definining failure chains
 
         env = Substation::Environment.build do

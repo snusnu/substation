@@ -6,7 +6,8 @@ describe Request, '#success' do
 
   subject { object.success(output) }
 
-  let(:object) { described_class.new(env, input) }
+  let(:object) { described_class.new(name, env, input) }
+  let(:name)   { mock }
   let(:env)    { mock }
   let(:input)  { mock }
   let(:output) { mock }

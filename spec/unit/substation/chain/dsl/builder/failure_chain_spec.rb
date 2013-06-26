@@ -20,7 +20,8 @@ describe "Initializing a processor's failure chain" do
     }
   }
 
-  let(:request) { Request.new(app_env, input) }
+  let(:request) { Request.new(name, app_env, input) }
+  let(:name)    { mock }
   let(:app_env) { mock }
   let(:input)   { :invalid }
 

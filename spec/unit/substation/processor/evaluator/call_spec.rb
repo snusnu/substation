@@ -9,7 +9,8 @@ describe Processor::Evaluator, '#call' do
   let(:klass)            { Class.new(described_class) { include Processor::Incoming } }
   let(:failure_chain)    { mock(:call => failure_response) }
   let(:failure_response) { mock }
-  let(:request)          { Request.new(env, input) }
+  let(:request)          { Request.new(name, env, input) }
+  let(:name)             { mock }
   let(:env)              { mock }
   let(:input)            { mock }
 

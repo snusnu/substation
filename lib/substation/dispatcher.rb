@@ -249,7 +249,7 @@ module Substation
     #
     # @api public
     def call(name, input)
-      fetch(name).call(Request.new(env, input))
+      fetch(name).call(Request.new(name, env, input))
     end
 
     # The names of all registered actions

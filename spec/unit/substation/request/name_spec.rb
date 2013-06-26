@@ -2,14 +2,14 @@
 
 require 'spec_helper'
 
-describe Request, '#env' do
+describe Request, '#name' do
 
-  subject { object.env }
+  subject { object.name }
 
   let(:object) { described_class.new(name, env, input) }
   let(:name)   { mock }
   let(:env)    { mock }
   let(:input)  { mock }
 
-  it { should be(env) }
+  it { should be(name) }
 end

@@ -17,7 +17,8 @@ describe Chain::Outgoing, '#call' do
   }
 
   let(:response) { Response::Success.new(request, :altered) }
-  let(:request)  { Request.new(env, input) }
+  let(:request)  { Request.new(name, env, input) }
+  let(:name)     { mock }
   let(:env)      { mock }
   let(:input)    { mock }
 

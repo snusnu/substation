@@ -9,7 +9,8 @@ describe Processor::Evaluator::Data, '#call' do
   let(:failure_chain)    { mock(:call => failure_response) }
   let(:failure_response) { mock }
   let(:handler)          { Spec::Handler::Evaluator }
-  let(:request)          { Request.new(env, input) }
+  let(:request)          { Request.new(name, env, input) }
+  let(:name)             { mock }
   let(:env)              { mock }
 
   context "with a successful handler" do

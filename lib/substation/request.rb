@@ -3,8 +3,15 @@ module Substation
   # Encapsulates the application environment and an input model instance
   class Request
 
-    include Concord.new(:env, :input)
+    include Concord.new(:name, :env, :input)
     include Adamantium::Flat
+
+    # The name of the request
+    #
+    # @return [Symbol]
+    #
+    # @api private
+    attr_reader :name
 
     # The application environment
     #

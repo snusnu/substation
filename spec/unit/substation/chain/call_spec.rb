@@ -8,7 +8,8 @@ describe Chain, '#call' do
 
   let(:object)   { described_class.new(handlers) }
   let(:handlers) { [ handler_1, handler_2 ] }
-  let(:request)  { Request.new(env, input) }
+  let(:request)  { Request.new(name, env, input) }
+  let(:name)     { mock }
   let(:env)      { mock }
   let(:input)    { mock }
 

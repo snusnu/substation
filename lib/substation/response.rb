@@ -129,6 +129,15 @@ module Substation
     # @api public
     abstract_method :success?
 
+    # Return a {Request} instance built upon this response
+    #
+    # @return [Request]
+    #
+    # @api private
+    def to_request
+      Request.new(request.name, env, output)
+    end
+
     # An errorneous {Response}
     class Failure < self
 

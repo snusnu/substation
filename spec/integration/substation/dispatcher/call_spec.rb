@@ -217,7 +217,7 @@ describe App::APP, '#call' do
     subject { object.call(action, input) }
 
     let(:object)   { described_class }
-    let(:request)  { Substation::Request.new(env, input) }
+    let(:request)  { Substation::Request.new(action, env, input) }
     let(:env)      { App::Environment.new(storage) }
     let(:storage)  { App::Storage.new(App::DB) }
     let(:response) { Substation::Response::Success.new(request, output) }

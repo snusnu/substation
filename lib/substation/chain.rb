@@ -80,7 +80,7 @@ module Substation
       #
       # @api private
       def result(response)
-        Request.new(response.env, response.output)
+        response.to_request
       end
     end
 

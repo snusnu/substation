@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe Response, '#request' do
+describe Response, '#to_request' do
 
-  subject { object.request }
+  subject { object.to_request }
 
   let(:object)   { Class.new(described_class).new(request, output) }
   let(:request)  { Request.new(name, env, input) }
@@ -13,5 +13,7 @@ describe Response, '#request' do
   let(:input)    { mock }
   let(:output)   { mock }
 
-  it { should be(request) }
+  let(:response) { Request.new(name, env, output) }
+
+  it { should eql(response) }
 end

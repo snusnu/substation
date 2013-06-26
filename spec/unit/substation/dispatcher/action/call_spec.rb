@@ -9,7 +9,8 @@ describe Dispatcher::Action, '#call' do
   let(:object)   { described_class.new(klass, observer) }
   let(:klass)    { mock }
   let(:observer) { mock }
-  let(:request)  { Request.new(env, input) }
+  let(:request)  { Request.new(name, env, input) }
+  let(:name)     { mock }
   let(:env)      { mock }
   let(:input)    { mock }
   let(:response) { mock }

@@ -8,7 +8,8 @@ describe Processor::Evaluator::Pivot, '#call' do
   let(:object)           { described_class.new(failure_chain, handler) }
   let(:failure_chain)    { mock(:call => failure_response) }
   let(:failure_response) { mock }
-  let(:request)          { Request.new(env, input) }
+  let(:request)          { Request.new(name, env, input) }
+  let(:name)             { mock }
   let(:env)              { mock }
   let(:input)            { mock }
 
