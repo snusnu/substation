@@ -35,6 +35,12 @@ module Spec
     include Concord.new(:data)
   end
 
+  class Transformer
+    def self.call(response)
+      :transformed
+    end
+  end
+
   module Handler
 
     class Evaluator
