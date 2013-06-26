@@ -38,8 +38,8 @@
 
         response.data.instance_of?(Errors::ValidationError)
         # => true
-
-        response.data.data # => the actual vanguard violation set
+        response.data.data
+        # => the actual vanguard violation set
 
 [Compare v0.0.8..master](https://github.com/snusnu/substation/compare/v0.0.8...master)
 
