@@ -5,11 +5,11 @@
   * Renamed `Substation::Processor::Evaluator` to `Substation::Processor::Evaluator::Data`.
   * Renamed `Substation::Processor::Pivot` to `Substation::Processor::Evaluator::Pivot`.
   * Added `Substation::Processor::Evaluator::Request` which passes the complete `Request` instance on to the handler.
-  * Added `Substation::Processor::Transformer` to transform response output into any other object.
+  * Added `Substation::Processor::Transformer` to transform `Response#output` into any other object.
 
-* [feature] Make the dispatched name available in Request#name
+* [feature] Make the dispatched name available in `Request#name`.
 
-* [feature] Support definining failure chains for incoming processors
+* [feature] Support definining failure chains for incoming processors.
 
         env = Substation::Environment.build do
           register :validate, Substation::Processor::Evaluator::Data
