@@ -22,7 +22,8 @@ receive arbitrary input data which will be available in `request.input`.
 Additionally, `request.env` contains an arbitrary object that
 represents your application environment and will typically provide access
 to useful things like a logger and probably some sort of storage engine
-abstraction object.
+abstraction object. Furthermore, `request.name` will contain the action
+name the `Substation::Dispatcher` used when dispatching to an action.
 
 The contract further specifies that every action must return an instance
 of either `Substation::Response::Success` or
