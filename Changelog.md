@@ -9,7 +9,7 @@
 
 * [feature] Make the dispatched name available in `Request#name`.
 
-* [feature] Support definining failure chains for incoming processors.
+* [feature] Support definining failure chains for `Substation::Processor::Evaluator::*` processors.
 
         env = Substation::Environment.build do
           register :validate, Substation::Processor::Evaluator::Data
