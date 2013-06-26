@@ -509,9 +509,9 @@ In a typical application scenario, a few things need to happen before an
 actual use case (an action) can be invoked. These things will often
 include the following steps (probably in that order).
 
+* Input data sanitization
 * Authentication
 * Authorization
-* Input data sanitization
 * Input data validation
 
 We only want to invoke our action if all those steps succeed. If any of
