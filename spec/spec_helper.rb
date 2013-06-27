@@ -28,7 +28,7 @@ module Spec
   end
 
   class Processor
-    include Concord::Public.new(:env, :handler)
+    include Concord::Public.new(:failure_chain, :handler)
   end
 
   class Presenter

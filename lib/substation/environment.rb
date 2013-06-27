@@ -43,21 +43,7 @@ module Substation
     #
     # @api private
     def chain(other = Chain::EMPTY, &block)
-      Chain.new(processors(other, &block))
-    end
-
-    # Build a new failure {Chain}
-    #
-    # @param [Proc] block
-    #   an optional block to be instance_eval'ed in {Chain::DSL}
-    #
-    # @return [Chain] if a +block+ was passed
-    # @return [Chain::EMPTY] if no +block+ was passed
-    #
-    # @api private
-    def failure_chain(&block)
-      return chain(&block) if block
-      Chain::EMPTY
+      Chain.new(@chain_dsl.processors(other, &block))
     end
 
     protected
@@ -68,23 +54,6 @@ module Substation
     #
     # @api private
     attr_reader :registry
-
-    private
-
-    # The processors collected via the chain dsl instance
-    #
-    # @param [Chain] other
-    #   another chain to build upon
-    #
-    # @param [Proc] block
-    #   the block to pass to {Chain::DSL#processors}
-    #
-    # @return [Hash<Symbol, #call>]
-    #
-    # @api private
-    def processors(other, &block)
-      @chain_dsl.processors(self, other, &block)
-    end
 
   end # class Environment
 end # module Substation

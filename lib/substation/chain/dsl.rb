@@ -71,7 +71,8 @@ module Substation
         def define_dsl_method(name, processor, dsl)
           dsl.class_eval do
             define_method(name) do |*args, &block|
-              use(processor.new(env.failure_chain(&block), *args))
+              failure_chain = self.class.build(processor[:block], block)
+              use(processor[:class].new(failure_chain, *args))
             end
           end
         end
@@ -87,11 +88,8 @@ module Substation
 
       # The processors to be used within a {Chain}
       #
-      # @param [Environment] env
-      #   the substation environment used to build chains
-      #
-      # @param [Chain] chain
-      #   the chain to build on top of
+      # @param [#each<#call>] processors
+      #   the processors to build on top of
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
@@ -99,17 +97,49 @@ module Substation
       # @return [Array<#call>]
       #
       # @api private
-      def self.processors(env, chain, &block)
-        new(env, chain, &block).processors
+      def self.processors(chain, &block)
+        new(chain, &block).processors
       end
+
+      # The substation environment used to build chains
+      #
+      # @return [Environment]
+      #
+      # @api private
+      # attr_reader :env
+
+      # Build a new chain based on all +blocks+
+      #
+      # @param [Proc] *blocks
+      #   any number of blocks to instance_eval inside a new instance
+      #
+      # @return [Chain]
+      #
+      # @api private
+      def self.build(*blocks)
+        Chain.new(coerce(*blocks).processors)
+      end
+
+      # Coerce an array of blocks into a new instance
+      #
+      # @param [Proc] *blocks
+      #   any number of blocks to instance_eval inside the new instance
+      #
+      # @return [DSL]
+      #
+      # @api private
+      def self.coerce(*blocks)
+        blocks.compact.inject(new(Chain::EMPTY)) { |dsl, block|
+          dsl.instance_eval(&block)
+        }
+      end
+
+      private_class_method :coerce
 
       # Initialize a new instance
       #
-      # @param [Environment] env
-      #   the substation environment used to build chains
-      #
       # @param [#each<#call>] processors
-      #   an enumerable of processors to build on top of
+      #   the processors to build on top of
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
@@ -117,8 +147,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(env, processors, &block)
-        @env, @processors = env, []
+      def initialize(processors, &block)
+        @processors = []
         chain(processors)
         instance_eval(&block) if block
       end
@@ -145,18 +175,11 @@ module Substation
       #
       # @api private
       def chain(other)
-        other.each { |handler| use(handler) }
+        other.each { |processor| use(processor) }
         self
       end
 
       private
-
-      # The substation environment used to build chains
-      #
-      # @return [Environment]
-      #
-      # @api private
-      attr_reader :env
 
     end # class DSL
   end # class Chain

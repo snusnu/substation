@@ -16,7 +16,7 @@ describe Substation::Environment, '#chain' do
     context "and a block is given" do
       subject { object.chain(&chain) }
 
-      let(:processors) { dsl.processors(object, other, &chain) }
+      let(:processors) { dsl.processors(other, &chain) }
 
       it { should eql(expected) }
     end
@@ -24,7 +24,7 @@ describe Substation::Environment, '#chain' do
     context "and no block is given" do
       subject { object.chain }
 
-      let(:processors) { dsl.processors(object, other) }
+      let(:processors) { dsl.processors(other) }
 
       it { should eql(expected) }
     end
@@ -34,7 +34,7 @@ describe Substation::Environment, '#chain' do
     context "and a block is given" do
       subject { object.chain(other, &chain) }
 
-      let(:processors) { dsl.processors(object, other, &chain) }
+      let(:processors) { dsl.processors(other, &chain) }
 
       it { should eql(expected) }
     end
@@ -42,7 +42,7 @@ describe Substation::Environment, '#chain' do
     context "and no block is given" do
       subject { object.chain(other) }
 
-      let(:processors) { dsl.processors(object, other) }
+      let(:processors) { dsl.processors(other) }
 
       it { should eql(expected) }
     end

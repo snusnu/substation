@@ -172,9 +172,11 @@ module Substation
     #
     # @api public
     def call(request)
+      # TODO refactor
+      continue = outgoing?(request)
       handlers.inject(request) { |result, handler|
         response = handler.call(result)
-        return response unless response.success?
+        return response unless response.success? || continue
         handler.result(response)
       }
     end
@@ -196,6 +198,22 @@ module Substation
       return to_enum unless block
       handlers.each(&block)
       self
+    end
+
+    private
+
+    # Test wether this instance got invoked with a response
+    #
+    # @todo refactor into request/response chains with a pivot in between
+    #
+    # @param [Request, Response] object
+    #   the object the chain got invoked with
+    #
+    # @return [Boolean]
+    #
+    # @api private
+    def outgoing?(object)
+      object.respond_to?(:success?) && !object.success?
     end
   end # class Chain
 end # module Substation
