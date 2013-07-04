@@ -577,7 +577,7 @@ def initialize(failure_chain, handler)
 end
 
 def result(response)
-  Request.new(response.env, response.output)
+  response.to_request
 end
 
 def success?(response)
@@ -662,6 +662,12 @@ end
 
 def success?(response)
   true
+end
+
+private
+
+def respond_with(response, output)
+  response.class.new(response.request, output)
 end
 ```
 
