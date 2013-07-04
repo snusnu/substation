@@ -4,7 +4,7 @@ module Substation
   #
   # An instance of this class will typically contain (in that order)
   # a few processors that process the incoming {Request} object, one
-  # processor that calls an action ({Chain::Pivot}), and some processors
+  # processor that calls an action ({Processor::Pivot}), and some processors
   # that process the outgoing {Response} object.
   #
   # Both {Chain::Incoming} and {Chain::Outgoing} processors must
