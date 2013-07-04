@@ -172,11 +172,9 @@ module Substation
     #
     # @api public
     def call(request)
-      # TODO refactor
-      continue = outgoing?(request)
       processors.inject(request) { |result, processor|
         response = processor.call(result)
-        return response unless response.success? || continue
+        return response unless processor.success?(response)
         processor.result(response)
       }
     end
@@ -200,20 +198,5 @@ module Substation
       self
     end
 
-    private
-
-    # Test wether this instance got invoked with a response
-    #
-    # @todo refactor into request/response chains with a pivot in between
-    #
-    # @param [Request, Response] object
-    #   the object the chain got invoked with
-    #
-    # @return [Boolean]
-    #
-    # @api private
-    def outgoing?(object)
-      object.respond_to?(:success?) && !object.success?
-    end
   end # class Chain
 end # module Substation

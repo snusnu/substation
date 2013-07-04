@@ -31,7 +31,7 @@ module Substation
 
       # Processor to evaluate a pivot chain handler
       class Pivot < self
-        include Outgoing
+        include Processor::Pivot
 
         private
 

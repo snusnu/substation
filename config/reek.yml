@@ -30,7 +30,7 @@ FeatureEnvy:
   - Substation::Chain::Outgoing#respond_with #defined in a module
   - Substation::Processor::Evaluator#call # method object
   - Substation::Processor::Evaluator#on_success # method object
-  - Substation::Chain#outgoing? # TODO refactor
+  - Substation::Processor#success? # in a module to be included in a method object
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -118,5 +118,5 @@ UtilityFunction:
   - Substation::Chain::Incoming#result # defined in a module
   - Substation::Chain::Outgoing#respond_with # defined in a module
   - Substation::Processor::Evaluator#on_success # inside a method object
-  - Substation::Chain#outgoing? # TODO refactor
+  - Substation::Processor#success? # in a module to be included in a method object
   max_helper_calls: 0
