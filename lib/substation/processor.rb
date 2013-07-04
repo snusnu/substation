@@ -3,7 +3,6 @@ module Substation
   # Namespace for chain processors
   module Processor
 
-    include Adamantium::Flat
     include Concord.new(:failure_chain, :handler)
 
     module Incoming

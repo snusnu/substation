@@ -51,6 +51,7 @@ module Substation
         end
       end
 
+      include Adamantium::Flat
       include AbstractType
 
       # Evaluate a chain's request input data

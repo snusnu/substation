@@ -5,6 +5,7 @@ module Substation
     class Transformer
 
       include Processor::Outgoing
+      include Adamantium::Flat
 
       # Transform response data into something else
       #
