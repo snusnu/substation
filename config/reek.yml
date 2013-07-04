@@ -10,8 +10,7 @@ ClassVariable:
   exclude: []
 ControlParameter:
   enabled: true
-  exclude:
-  - Substation::Chain::DSL#default_chain # TODO refactor
+  exclude: []
 DataClump:
   enabled: true
   exclude: []
@@ -26,8 +25,7 @@ FeatureEnvy:
   enabled: true
   exclude:
   - Substation::Chain#call # loops over instance state
-  - Substation::Chain::Incoming#result # defined in a module
-  - Substation::Chain::Outgoing#respond_with #defined in a module
+  - Substation::Processor::Outgoing#respond_with #defined in a module
   - Substation::Processor::Evaluator#call # method object
   - Substation::Processor::Evaluator#on_success # method object
   - Substation::Processor#success? # in a module to be included in a method object
@@ -115,8 +113,7 @@ UnusedParameters:
 UtilityFunction:
   enabled: true
   exclude:
-  - Substation::Chain::Incoming#result # defined in a module
-  - Substation::Chain::Outgoing#respond_with # defined in a module
+  - Substation::Processor::Outgoing#respond_with # defined in a module
   - Substation::Processor::Evaluator#on_success # inside a method object
   - Substation::Processor#success? # in a module to be included in a method object
   max_helper_calls: 0

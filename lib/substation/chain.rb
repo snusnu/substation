@@ -67,64 +67,9 @@ module Substation
   #
   class Chain
 
-    # Supports chaining processors before the {Pivot}
-    module Incoming
-
-      # The request passed on to the next handler in a {Chain}
-      #
-      # @param [Response] response
-      #   the response returned from the previous processor in a {Chain}
-      #
-      # @return [Request]
-      #   the request passed on to the next processor in a {Chain}
-      #
-      # @api private
-      def result(response)
-        response.to_request
-      end
-    end
-
-    # Supports chaining the {Pivot} or processors after the {Pivot}
-    module Outgoing
-
-      # The response passed on to the next processor in a {Chain}
-      #
-      # @param [Response] response
-      #   the response returned from the previous processor in a {Chain}
-      #
-      # @return [Response]
-      #   the response passed on to the next processor in a {Chain}
-      #
-      # @api private
-      def result(response)
-        response
-      end
-
-      private
-
-      # Build a new {Response} based on +response+ and +output+
-      #
-      # @param [Response] response
-      #   the original response
-      #
-      # @param [Object] output
-      #   the data to be wrapped within the new {Response}
-      #
-      # @return [Response]
-      #
-      # @api private
-      def respond_with(response, output)
-        response.class.new(response.request, output)
-      end
-    end
-
-    # Supports chaining the {Pivot} processor
-    Pivot = Outgoing
-
     include Enumerable
     include Concord.new(:processors)
     include Adamantium::Flat
-    include Pivot # allow nesting of chains
 
     # Empty chain
     EMPTY = Class.new(self).new([])
