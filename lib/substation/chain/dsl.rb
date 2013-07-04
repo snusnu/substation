@@ -129,7 +129,7 @@ module Substation
       #
       # @api private
       def self.coerce(*blocks)
-        blocks.compact.inject(new(Chain::EMPTY)) { |dsl, block|
+        blocks.compact.inject(new(EMPTY_ARRAY)) { |dsl, block|
           dsl.instance_eval(&block)
         }
       end

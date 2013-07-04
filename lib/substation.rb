@@ -31,6 +31,10 @@ require 'concord'
 # action.
 
 module Substation
+
+  # An empty frozen array useful for (default) parameters
+  EMPTY_ARRAY = [].freeze
+
 end
 
 require 'substation/utils'
