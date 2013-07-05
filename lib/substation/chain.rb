@@ -7,9 +7,6 @@ module Substation
   # processor that calls an action ({Processor::Pivot}), and some processors
   # that process the outgoing {Response} object.
   #
-  # Both {Chain::Incoming} and {Chain::Outgoing} processors must
-  # respond to `#call(response)` and `#result(response)`.
-  #
   # @example chain processors (used in instance method examples)
   #
   #   module App
@@ -25,11 +22,11 @@ module Substation
   #       attr_reader :handler
   #
   #       class Incoming < self
-  #         include Substation::Chain::Incoming
+  #         include Substation::Processor::Incoming
   #       end
   #
   #       class Outgoing < self
-  #         include Substation::Chain::Outgoing
+  #         include Substation::Processor::Outgoing
   #
   #         private
   #
