@@ -179,8 +179,6 @@ module Substation
         self
       end
 
-      private
-
     end # class DSL
   end # class Chain
 end # module Substation
