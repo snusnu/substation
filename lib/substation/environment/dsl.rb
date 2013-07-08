@@ -3,7 +3,7 @@
 module Substation
   class Environment
 
-    # The DSL class used to define register processors
+    # The DSL class used to register processors
     class DSL
 
       # The registry of processors
@@ -45,9 +45,6 @@ module Substation
       #
       # @param [#call] processor
       #   the processor to register for +name+
-      #
-      # @param [Proc] block
-      #   the block used to define the default failure chain
       #
       # @return [self]
       #
