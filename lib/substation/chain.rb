@@ -116,7 +116,7 @@ module Substation
     #
     # @api public
     def call(request)
-      processors.inject(request) { |result, processor|
+      processors.reduce(request) { |result, processor|
         response = processor.call(result)
         return response unless processor.success?(response)
         processor.result(response)
