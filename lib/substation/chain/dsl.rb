@@ -173,7 +173,7 @@ module Substation
       #
       # @api private
       def processor(name)
-        found = @processors.find { |processor| processor.name == name }
+        found = @processors.detect { |processor| processor.name == name }
         unless found
           raise UnknownProcessor, "No processor named #{name.inspect} is registered"
         end
