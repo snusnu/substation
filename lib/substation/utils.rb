@@ -14,7 +14,7 @@ module Substation
     #
     # @api private
     def self.const_get(name)
-      list = name.to_s.split("::")
+      list = name.to_s.split('::')
       list.shift if list.first.empty?
       obj = Object
       list.each do |const|

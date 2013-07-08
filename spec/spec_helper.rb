@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'devtools/spec_helper'
 
 require 'concord' # makes spec setup easier

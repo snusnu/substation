@@ -22,9 +22,9 @@ describe Chain, '#each' do
   end
 
   it 'yields only processors with the expected handler' do
-    expect { subject }.to change { yields.dup }.
-      from([]).
-      to([ processor ])
+    expect { subject }.to change { yields.dup }
+      .from([])
+      .to([ processor ])
   end
 end
 
@@ -39,8 +39,4 @@ describe Chain do
   end
 
   it { should be_kind_of(Enumerable) }
-
-  it 'case matches Enumerable' do
-    (Enumerable === subject).should be(true)
-  end
 end

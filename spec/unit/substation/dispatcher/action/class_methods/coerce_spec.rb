@@ -9,13 +9,15 @@ describe Dispatcher::Action, '.coerce' do
   let(:action)  { Spec::Action::Success }
   let(:coerced) { Dispatcher::Action.new(action, observer) }
 
-  context "when config is a hash" do
-    context "and coercion is possible" do
+  context 'when config is a hash' do
+    context 'and coercion is possible' do
 
-      let(:config) {{
+      let(:config) {
+        {
           :action   => action,
           :observer => observer_value
-      }}
+        }
+      }
 
       before do
         Observer.should_receive(:coerce).with(observer_value).and_return(observer)
@@ -46,7 +48,7 @@ describe Dispatcher::Action, '.coerce' do
     end
   end
 
-  context "when config is no hash" do
+  context 'when config is no hash' do
     let(:config)         { action }
     let(:observer_value) { nil }
     let(:observer)       { Observer::NULL }

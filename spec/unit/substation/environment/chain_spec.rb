@@ -14,8 +14,8 @@ describe Substation::Environment, '#chain' do
 
   let(:expected) { Chain.new(processors) }
 
-  context "when other is not given" do
-    context "and a block is given" do
+  context 'when other is not given' do
+    context 'and a block is given' do
       subject { object.chain(&chain) }
 
       let(:processors) { dsl.processors(other, &chain) }
@@ -23,7 +23,7 @@ describe Substation::Environment, '#chain' do
       it { should eql(expected) }
     end
 
-    context "and no block is given" do
+    context 'and no block is given' do
       subject { object.chain }
 
       let(:processors) { dsl.processors(other) }
@@ -32,8 +32,8 @@ describe Substation::Environment, '#chain' do
     end
   end
 
-  context "when other is given" do
-    context "and a block is given" do
+  context 'when other is given' do
+    context 'and a block is given' do
       subject { object.chain(other, &chain) }
 
       let(:processors) { dsl.processors(other, &chain) }
@@ -41,7 +41,7 @@ describe Substation::Environment, '#chain' do
       it { should eql(expected) }
     end
 
-    context "and no block is given" do
+    context 'and no block is given' do
       subject { object.chain(other) }
 
       let(:processors) { dsl.processors(other) }

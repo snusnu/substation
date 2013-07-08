@@ -22,7 +22,7 @@ describe Chain, '#call' do
   let(:processor_2_name) { mock }
   let(:processor_3_name) { mock }
 
-  context "when all processors are successful" do
+  context 'when all processors are successful' do
     let(:processor_1) {
       Class.new {
         include Substation::Processor::Incoming
@@ -61,7 +61,7 @@ describe Chain, '#call' do
     it { should eql(response) }
   end
 
-  context "when an incoming processor is not successful" do
+  context 'when an incoming processor is not successful' do
     let(:processor_1) {
       Class.new {
         include Substation::Processor::Incoming
@@ -100,7 +100,7 @@ describe Chain, '#call' do
     it { should eql(response) }
   end
 
-  context "when the pivot processor is not successful" do
+  context 'when the pivot processor is not successful' do
     let(:processor_1) {
       Class.new {
         include Substation::Processor::Incoming
@@ -140,7 +140,7 @@ describe Chain, '#call' do
     it { should eql(response) }
   end
 
-  context "when an outgoing processor is not successful" do
+  context 'when an outgoing processor is not successful' do
     let(:processor_1) {
       Class.new {
         include Substation::Processor::Pivot

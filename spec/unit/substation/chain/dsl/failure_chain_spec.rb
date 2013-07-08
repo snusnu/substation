@@ -29,7 +29,7 @@ describe Chain::DSL, '#failure_chain' do
     specify {
       expect {
         subject
-      }.to raise_error(UnknownProcessor, "No processor named :unknown is registered")
+      }.to raise_error(UnknownProcessor, 'No processor named :unknown is registered')
     }
   end
 end

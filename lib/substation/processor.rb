@@ -58,7 +58,6 @@ module Substation
       include Processor
       include Fallible
 
-
       # The request passed on to the next processor in a {Chain}
       #
       # @param [Response] _response

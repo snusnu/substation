@@ -8,7 +8,7 @@ describe Chain::DSL, '#processors' do
   let(:processor) { Spec::FAKE_PROCESSOR }
   let(:name)      { mock }
 
-  context "and a block is given" do
+  context 'and a block is given' do
     let(:object) { described_class.new(chain, &block) }
     let(:chain)  { EMPTY_ARRAY }
     let(:block)  { lambda { |_| use(Spec::FAKE_PROCESSOR) } }
@@ -18,7 +18,7 @@ describe Chain::DSL, '#processors' do
     its(:length) { should == 1 }
   end
 
-  context "and no block is given" do
+  context 'and no block is given' do
     let(:object) { described_class.new(chain) }
     let(:chain)  { Chain.new([ processor ]) }
 

@@ -14,14 +14,14 @@ describe Processor::Evaluator::Data, '#call' do
   let(:action_name)      { mock }
   let(:env)              { mock }
 
-  context "with a successful handler" do
+  context 'with a successful handler' do
     let(:input)    { :success }
     let(:response) { request.success(input) }
 
     it { should eql(response) }
   end
 
-  context "with a failing handler" do
+  context 'with a failing handler' do
     let(:input)    { :foo }
     let(:response) { request.error(:failure) }
 

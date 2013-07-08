@@ -14,14 +14,14 @@ describe Processor::Evaluator::Pivot, '#call' do
   let(:env)              { mock }
   let(:input)            { mock }
 
-  context "with a successful handler" do
+  context 'with a successful handler' do
     let(:handler)  { Spec::Action::Success }
     let(:response) { Response::Success.new(request, Spec.response_data) }
 
     it { should eql(response) }
   end
 
-  context "with a failing handler" do
+  context 'with a failing handler' do
     let(:handler)  { Spec::Action::Failure }
     let(:response) { Response::Failure.new(request, Spec.response_data) }
 

@@ -13,11 +13,11 @@ describe Chain::DSL::Builder, '#dsl' do
 
   let(:processor)  { Spec::FAKE_PROCESSOR }
 
-  it "should register instantiated processors" do
+  it 'should register instantiated processors' do
     expect(subject.processors).to include(processor)
   end
 
-  it "should create a subclass of Chain::DSL" do
+  it 'should create a subclass of Chain::DSL' do
     expect(subject.class).to be < Chain::DSL
   end
 end

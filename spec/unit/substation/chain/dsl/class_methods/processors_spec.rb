@@ -6,7 +6,7 @@ describe Chain::DSL, '.processors' do
 
   let(:chain) { EMPTY_ARRAY }
 
-  context "and a block is given" do
+  context 'and a block is given' do
     subject { described_class.processors(chain, &block) }
 
     let(:block)     { lambda { |_| use(Spec::FAKE_PROCESSOR) } }
@@ -15,7 +15,7 @@ describe Chain::DSL, '.processors' do
     it { should include(processor) }
   end
 
-  context "and no block is given" do
+  context 'and no block is given' do
     subject { described_class.processors(chain) }
 
     it { should be_empty }

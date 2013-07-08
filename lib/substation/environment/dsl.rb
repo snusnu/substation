@@ -13,7 +13,6 @@ module Substation
       # @api private
       attr_reader :registry
 
-
       # The registry of processors
       #
       # @param [Proc] block

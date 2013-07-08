@@ -13,7 +13,7 @@ describe Environment::DSL, '#register' do
 
   it_behaves_like 'a command method'
 
-  it "registers the given processor" do
+  it 'registers the given processor' do
     expect(subject.registry).to eql(expected)
   end
 end

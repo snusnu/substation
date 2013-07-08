@@ -55,7 +55,6 @@ module Substation
           }
         end
 
-
         # Define a new instance method on the +dsl+ class
         #
         # @param [Symbol] name

@@ -181,8 +181,8 @@ module App
   end # module Actions
 
   module Observers
-    LogEvent  = Proc.new { |response| response }
-    SendEmail = Proc.new { |response| response }
+    LOG_EVENT  = lambda { |response| response }
+    SEND_EMAIL = lambda { |response| response }
   end
 
   DB = Database.new({
@@ -198,8 +198,8 @@ module App
     :create_person => {
       :action   => Actions::CreatePerson,
       :observer => [
-        Observers::LogEvent,
-        Observers::SendEmail
+        Observers::LOG_EVENT,
+        Observers::SEND_EMAIL
       ]
     }
   }
@@ -213,7 +213,7 @@ end
 
 describe App::APP, '#call' do
 
-  context "when dispatching an action" do
+  context 'when dispatching an action' do
     subject { object.call(action, input) }
 
     let(:object)   { described_class }
@@ -225,7 +225,7 @@ describe App::APP, '#call' do
     let(:john) { App::Models::Person.new(:id => 1, :name => 'John') }
     let(:jane) { App::Models::Person.new(:id => 2, :name => 'Jane') }
 
-    context "with no input data" do
+    context 'with no input data' do
       let(:action)  { :list_people }
       let(:input)   { nil }
       let(:output)  { [ john ] }
@@ -233,8 +233,8 @@ describe App::APP, '#call' do
       it { should eql(response) }
     end
 
-    context "with input data" do
-      context "and no observer" do
+    context 'with input data' do
+      context 'and no observer' do
         let(:action) { :load_person }
         let(:input)  { 1 }
         let(:output) { john }
@@ -242,14 +242,14 @@ describe App::APP, '#call' do
         it { should eq(response) }
       end
 
-      context "and observers" do
+      context 'and observers' do
         let(:action)   { :create_person }
         let(:input)    { jane }
         let(:output)   { [ john, jane ] }
 
         before do
-          App::Observers::LogEvent.should_receive(:call).with(response).ordered
-          App::Observers::SendEmail.should_receive(:call).with(response).ordered
+          App::Observers::LOG_EVENT.should_receive(:call).with(response).ordered
+          App::Observers::SEND_EMAIL.should_receive(:call).with(response).ordered
         end
 
         it { should eql(response) }
