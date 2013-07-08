@@ -3,18 +3,15 @@ module Substation
   # Implements a chain of responsibility for an action
   #
   # An instance of this class will typically contain (in that order)
-  # a few handlers that process the incoming {Request} object, one
-  # handler that calls an action ({Chain::Pivot}), and some handlers
+  # a few processors that process the incoming {Request} object, one
+  # processor that calls an action ({Processor::Pivot}), and some processors
   # that process the outgoing {Response} object.
   #
-  # Both {Chain::Incoming} and {Chain::Outgoing} handlers must
-  # respond to `#call(response)` and `#result(response)`.
-  #
-  # @example chain handlers (used in instance method examples)
+  # @example chain processors (used in instance method examples)
   #
   #   module App
   #
-  #     class Handler
+  #     class Processor
   #
   #       def initialize(handler = nil)
   #         @handler = handler
@@ -25,11 +22,11 @@ module Substation
   #       attr_reader :handler
   #
   #       class Incoming < self
-  #         include Substation::Chain::Incoming
+  #         include Substation::Processor::Incoming
   #       end
   #
   #       class Outgoing < self
-  #         include Substation::Chain::Outgoing
+  #         include Substation::Processor::Outgoing
   #
   #         private
   #
@@ -39,13 +36,13 @@ module Substation
   #       end
   #     end
   #
-  #     class Validator < Handler::Incoming
+  #     class Validator < Processor::Incoming
   #       def call(request)
   #         result = handler.call(request.input)
-  #         if result.valid?
+  #         if result.success?
   #           request.success(request.input)
   #         else
-  #           request.error(result.violations)
+  #           request.error(result.output)
   #         end
   #       end
   #     end
@@ -58,7 +55,7 @@ module Substation
   #       end
   #     end
   #
-  #     class Presenter < Handler::Outgoing
+  #     class Presenter < Processor::Outgoing
   #       def call(response)
   #         respond_with(response, handler.new(response.output))
   #       end
@@ -67,74 +64,19 @@ module Substation
   #
   class Chain
 
-    # Supports chaining handlers processed before the {Pivot}
-    module Incoming
-
-      # The request passed on to the next handler in a {Chain}
-      #
-      # @param [Response] response
-      #   the response returned from the previous handler in a {Chain}
-      #
-      # @return [Request]
-      #   the request passed on to the next handler in a {Chain}
-      #
-      # @api private
-      def result(response)
-        response.to_request
-      end
-    end
-
-    # Supports chaining the {Pivot} or handlers processed after the {Pivot}
-    module Outgoing
-
-      # The response passed on to the next handler in a {Chain}
-      #
-      # @param [Response] response
-      #   the response returned from the previous handler in a {Chain}
-      #
-      # @return [Response]
-      #   the response passed on to the next handler in a {Chain}
-      #
-      # @api private
-      def result(response)
-        response
-      end
-
-      private
-
-      # Build a new {Response} based on +response+ and +output+
-      #
-      # @param [Response] response
-      #   the original response
-      #
-      # @param [Object] output
-      #   the data to be wrapped within the new {Response}
-      #
-      # @return [Response]
-      #
-      # @api private
-      def respond_with(response, output)
-        response.class.new(response.request, output)
-      end
-    end
-
-    # Supports chaining the {Pivot} handler
-    Pivot = Outgoing
-
     include Enumerable
-    include Concord.new(:handlers)
+    include Concord.new(:processors)
     include Adamantium::Flat
-    include Pivot # allow nesting of chains
 
     # Empty chain
-    EMPTY = Class.new(self).new([])
+    EMPTY = Class.new(self).new(EMPTY_ARRAY)
 
     # Call the chain
     #
-    # Invokes all handlers and returns either the first
+    # Invokes all processors and returns either the first
     # {Response::Failure} that it encounters, or if all
     # goes well, the {Response::Success} returned from
-    # the last handler.
+    # the last processor.
     #
     # @example
     #
@@ -162,20 +104,20 @@ module Substation
     #   the request to handle
     #
     # @return [Response::Success]
-    #   the response returned from the last handler
+    #   the response returned from the last processor
     #
     # @return [Response::Failure]
-    #   the response returned from the failing handler
+    #   the response returned from the failing processor's failure chain
     #
     # @raise [Exception]
     #   any exception that isn't explicitly rescued in client code
     #
     # @api public
     def call(request)
-      handlers.inject(request) { |result, handler|
-        response = handler.call(result)
-        return response unless response.success?
-        handler.result(response)
+      processors.inject(request) { |result, processor|
+        response = processor.call(result)
+        return response unless processor.success?(response)
+        processor.result(response)
       }
     end
 
@@ -194,8 +136,9 @@ module Substation
     # @api private
     def each(&block)
       return to_enum unless block
-      handlers.each(&block)
+      processors.each(&block)
       self
     end
+
   end # class Chain
 end # module Substation

@@ -542,128 +542,197 @@ b) If you need to return JSON, you might just
 * Pass the response data to some serializer object and dump it to JSON
 
 To allow chaining all those steps in a declarative way, substation
-provides an object called `Substation::Chain`. Its contract is dead
-simple:
-
-1. `#call(Substation::Request) => Substation::Response`
-2. `#result(Substation::Response) => Substation::Response`
-
-You typically won't be calling `Substation::Chain#result` yourself, but
-having it around, allows us to use chains in *incoming handlers*,
-essentially nesting chains. This makes it possible to construct one
-chain up until the pivot handler, and then reuse that same chain in one
-usecase that takes the response and renders HTML, and in another that
-renders JSON.
-
-To construct a chain, you need to pass an enumerable of so called
-handler objects to `Substation::Chain.new`. Handlers must support two
-methods:
+provides an object called `Substation::Chain`. To construct a chain, you
+need to pass an enumerable of processors to `Substation::Chain#initialize`.
+Processors must support three methods:
 
 1. `#call(<Substation::Request, Substation::Response>) => Substation::Response`
 2. `#result(Substation::Response) => <Substation::Request, Substation::Response>`
+3. `#success?(Substation::Response) => Boolean`
 
-### Incoming handlers
+### Incoming processors
 
 All steps required *before* processing the action will potentially
 produce a new, altered, `Substation::Request`. Therefore, the object
 passed to `#call` must be an instance of `Substation::Request`.
 
 Since `#call` must return a `Substation::Response` (because the chain
-would halt and return that response in case calling its `#success?`
+would halt and return that response in case calling `Processor#success?`
 method would return `false`), we also need to implement `#result`
 and have it return a `Substation::Request` instance that can be passed
 on to the next handler.
 
-The contract for incoming handlers therefore is:
+The contract for incoming processors therefore is:
 
 1. `#call(Substation::Request) => Substation::Response`
 2. `#result(Substation::Response) => Substation::Request`
+3. `#success?(Substation::Response) => Boolean`
 
-By including the `Substation::Chain::Incoming` module into your handler
-class, you'll get the following for free:
+By including the `Substation::Processor::Incoming` module into your
+processor class, you'll get the following for free:
 
 ```ruby
+def initialize(name, handler, failure_chain)
+  @name, @handler, @failure_chain = name, handler, failure_chain
+end
+
 def result(response)
-  Request.new(response.env, response.output)
+  response.to_request
+end
+
+def success?(response)
+  response.success?
+end
+
+def with_failure_chain(chain)
+  self.class.new(name, handler, chain)
 end
 ```
 
-This shows that an incoming handler can alter the incoming request in any
+This shows that an incoming processor can alter the incoming request in any
 way that it wants to, as long as it returns the new request input data in
 `Substation::Response#output` returned from `#call`.
 
-### The pivot handler
+Currently, `substation` provides the following incoming processors out
+of the box:
+
+* `Substation::Processor::Evaluator::Request` passes `request` to the handler
+* `Substation::Processor::Evaluator::Data` passes `request.input` to the handler
+
+### The pivot processor
 
 Pivot is just another fancy name for the action in the context of a
-chain. It's also the point where all subsequent handlers have to further
+chain. It's also the point where all subsequent processors have to further
 process the `Substation::Response` returned from invoking the action.
+Therefore, the pivot processor is the last processor that expects a
+`Substation::Request` as parameter to its `#call` method.
 
-The contract for the pivot handler therefore is:
+The contract for the pivot processor therefore is:
 
 1. `#call(Substation::Request) => Substation::Response`
 2. `#result(Substation::Response) => Substation::Response`
+3. `#success?(Substation::Response) => Boolean`
 
-By including the `Substation::Chain::Pivot` module into your handler
+By including the `Substation::Processor::Pivot` module into your handler
 class, you'll get the following for free:
 
 ```ruby
+def initialize(name, handler, failure_chain)
+  @name, @handler, @failure_chain = name, handler, failure_chain
+end
+
 def result(response)
   response
 end
+
+def success?(response)
+  response.success?
+end
+
+def with_failure_chain(chain)
+  self.class.new(name, handler, chain)
+end
 ```
 
-This reflects the fact that a pivot handler (since it's the one actually
-producing the "raw" response, returns it unaltered.
+This reflects the fact that a pivot processor (since it's the one actually
+producing the "raw" response, returns it unaltered).
 
-### Outgoing handlers
+The pivot processor is shipped with `substation` and is implemented by
+`Substation::Processor::Evaluator::Pivot`.
+
+### Outgoing processors
 
 All steps required *after* processing the action will potentially
 produce a new, altered, `Substation::Response` instance to be returned.
 Therefore the object passed to `#call` must be an instance of
-`Substation::Response`. Since subsequent outgoing handlers might further
+`Substation::Response`. Since subsequent outgoing processors might further
 process the response, `#result` must be implemented so that it returns a
-`Substation::Response` object that can be passed on to the next handler.
+`Substation::Response` object that can be passed on to the next
+processor.
 
-The contract for outgoing handlers therefore is:
+The contract for outgoing processors therefore is:
 
 1. `#call(Substation::Response) => Substation::Response`
 2. `#result(Substation::Response) => Substation::Response`
+3. `#success?(Substation::Response) => true`
 
-By including the `Substation::Chain::Outgoing` module into your handler
-class, you'll get the following for free:
+By including the `Substation::Processor::Outgoing` module into your
+processor class, you'll get the following for free:
 
 ```ruby
+def initialize(name, handler)
+  @name, @handler = name, handler
+end
+
 def result(response)
   response
 end
+
+def success?(response)
+  true
+end
+
+private
+
+def respond_with(response, output)
+  response.class.new(response.request, output)
+end
 ```
 
-This shows that an outgoing handler's `#call` can do anything with
+This shows that an outgoing processor's `#call` can do anything with
 the `Substation::Response#output` it received, as long as it makes
 sure to return a new response with the new output properly set.
+
+Currently, `substation` provides the following outgoing processors out
+of the box:
+
+* `Substation::Processor::Wrapper` wraps `response.output` in a new handler instance
+* `Substation::Processor::Transformer` transforms `response.output` using a new handler instance
+
+### Handlers
+
+You might have noticed the `handler` param passed to any processor's
+`#initialize` method. Handlers are the actual objects performing your
+application logic. Processors use these handlers to produce the data
+they're supposed to "pipe through the chain".
+
+The interface your handlers must implement should be familiar by now.
+
+All handlers to be used with incoming processors must accept an instance
+of `Substation::Request` as parameter to `#call`. Handlers to be used
+with `Substation::Processor::Evaluator` subclasses must furthermore
+return an object that responds to `#success?` and `#output`.
+
+Note how the interface required for evaluator handler return values
+matches the interface a `Substation::Response` exposes. This means that
+the pivot processor can be (and is) implemented using the builtin
+`Substation::Processor::Evaluator::Request` processor. The handler you
+pass to the pivot processor is the object that actually implements your
+application usecase, the action, and it's response gets evaluated.
+
+All handlers to be used with outgoing processors must accept an instance
+of `Substation::Response` as parameter to `#call`. They can do whatever
+they want with the passed in response, but they must make sure to return
+another instance of `Substation::Response`. To help with this, outgoing
+processors provide the `#respond_with(response, data)` method that
+you'll typically call to return the response value for `#call`.
 
 ### Example
 
 [substation-demo](https://github.com/snusnu/substation-demo) implements a
 simple web application using `Substation::Chain`.
 
-The demo implements a few of the above mentioned *incoming handlers*
+The demo uses a few of the above mentioned *incoming processors*
 for
 
 * [Sanitization](https://github.com/snusnu/substation-demo/blob/master/demo/web/sanitizers.rb) using [ducktrap](https://github.com/mbj/ducktrap)
 * [Validation](https://github.com/snusnu/substation-demo/blob/master/demo/validators.rb) using [vanguard](https://github.com/mbj/vanguard)
 
-and some simple *outgoing handlers* for
+and some simple *outgoing processors* for
 
 * Wrapping response output in a
 [presenter](https://github.com/snusnu/substation-demo/blob/master/demo/web/presenters.rb)
 * [Serializing](https://github.com/snusnu/substation-demo/blob/master/demo/web/serializers.rb) response output to JSON
-
-The
-[handlers](https://github.com/snusnu/substation-demo/blob/master/demo/web/processors.rb)
-are called *processors* in that app, and encapsulate the actual handler
-performing the job. That's a common pattern, because you typically will
-have to adapt to the interface your actual handlers provide.
 
 Have a look at the base
 [actions](https://github.com/snusnu/substation-demo/blob/master/demo/web/actions.rb)

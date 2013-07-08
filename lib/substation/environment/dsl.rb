@@ -45,11 +45,14 @@ module Substation
       # @param [#call] processor
       #   the processor to register for +name+
       #
+      # @param [Proc] block
+      #   the block used to define the default failure chain
+      #
       # @return [self]
       #
       # @api private
       def register(name, processor)
-        @registry[name] = processor
+        @registry[name.to_sym] = processor
         self
       end
 

@@ -3,19 +3,21 @@
 require 'spec_helper'
 
 describe Chain::DSL::Builder, '#dsl' do
-  subject { dsl.new(env, processors, &block) }
+  subject { dsl.new(processors, &block) }
 
-  let(:env)        { mock(:failure_chain => mock) }
   let(:dsl)        { builder.dsl }
   let(:builder)    { described_class.new(registry) }
   let(:registry)   { { :test => Spec::Processor } }
   let(:processors) { [] }
-  let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER) } }
-  let(:processor)  { Spec::Processor.new(env.failure_chain, Spec::FAKE_HANDLER) }
+  let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER, EMPTY_ARRAY) } }
 
-  its(:processors) { should include(processor) }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
+
+  it "should register instantiated processors" do
+    expect(subject.processors).to include(processor)
+  end
 
   it "should create a subclass of Chain::DSL" do
-    subject.class.should be < Chain::DSL
+    expect(subject.class).to be < Chain::DSL
   end
 end
