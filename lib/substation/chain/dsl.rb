@@ -70,9 +70,7 @@ module Substation
         # @api private
         def define_dsl_method(name, processor, dsl)
           dsl.class_eval do
-            define_method(name) do |*args, &block|
-              use(processor.new(env.failure_chain(&block), *args))
-            end
+            define_method(name) { |*args| use(processor.new(name, *args)) }
           end
         end
 
@@ -87,11 +85,8 @@ module Substation
 
       # The processors to be used within a {Chain}
       #
-      # @param [Environment] env
-      #   the substation environment used to build chains
-      #
-      # @param [Chain] chain
-      #   the chain to build on top of
+      # @param [#each<#call>] processors
+      #   the processors to build on top of
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
@@ -99,17 +94,14 @@ module Substation
       # @return [Array<#call>]
       #
       # @api private
-      def self.processors(env, chain, &block)
-        new(env, chain, &block).processors
+      def self.processors(chain, &block)
+        new(chain, &block).processors
       end
 
       # Initialize a new instance
       #
-      # @param [Environment] env
-      #   the substation environment used to build chains
-      #
       # @param [#each<#call>] processors
-      #   an enumerable of processors to build on top of
+      #   the processors to build on top of
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
@@ -117,8 +109,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(env, processors, &block)
-        @env, @processors = env, []
+      def initialize(processors, &block)
+        @processors = []
         chain(processors)
         instance_eval(&block) if block
       end
@@ -145,19 +137,61 @@ module Substation
       #
       # @api private
       def chain(other)
-        other.each { |handler| use(handler) }
+        other.each { |processor| use(processor) }
+        self
+      end
+
+      # Use +chain+ as the failure chain for the processor identified by +name+
+      #
+      # @param [Symbol] name
+      #   the processor's name
+      #
+      # @param [#call] chain
+      #   the failure chain to use for the processor identified by +name+
+      #
+      # @return [self]
+      #
+      # @api private
+      def failure_chain(name, chain)
+        replace_processor(processor(name), chain)
         self
       end
 
       private
 
-      # The substation environment used to build chains
+      # Return the processor identified by +name+
       #
-      # @return [Environment]
+      # @param [Symbol] name
+      #   the processor's name
+      #
+      # @return [#call]
+      #   the processor identified by +name+
+      #
+      # @return [nil]
+      #   if no processor identified by +name+ is registered
       #
       # @api private
-      attr_reader :env
+      def processor(name)
+        processor = @processors.detect { |processor| processor.name == name }
+        unless processor
+          raise UnknownProcessor, "No processor named #{name.inspect} is registered"
+        end
+        processor
+      end
 
+      # Replace +processor+'s failure chain with +chain+
+      #
+      # @param [#call] processor
+      # @param [#call] chain
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def replace_processor(processor, chain)
+        index = @processors.index(processor)
+        @processors.delete_at(index)
+        @processors.insert(index, processor.with_failure_chain(chain))
+      end
     end # class DSL
   end # class Chain
 end # module Substation

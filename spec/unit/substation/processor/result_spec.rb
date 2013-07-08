@@ -2,13 +2,13 @@
 
 require 'spec_helper'
 
-describe Chain::Incoming, '#result' do
+describe Processor, '#result' do
 
   subject { object.result(response) }
 
   let(:object) {
     Class.new {
-      include Substation::Chain::Incoming
+      include Substation::Processor
     }.new
   }
 
@@ -18,5 +18,5 @@ describe Chain::Incoming, '#result' do
   let(:env)      { mock }
   let(:input)    { mock }
 
-  it { should eql(request) }
+  it { should be(response) }
 end

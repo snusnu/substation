@@ -25,10 +25,10 @@ FeatureEnvy:
   enabled: true
   exclude:
   - Substation::Chain#call # loops over instance state
-  - Substation::Chain::Incoming#result # defined in a module
-  - Substation::Chain::Outgoing#respond_with #defined in a module
+  - Substation::Processor::Outgoing#respond_with #defined in a module
   - Substation::Processor::Evaluator#call # method object
   - Substation::Processor::Evaluator#on_success # method object
+  - Substation::Processor#success? # in a module to be included in a method object
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -63,7 +63,8 @@ TooManyInstanceVariables:
   max_instance_variables: 3
 TooManyMethods:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Chain::DSL
   max_methods: 4
 TooManyStatements:
   enabled: true
@@ -112,7 +113,7 @@ UnusedParameters:
 UtilityFunction:
   enabled: true
   exclude:
-  - Substation::Chain::Incoming#result # defined in a module
-  - Substation::Chain::Outgoing#respond_with # defined in a module
+  - Substation::Processor::Outgoing#respond_with # defined in a module
   - Substation::Processor::Evaluator#on_success # inside a method object
+  - Substation::Processor#success? # in a module to be included in a method object
   max_helper_calls: 0

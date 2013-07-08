@@ -31,7 +31,7 @@ module Substation
 
       # Processor to evaluate a pivot chain handler
       class Pivot < self
-        include Outgoing
+        include Processor::Pivot
 
         private
 
@@ -51,6 +51,7 @@ module Substation
         end
       end
 
+      include Adamantium::Flat
       include AbstractType
 
       # Evaluate a chain's request input data

@@ -5,6 +5,7 @@ module Substation
     class Wrapper
 
       include Processor::Outgoing
+      include Adamantium::Flat
 
       # Wrap response data in an instance of {#handler}
       #
