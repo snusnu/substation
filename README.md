@@ -572,8 +572,8 @@ By including the `Substation::Processor::Incoming` module into your
 processor class, you'll get the following for free:
 
 ```ruby
-def initialize(failure_chain, handler)
-  @failure_chain, @handler = failure_chain, handler
+def initialize(name, handler, failure_chain)
+  @name, @handler, @failure_chain = name, handler, failure_chain
 end
 
 def result(response)
@@ -582,6 +582,10 @@ end
 
 def success?(response)
   response.success?
+end
+
+def with_failure_chain(chain)
+  self.class.new(name, handler, chain)
 end
 ```
 
@@ -613,8 +617,8 @@ By including the `Substation::Processor::Pivot` module into your handler
 class, you'll get the following for free:
 
 ```ruby
-def initialize(failure_chain, handler)
-  @failure_chain, @handler = failure_chain, handler
+def initialize(name, handler, failure_chain)
+  @name, @handler, @failure_chain = name, handler, failure_chain
 end
 
 def result(response)
@@ -623,6 +627,10 @@ end
 
 def success?(response)
   response.success?
+end
+
+def with_failure_chain(chain)
+  self.class.new(name, handler, chain)
 end
 ```
 
@@ -652,8 +660,8 @@ By including the `Substation::Processor::Outgoing` module into your
 processor class, you'll get the following for free:
 
 ```ruby
-def initialize(failure_chain, handler)
-  @failure_chain, @handler = failure_chain, handler
+def initialize(name, handler)
+  @name, @handler = name, handler
 end
 
 def result(response)
