@@ -5,7 +5,7 @@ describe Substation::Environment::DSL, '.registry' do
     subject { described_class.registry(&block) }
 
     let(:block)    { lambda { |_| register :test, Spec::Processor } }
-    let(:expected) { { :test => { :class => Spec::Processor, :block => nil } } }
+    let(:expected) { { :test => Spec::Processor } }
 
     it { should eql(expected) }
   end

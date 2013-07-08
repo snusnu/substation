@@ -5,11 +5,12 @@ require 'spec_helper'
 describe Processor::Evaluator::Request, '#call' do
   subject { object.call(request) }
 
-  let(:object)           { described_class.new(failure_chain, handler) }
+  let(:object)           { described_class.new(processor_name, handler, failure_chain) }
+  let(:processor_name)   { mock }
   let(:failure_chain)    { mock(:call => failure_response) }
   let(:failure_response) { mock }
-  let(:request)          { Request.new(name, env, input) }
-  let(:name)             { mock }
+  let(:request)          { Request.new(action_name, env, input) }
+  let(:action_name)      { mock }
   let(:env)              { mock }
   let(:input)            { mock }
 

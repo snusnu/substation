@@ -9,37 +9,54 @@
 
 * [feature] Make the dispatched name available in `Request#name`.
 
-* [feature] Support definining failure chains for `Substation::Processor::Evaluator::*` processors.
+* [feature] Support (re)definining failure chains for `Substation::Processor::Fallible` processors.
 
-        env = Substation::Environment.build do
-          register :validate, Substation::Processor::Evaluator::Data
-          register :call,     Substation::Processor::Evaluator::Pivot
-        end
-
-        class Error
-          attr_reader :data
-          def initialize(data)
-            @data = data
+        module Demo
+          ENV = Substation::Environment.build do
+            register :validate, Substation::Processor::Evaluator::Data
+            register :call,     Substation::Processor::Evaluator::Pivot
           end
 
-          ValidationError = Class.new(self)
-          InternalError   = Class.new(self)
+          class Error
+            attr_reader :data
+            def initialize(data)
+              @data = data
+            end
+
+            ValidationError = Class.new(self)
+            InternalError   = Class.new(self)
+          end
+
+          module App
+            VALIDATION_ERROR = Demo::ENV.chain { wrap Error::ValidationError }
+            INTERNAL_ERROR   = Demo::ENV.chain { wrap Error::InternalError }
+
+            SOME_ACTION = Demo::ENV.chain do
+              validate Vanguard::Validator, VALIDATION_ERROR
+              call     Some::Action,        INTERNAL_ERROR
+            end
+          end
+
+          module Web
+            VALIDATION_ERROR = Demo::ENV.chain(App::VALIDATION_ERROR) do
+              render Renderer::ValidationError
+            end
+
+            INTERNAL_ERROR = Demo::ENV.chain(App::INTERNAL_ERROR) do
+              render Renderer::InternalError
+            end
+
+            # in case of success, returns an instance of Views::Person
+            # in case of validation failure, renders using Renderer::ValidationError
+            # in case of internal error, renders using Renderer::InternalError
+            SOME_ACTION = Demo::ENV.chain(App::SOME_ACTION) do
+              failure_chain :validate, VALIDATION_ERROR
+              failure_chain :call,     INTERNAL_ERROR
+              wrap Presenters::Person
+              wrap Views::ShowPerson
+            end
+          end
         end
-
-        chain = env.chain do
-          validate(Vanguard::Validator) { wrap Error::ValidationError }
-          call(Some::Action) { wrap Error::InternalError }
-        end
-
-        env             = Object.new
-        name            = :some_name
-        invalid_request = Substation::Request.new(name, env, :invalid)
-        response        = chain.call(invalid_request)
-
-        response.data.instance_of?(Errors::ValidationError)
-        # => true
-        response.data.data
-        # => the actual vanguard violation set
 
 [Compare v0.0.8..master](https://github.com/snusnu/substation/compare/v0.0.8...master)
 

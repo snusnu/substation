@@ -7,11 +7,11 @@ describe Chain::DSL::Builder, '#dsl' do
 
   let(:dsl)        { builder.dsl }
   let(:builder)    { described_class.new(registry) }
-  let(:registry)   { { :test => { :class => Spec::Processor, :block => nil } } }
+  let(:registry)   { { :test => Spec::Processor } }
   let(:processors) { [] }
-  let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER) } }
+  let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER, EMPTY_ARRAY) } }
 
-  let(:processor)  { Spec::Processor.new(Chain::EMPTY, Spec::FAKE_HANDLER) }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
 
   it "should register instantiated processors" do
     expect(subject.processors).to include(processor)

@@ -2,6 +2,25 @@ require 'devtools/spec_helper'
 
 require 'concord' # makes spec setup easier
 
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
+  require 'coveralls'
+
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    SimpleCov::Formatter::HTMLFormatter,
+    Coveralls::SimpleCov::Formatter
+  ]
+
+  SimpleCov.start do
+    command_name     'spec:unit'
+    add_filter       'config'
+    add_filter       'spec'
+    minimum_coverage 100
+  end
+end
+
+require 'substation'
+
 module Spec
 
   def self.response_data
@@ -28,7 +47,8 @@ module Spec
   end
 
   class Processor
-    include Concord::Public.new(:failure_chain, :handler)
+    include Substation::Processor::Fallible
+    attr_reader :name
   end
 
   class Presenter
@@ -84,28 +104,9 @@ module Spec
 
   FAKE_HANDLER   = Object.new
   FAKE_ENV       = Object.new
-  FAKE_PROCESSOR = Processor.new(FAKE_ENV, FAKE_HANDLER)
+  FAKE_PROCESSOR = Processor.new(:test, FAKE_HANDLER, [])
 
 end
-
-if ENV['COVERAGE'] == 'true'
-  require 'simplecov'
-  require 'coveralls'
-
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-  ]
-
-  SimpleCov.start do
-    command_name     'spec:unit'
-    add_filter       'config'
-    add_filter       'spec'
-    minimum_coverage 100
-  end
-end
-
-require 'substation'
 
 include Substation
 

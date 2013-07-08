@@ -1,33 +1,17 @@
 require 'spec_helper'
 
 describe Environment::DSL, '#register' do
+  subject { object.register(name, processor) }
 
   let(:object)    { described_class.new }
   let(:name)      { :test }
   let(:processor) { Spec::Processor }
 
-  shared_examples_for 'Environment::DSL#register' do
-    it "registers the given processor" do
-      expect(subject.registry).to eql(expected)
-    end
-  end
+  let(:expected) { { :test => Spec::Processor } }
 
-  context "when a block is given" do
-    subject { object.register(name, processor, &block) }
+  it_behaves_like 'a command method'
 
-    let(:block)    { lambda { |_| register :test, Spec::Processor } }
-    let(:expected) { { :test => { :class => Spec::Processor, :block => block } } }
-
-    it_behaves_like 'a command method'
-    it_behaves_like 'Environment::DSL#register'
-  end
-
-  context "when no block is given" do
-    subject { object.register(name, processor) }
-
-    let(:expected) { { :test => { :class => Spec::Processor, :block => nil } } }
-
-    it_behaves_like 'a command method'
-    it_behaves_like 'Environment::DSL#register'
+  it "registers the given processor" do
+    expect(subject.registry).to eql(expected)
   end
 end

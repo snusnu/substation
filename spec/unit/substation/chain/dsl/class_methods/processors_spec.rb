@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe Chain::DSL, '.processors' do
 
-  let(:chain) { Chain::EMPTY }
+  let(:chain) { EMPTY_ARRAY }
 
   context "and a block is given" do
     subject { described_class.processors(chain, &block) }

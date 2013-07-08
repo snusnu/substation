@@ -70,10 +70,7 @@ module Substation
         # @api private
         def define_dsl_method(name, processor, dsl)
           dsl.class_eval do
-            define_method(name) do |*args, &block|
-              failure_chain = self.class.build(processor[:block], block)
-              use(processor[:class].new(failure_chain, *args))
-            end
+            define_method(name) { |*args| use(processor.new(name, *args)) }
           end
         end
 
@@ -100,41 +97,6 @@ module Substation
       def self.processors(chain, &block)
         new(chain, &block).processors
       end
-
-      # The substation environment used to build chains
-      #
-      # @return [Environment]
-      #
-      # @api private
-      # attr_reader :env
-
-      # Build a new chain based on all +blocks+
-      #
-      # @param [Proc] *blocks
-      #   any number of blocks to instance_eval inside a new instance
-      #
-      # @return [Chain]
-      #
-      # @api private
-      def self.build(*blocks)
-        Chain.new(coerce(*blocks).processors)
-      end
-
-      # Coerce an array of blocks into a new instance
-      #
-      # @param [Proc] *blocks
-      #   any number of blocks to instance_eval inside the new instance
-      #
-      # @return [DSL]
-      #
-      # @api private
-      def self.coerce(*blocks)
-        blocks.compact.inject(new(EMPTY_ARRAY)) { |dsl, block|
-          dsl.instance_eval(&block)
-        }
-      end
-
-      private_class_method :coerce
 
       # Initialize a new instance
       #
@@ -179,6 +141,57 @@ module Substation
         self
       end
 
+      # Use +chain+ as the failure chain for the processor identified by +name+
+      #
+      # @param [Symbol] name
+      #   the processor's name
+      #
+      # @param [#call] chain
+      #   the failure chain to use for the processor identified by +name+
+      #
+      # @return [self]
+      #
+      # @api private
+      def failure_chain(name, chain)
+        replace_processor(processor(name), chain)
+        self
+      end
+
+      private
+
+      # Return the processor identified by +name+
+      #
+      # @param [Symbol] name
+      #   the processor's name
+      #
+      # @return [#call]
+      #   the processor identified by +name+
+      #
+      # @return [nil]
+      #   if no processor identified by +name+ is registered
+      #
+      # @api private
+      def processor(name)
+        processor = @processors.detect { |processor| processor.name == name }
+        unless processor
+          raise UnknownProcessor, "No processor named #{name.inspect} is registered"
+        end
+        processor
+      end
+
+      # Replace +processor+'s failure chain with +chain+
+      #
+      # @param [#call] processor
+      # @param [#call] chain
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def replace_processor(processor, chain)
+        index = @processors.index(processor)
+        @processors.delete_at(index)
+        @processors.insert(index, processor.with_failure_chain(chain))
+      end
     end # class DSL
   end # class Chain
 end # module Substation

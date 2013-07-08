@@ -18,6 +18,10 @@ describe Chain, '#call' do
 
   let(:response) { response_class.new(request, request.input) }
 
+  let(:processor_1_name) { mock }
+  let(:processor_2_name) { mock }
+  let(:processor_3_name) { mock }
+
   context "when all processors are successful" do
     let(:processor_1) {
       Class.new {
@@ -25,7 +29,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_1_name, handler, failure_chain)
     }
 
     let(:processor_2) {
@@ -34,7 +38,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_2_name, handler, failure_chain)
     }
 
     let(:processor_3) {
@@ -43,7 +47,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(failure_chain, handler)
+      }.new(processor_3_name, handler)
     }
 
     let(:response_class) { Response::Success }
@@ -64,7 +68,7 @@ describe Chain, '#call' do
         def call(request)
           request.error(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_1_name, handler, failure_chain)
     }
 
     let(:processor_2) {
@@ -73,7 +77,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_2_name, handler, failure_chain)
     }
 
     let(:processor_3) {
@@ -82,7 +86,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(failure_chain, handler)
+      }.new(processor_3_name, handler)
     }
 
     let(:response_class) { Response::Failure }
@@ -103,7 +107,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_1_name, handler, failure_chain)
     }
 
     let(:processor_2) {
@@ -112,7 +116,7 @@ describe Chain, '#call' do
         def call(request)
           request.error(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_2_name, handler, failure_chain)
     }
 
     let(:processor_3) {
@@ -121,7 +125,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(failure_chain, handler)
+      }.new(processor_3_name, handler)
     }
 
     let(:response_class) { Response::Failure }
@@ -143,7 +147,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(request.input)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_1_name, handler, failure_chain)
     }
 
     let(:processor_2) {
@@ -152,7 +156,7 @@ describe Chain, '#call' do
         def call(response)
           response.request.error(response.output)
         end
-      }.new(failure_chain, handler)
+      }.new(processor_2_name, handler)
     }
 
     let(:processor_3) {
@@ -161,7 +165,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(failure_chain, handler)
+      }.new(processor_3_name, handler)
     }
 
     let(:response_class) { Response::Failure }

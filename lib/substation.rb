@@ -35,6 +35,9 @@ module Substation
   # An empty frozen array useful for (default) parameters
   EMPTY_ARRAY = [].freeze
 
+  # Error raised when trying to access an unknown processor
+  UnknownProcessor = Class.new(StandardError)
+
 end
 
 require 'substation/utils'
