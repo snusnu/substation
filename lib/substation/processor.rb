@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Substation
 
   # Namespace for chain processors

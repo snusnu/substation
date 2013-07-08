@@ -27,3 +27,6 @@ CollectionMethods:
 # to scan the code and see where the sections are.
 AccessControl:
   Enabled: false
+
+HashSyntax:
+  Enabled: false

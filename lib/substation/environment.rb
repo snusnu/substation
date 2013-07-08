@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Substation
 
   # The environment holding all registered {Chain} processors

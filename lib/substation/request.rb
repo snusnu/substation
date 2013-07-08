@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Substation
 
   # Encapsulates the application environment and an input model instance

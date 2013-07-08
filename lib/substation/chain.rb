@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Substation
 
   # Implements a chain of responsibility for an action

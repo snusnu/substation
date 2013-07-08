@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Substation
 
   # Encapsulates all registered actions and their observers
