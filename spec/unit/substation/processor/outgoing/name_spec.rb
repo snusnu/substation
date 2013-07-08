@@ -2,11 +2,11 @@
 
 require 'spec_helper'
 
-describe Processor, '#name' do
+describe Processor::Outgoing, '#name' do
   subject { object.name }
 
   let(:object)  { klass.new(name, handler) }
-  let(:klass)   { Class.new { include Processor } }
+  let(:klass)   { Class.new { include Processor::Outgoing } }
   let(:name)    { mock }
   let(:handler) { mock }
 

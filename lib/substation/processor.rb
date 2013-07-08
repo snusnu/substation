@@ -3,15 +3,6 @@ module Substation
   # Namespace for chain processors
   module Processor
 
-    include Concord.new(:name, :handler)
-
-    # This processor's name
-    #
-    # @return [Symbol]
-    #
-    # @api private
-    attr_reader :name
-
     # Test wether chain processing should continue
     #
     # @param [Response] response
@@ -40,6 +31,13 @@ module Substation
 
     module Fallible
       include Concord.new(:name, :handler, :failure_chain)
+
+      # This processor's name
+      #
+      # @return [Symbol]
+      #
+      # @api private
+      attr_reader :name
 
       # Return a new processor with +chain+ as failure_chain
       #
@@ -79,7 +77,15 @@ module Substation
     end
 
     module Outgoing
+      include Concord.new(:name, :handler)
       include Processor
+
+      # This processor's name
+      #
+      # @return [Symbol]
+      #
+      # @api private
+      attr_reader :name
 
       # Test wether chain processing should continue
       #

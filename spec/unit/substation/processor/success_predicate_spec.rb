@@ -5,10 +5,8 @@ require 'spec_helper'
 describe Processor, '#success?' do
   subject { object.success?(response) }
 
-  let(:object)  { klass.new(name, handler) }
+  let(:object)  { klass.new }
   let(:klass)   { Class.new { include Processor } }
-  let(:name)    { mock }
-  let(:handler) { mock }
 
   context 'with a successful response' do
     let(:response) { mock(:success? => true) }
