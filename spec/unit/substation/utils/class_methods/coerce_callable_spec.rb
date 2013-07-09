@@ -27,7 +27,7 @@ describe Utils, '.coerce_callable' do
   end
 
   context 'with a Proc handler' do
-    let(:handler) { lambda { |response| respone } }
+    let(:handler) { ->(response) { response } }
 
     it { should be(handler) }
   end

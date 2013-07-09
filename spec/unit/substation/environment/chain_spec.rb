@@ -7,10 +7,10 @@ describe Substation::Environment, '#chain' do
   let(:object) { described_class.build(&block) }
 
   let(:other)    { EMPTY_ARRAY }
-  let(:chain)    { lambda { |_| test Spec::FAKE_HANDLER, EMPTY_ARRAY } }
+  let(:chain)    { ->(_) { test Spec::FAKE_HANDLER, EMPTY_ARRAY } }
   let(:dsl)      { Chain::DSL::Builder.call(registry) }
   let(:registry) { described_class::DSL.registry(&block) }
-  let(:block)    { lambda { |_| register(:test, Spec::Processor) } }
+  let(:block)    { ->(_) { register(:test, Spec::Processor) } }
 
   let(:expected) { Chain.new(processors) }
 

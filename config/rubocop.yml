@@ -17,9 +17,6 @@ HashSyntax:
 Blocks:
   Enabled: false
 
-Lambda:
-  Enabled: false
-
 SpaceInsideBrackets:
   Enabled: false
 

@@ -9,7 +9,7 @@ describe Chain::DSL::Builder, '#dsl' do
   let(:builder)    { described_class.new(registry) }
   let(:registry)   { { :test => Spec::Processor } }
   let(:processors) { [] }
-  let(:block)      { lambda { |_| test(Spec::FAKE_HANDLER, EMPTY_ARRAY) } }
+  let(:block)      { ->(_) { test(Spec::FAKE_HANDLER, EMPTY_ARRAY) } }
 
   let(:processor)  { Spec::FAKE_PROCESSOR }
 

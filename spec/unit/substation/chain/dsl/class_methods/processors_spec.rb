@@ -9,7 +9,7 @@ describe Chain::DSL, '.processors' do
   context 'and a block is given' do
     subject { described_class.processors(chain, &block) }
 
-    let(:block)     { lambda { |_| use(Spec::FAKE_PROCESSOR) } }
+    let(:block)     { ->(_) { use(Spec::FAKE_PROCESSOR) } }
     let(:processor) { Spec::FAKE_PROCESSOR }
 
     it { should include(processor) }

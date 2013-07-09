@@ -181,8 +181,8 @@ module App
   end # module Actions
 
   module Observers
-    LOG_EVENT  = lambda { |response| response }
-    SEND_EMAIL = lambda { |response| response }
+    LOG_EVENT  = ->(response) { response }
+    SEND_EMAIL = ->(response) { response }
   end
 
   DB = Database.new({

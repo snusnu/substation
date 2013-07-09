@@ -8,13 +8,13 @@ describe Chain::DSL, '#failure_chain' do
   let(:object)   { dsl.new([ Spec::FAKE_PROCESSOR ]) }
   let(:dsl)      { described_class::Builder.call(registry) }
   let(:registry) { Environment::DSL.registry(&block) }
-  let(:block)    { lambda { |_| register(:test, Spec::Processor) } }
+  let(:block)    { ->(_) { register(:test, Spec::Processor) } }
 
   let(:processor)     { Spec::FAKE_PROCESSOR.with_failure_chain(failure_chain) }
   let(:failure_chain) { mock }
 
   context 'when the processor to alter is registered' do
-    let(:name)          { :test }
+    let(:name) { :test }
 
     its(:processors) { should include(processor) }
 

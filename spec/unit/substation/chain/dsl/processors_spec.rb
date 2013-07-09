@@ -11,7 +11,7 @@ describe Chain::DSL, '#processors' do
   context 'and a block is given' do
     let(:object) { described_class.new(chain, &block) }
     let(:chain)  { EMPTY_ARRAY }
-    let(:block)  { lambda { |_| use(Spec::FAKE_PROCESSOR) } }
+    let(:block)  { ->(_) { use(Spec::FAKE_PROCESSOR) } }
 
     it { should include(processor) }
 
