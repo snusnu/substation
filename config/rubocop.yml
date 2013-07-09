@@ -21,7 +21,7 @@ SpaceInsideBrackets:
   Enabled: false
 
 Documentation:
-  Enabled: false
+  Enabled: false # reek already checks this and rubocop requires duplicate docs
 
 SingleLineMethods:
   Enabled: false
