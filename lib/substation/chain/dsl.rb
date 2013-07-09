@@ -79,13 +79,6 @@ module Substation
 
       # The processors to be used within a {Chain}
       #
-      # @return [Array<#call>]
-      #
-      # @api private
-      attr_reader :processors
-
-      # The processors to be used within a {Chain}
-      #
       # @param [#each<#call>] processors
       #   the processors to build on top of
       #
@@ -111,9 +104,18 @@ module Substation
       #
       # @api private
       def initialize(processors, &block)
-        @processors = []
+        @processors = {}
         chain(processors)
         instance_eval(&block) if block
+      end
+
+      # The processors to be used within a {Chain}
+      #
+      # @return [Array<#call>]
+      #
+      # @api private
+      def processors
+        @processors.values
       end
 
       # Use the given +processor+ within a chain
@@ -125,7 +127,7 @@ module Substation
       #
       # @api private
       def use(processor)
-        @processors << processor
+        @processors[processor.name] = processor
         self
       end
 
@@ -154,7 +156,7 @@ module Substation
       #
       # @api private
       def failure_chain(name, chain)
-        replace_processor(processor(name), chain)
+        @processors[name] = processor(name).with_failure_chain(chain)
         self
       end
 
@@ -168,31 +170,16 @@ module Substation
       # @return [#call]
       #   the processor identified by +name+
       #
-      # @return [nil]
+      # @raise [UnknownProcessor]
       #   if no processor identified by +name+ is registered
       #
       # @api private
       def processor(name)
-        found = @processors.detect { |processor| processor.name == name }
-        unless found
+        @processors.fetch(name) {
           raise UnknownProcessor, "No processor named #{name.inspect} is registered"
-        end
-        found
+        }
       end
 
-      # Replace +processor+'s failure chain with +chain+
-      #
-      # @param [#call] processor
-      # @param [#call] chain
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def replace_processor(processor, chain)
-        index = @processors.index(processor)
-        @processors.delete_at(index)
-        @processors.insert(index, processor.with_failure_chain(chain))
-      end
     end # class DSL
   end # class Chain
 end # module Substation
