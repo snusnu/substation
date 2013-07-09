@@ -17,7 +17,9 @@ module Substation
     #
     # @api private
     def self.build(&block)
-      new(DSL.registry(&block))
+      registry  = DSL.registry(&block)
+      chain_dsl = Chain::DSL::Builder.call(registry)
+      new(registry, chain_dsl)
     end
 
     # Initialize a new instance
@@ -28,9 +30,8 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(registry)
-      @registry  = registry
-      @chain_dsl = Chain::DSL::Builder.call(@registry)
+    def initialize(registry, chain_dsl)
+      @registry, @chain_dsl = registry, chain_dsl
     end
 
     # Build a new {Chain} instance
@@ -44,8 +45,8 @@ module Substation
     # @return [Chain]
     #
     # @api private
-    def chain(other = Chain::EMPTY, &block)
-      Chain.new(@chain_dsl.processors(other, &block))
+    def chain(other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
+      @chain_dsl.build(other, failure_chain, &block)
     end
 
     protected

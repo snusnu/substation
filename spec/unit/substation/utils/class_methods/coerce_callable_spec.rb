@@ -33,7 +33,7 @@ describe Utils, '.coerce_callable' do
   end
 
   context 'with a Chain handler' do
-    let(:handler) { Chain.new([]) }
+    let(:handler) { Chain.new(EMPTY_ARRAY, Chain::EMPTY) }
 
     it { should be(handler) }
   end

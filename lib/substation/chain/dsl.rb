@@ -77,20 +77,25 @@ module Substation
 
       end # class Builder
 
-      # The processors to be used within a {Chain}
+      # Build a new {Chain} based on +other+, a +failure_chain+ and a block
       #
-      # @param [#each<#call>] processors
+      # @param [#each<#call>] other
       #   the processors to build on top of
+      #
+      # @param [Chain] failure_chain
+      #   the failure chain to invoke in case of an uncaught exception
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
       #
-      # @return [Array<#call>]
+      # @return [Chain]
       #
       # @api private
-      def self.processors(chain, &block)
-        new(chain, &block).processors
+      def self.build(other, failure_chain, &block)
+        Chain.new(new(other, &block).processors, failure_chain)
       end
+
+      include Equalizer.new(:processors)
 
       # Initialize a new instance
       #

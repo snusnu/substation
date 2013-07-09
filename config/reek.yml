@@ -37,6 +37,8 @@ LongParameterList:
   exclude:
   - Substation::Dispatcher#call
   - Substation::Chain::DSL::Builder#define_dsl_method
+  - Substation::Chain#self.failure_response
+  - Substation::Chain#on_failure
   max_params: 2
 LongYieldList:
   enabled: true

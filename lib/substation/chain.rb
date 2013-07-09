@@ -67,11 +67,89 @@ module Substation
   class Chain
 
     include Enumerable
-    include Concord.new(:processors)
+    include Concord.new(:processors, :failure_chain)
     include Adamantium::Flat
 
     # Empty chain
-    EMPTY = Class.new(self).new(EMPTY_ARRAY)
+    EMPTY = Class.new(self).new(EMPTY_ARRAY, EMPTY_ARRAY)
+
+    # Wraps response data and an exception not caught from a handler
+    class FailureData
+      include Equalizer.new(:data)
+
+      # Return the data available when +exception+ was raised
+      #
+      # @return [Object]
+      #
+      # @api private
+      attr_reader :data
+
+      # Return the exception instance
+      #
+      # @return [Class<StandardError>]
+      #
+      # @api private
+      attr_reader :exception
+
+      # Initialize a new instance
+      #
+      # @param [Object] data
+      #   the data available when +exception+ was raised
+      #
+      # @param [Class<StandardError>] exception
+      #   the exception instance raised from a handler
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def initialize(data, exception)
+        @data, @exception = data, exception
+      end
+
+      # Return the hash value
+      #
+      # @return [Fixnum]
+      #
+      # @api private
+      def hash
+        super ^ exception.class.hash
+      end
+
+      private
+
+      # Tests wether +other+ is comparable using +comparator+
+      #
+      # @param [Symbol] comparator
+      #   the operation used for comparison
+      #
+      # @param [Object] other
+      #   the object to test
+      #
+      # @return [Boolean]
+      #
+      # @api private
+      def cmp?(comparator, other)
+        super && exception.class.send(comparator, other.exception.class)
+      end
+    end
+
+    # Return a failure response
+    #
+    # @param [Request] request
+    #   the initial request passed into the chain
+    #
+    # @param [Object] data
+    #   the processed data available when the exception was raised
+    #
+    # @param [Class<StandardError>] exception
+    #   the exception instance that was raised
+    #
+    # @return [Response::Failure]
+    #
+    # @api private
+    def self.failure_response(request, data, exception)
+      Response::Failure.new(request, FailureData.new(data, exception))
+    end
 
     # Call the chain
     #
@@ -111,15 +189,16 @@ module Substation
     # @return [Response::Failure]
     #   the response returned from the failing processor's failure chain
     #
-    # @raise [Exception]
-    #   any exception that isn't explicitly rescued in client code
-    #
     # @api public
     def call(request)
       processors.reduce(request) { |result, processor|
-        response = processor.call(result)
-        return response unless processor.success?(response)
-        processor.result(response)
+        begin
+          response = processor.call(result)
+          return response unless processor.success?(response)
+          processor.result(response)
+        rescue => exception
+          return on_failure(request, result, exception)
+        end
       }
     end
 
@@ -140,6 +219,26 @@ module Substation
       return to_enum unless block
       processors.each(&block)
       self
+    end
+
+    private
+
+    # Call the failure chain in case of an uncaught exception
+    #
+    # @param [Request] request
+    #   the initial request passed into the chain
+    #
+    # @param [Object] data
+    #   the processed data available when the exception was raised
+    #
+    # @param [Class<StandardError>] exception
+    #   the exception instance that was raised
+    #
+    # @return [Response::Failure]
+    #
+    # @api private
+    def on_failure(request, data, exception)
+      failure_chain.call(self.class.failure_response(request, data, exception))
     end
 
   end # class Chain

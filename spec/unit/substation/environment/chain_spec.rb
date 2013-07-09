@@ -4,49 +4,37 @@ require 'spec_helper'
 
 describe Substation::Environment, '#chain' do
 
-  let(:object) { described_class.build(&block) }
+  let(:object) { described_class.new(registry, dsl) }
 
-  let(:other)    { EMPTY_ARRAY }
-  let(:chain)    { ->(_) { test Spec::FAKE_HANDLER, EMPTY_ARRAY } }
   let(:dsl)      { Chain::DSL::Builder.call(registry) }
-  let(:registry) { described_class::DSL.registry(&block) }
-  let(:block)    { ->(_) { register(:test, Spec::Processor) } }
+  let(:registry) { described_class::DSL.registry(&r_block) }
+  let(:r_block)  { ->(_) { register(:test, Spec::Processor) } }
 
-  let(:expected) { Chain.new(processors) }
+  let(:other)         { mock('other', :each => EMPTY_ARRAY) }
+  let(:failure_chain) { mock('failure_chain') }
+  let(:block)         { ->(_) { test Spec::FAKE_HANDLER, Chain::EMPTY } }
 
-  context 'when other is not given' do
-    context 'and a block is given' do
-      subject { object.chain(&chain) }
+  context 'when other, failure_chain and block are given' do
+    subject { object.chain(other, failure_chain, &block) }
 
-      let(:processors) { dsl.processors(other, &chain) }
-
-      it { should eql(expected) }
-    end
-
-    context 'and no block is given' do
-      subject { object.chain }
-
-      let(:processors) { dsl.processors(other) }
-
-      it { should eql(expected) }
-    end
+    it { should eql(dsl.build(other, failure_chain, &block)) }
   end
 
-  context 'when other is given' do
-    context 'and a block is given' do
-      subject { object.chain(other, &chain) }
+  context 'when other, failure_chain and no block are given' do
+    subject { object.chain(other, failure_chain) }
 
-      let(:processors) { dsl.processors(other, &chain) }
+    it { should eql(dsl.build(other, failure_chain)) }
+  end
 
-      it { should eql(expected) }
-    end
+  context 'when other, no failure_chain and no block are given' do
+    subject { object.chain(other) }
 
-    context 'and no block is given' do
-      subject { object.chain(other) }
+    it { should eql(dsl.build(other, Chain::EMPTY)) }
+  end
 
-      let(:processors) { dsl.processors(other) }
+  context 'when no parameters are given' do
+    subject { object.chain }
 
-      it { should eql(expected) }
-    end
+    it { should eql(dsl.build(Chain::EMPTY, Chain::EMPTY)) }
   end
 end

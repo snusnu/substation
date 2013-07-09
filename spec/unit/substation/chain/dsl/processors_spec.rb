@@ -20,7 +20,8 @@ describe Chain::DSL, '#processors' do
 
   context 'and no block is given' do
     let(:object) { described_class.new(chain) }
-    let(:chain)  { Chain.new([ processor ]) }
+    let(:chain)  { Chain.new([ processor ], failure_chain) }
+    let(:failure_chain) { mock }
 
     it { should include(processor) }
 

@@ -2,12 +2,13 @@
 
 require 'spec_helper'
 
-describe Chain::DSL, '.processors' do
+describe Chain::DSL, '.build' do
 
   let(:chain) { EMPTY_ARRAY }
+  let(:failure_chain) { Chain::EMPTY }
 
   context 'and a block is given' do
-    subject { described_class.processors(chain, &block) }
+    subject { described_class.build(chain, failure_chain, &block) }
 
     let(:block)     { ->(_) { use(Spec::FAKE_PROCESSOR) } }
     let(:processor) { Spec::FAKE_PROCESSOR }
@@ -16,8 +17,8 @@ describe Chain::DSL, '.processors' do
   end
 
   context 'and no block is given' do
-    subject { described_class.processors(chain) }
+    subject { described_class.build(chain, failure_chain) }
 
-    it { should be_empty }
+    its(:processors) { should be_empty }
   end
 end

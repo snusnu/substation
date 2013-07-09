@@ -15,6 +15,8 @@
           ENV = Substation::Environment.build do
             register :validate, Substation::Processor::Evaluator::Data
             register :call,     Substation::Processor::Evaluator::Pivot
+            register :wrap,     Substation::Processor::Wrapper
+            register :render,   Substation::Processor::Transformer
           end
 
           class Error
@@ -23,17 +25,18 @@
               @data = data
             end
 
-            ValidationError = Class.new(self)
-            InternalError   = Class.new(self)
+            ValidationError  = Class.new(self)
+            ApplicationError = Class.new(self)
+            InternalError    = Class.new(self)
           end
 
           module App
-            VALIDATION_ERROR = Demo::ENV.chain { wrap Error::ValidationError }
-            INTERNAL_ERROR   = Demo::ENV.chain { wrap Error::InternalError }
+            VALIDATION_ERROR  = Demo::ENV.chain { wrap Error::ValidationError }
+            APPLICATION_ERROR = Demo::ENV.chain { wrap Error::ApplicationError }
 
             SOME_ACTION = Demo::ENV.chain do
               validate Vanguard::Validator, VALIDATION_ERROR
-              call     Some::Action,        INTERNAL_ERROR
+              call     Some::Action,        APPLICATION_ERROR
             end
           end
 
@@ -42,14 +45,39 @@
               render Renderer::ValidationError
             end
 
-            INTERNAL_ERROR = Demo::ENV.chain(App::INTERNAL_ERROR) do
-              render Renderer::InternalError
+            APPLICATION_ERROR = Demo::ENV.chain(App::APPLICATION_ERROR) do
+              render Renderer::ApplicationError
             end
 
             # in case of success, returns an instance of Views::Person
             # in case of validation failure, renders using Renderer::ValidationError
             # in case of internal error, renders using Renderer::InternalError
             SOME_ACTION = Demo::ENV.chain(App::SOME_ACTION) do
+              failure_chain :validate, VALIDATION_ERROR
+              failure_chain :call,     INTERNAL_ERROR
+              wrap Presenters::Person
+              wrap Views::ShowPerson
+            end
+          end
+        end
+
+* [feature] Support (re)defining chain specific failure chains in case of uncaught exceptions.
+
+        module Demo
+
+          module App
+            INTERNAL_ERROR = Demo::ENV.chain { wrap Error::InternalError }
+          end
+
+          module Web
+
+            INTERNAL_ERROR = Demo::ENV.chain(App::INTERNAL_ERROR) do
+              render Renderer::InternalError
+            end
+
+            # The INTERNAL_ERROR chain will be called if an exception
+            # isn't rescued by the responsible handler
+            SOME_ACTION = Demo::ENV.chain(App::SOME_ACTION, INTERNAL_ERROR) do
               failure_chain :validate, VALIDATION_ERROR
               failure_chain :call,     INTERNAL_ERROR
               wrap Presenters::Person

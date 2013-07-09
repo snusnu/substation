@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Chain, '#each' do
   subject { object.each { |tuple| yields << processor } }
 
-  let(:object)     { described_class.new(processors) }
+  let(:object)     { described_class.new(processors, described_class::EMPTY) }
   let(:processors) { [ processor ] }
   let(:processor)  { Spec::FAKE_PROCESSOR }
   let(:yields)     { [] }
@@ -29,7 +29,7 @@ describe Chain, '#each' do
 end
 
 describe Chain do
-  subject { described_class.new(processors) }
+  subject { described_class.new(processors, described_class::EMPTY) }
 
   let(:processors) { [ processor ] }
   let(:processor)  { Spec::FAKE_PROCESSOR }
