@@ -71,11 +71,7 @@ TooManyMethods:
 TooManyStatements:
   enabled: true
   exclude:
-  - Substation::Utils#self.const_get
-  - Substation::Utils#self.symbolize_keys
-  - Substation::Dispatcher::Action#self.coerce
   - Substation::Chain#call
-  - Substation::Utils#self.coerce_callable
   - Substation::Processor::Evaluator#call
   max_statements: 3
 UncommunicativeMethodName:
@@ -118,4 +114,5 @@ UtilityFunction:
   - Substation::Processor::Outgoing#respond_with # defined in a module
   - Substation::Processor::Evaluator#on_success # inside a method object
   - Substation::Processor#success? # in a module to be included in a method object
+  - Substation::Environment#action # DSL method
   max_helper_calls: 0

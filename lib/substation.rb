@@ -40,12 +40,14 @@ module Substation
   # Error raised when trying to access an unknown processor
   UnknownProcessor = Class.new(StandardError)
 
+  # Raised when trying to dispatch to an unregistered action
+  UnknownActionError = Class.new(StandardError)
+
 end
 
-require 'substation/utils'
 require 'substation/request'
 require 'substation/response'
-require 'substation/observer'
+require 'substation/action'
 require 'substation/chain'
 require 'substation/chain/dsl'
 require 'substation/processor'

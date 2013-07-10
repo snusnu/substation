@@ -6,8 +6,8 @@ describe Dispatcher, '#call' do
 
   subject { object.call(action_name, input) }
 
-  let(:object)  { described_class.coerce(config, env) }
-  let(:config)  { { 'test' => { 'action' => 'Spec::Action::Success' } } }
+  let(:object)  { described_class.new(config, env) }
+  let(:config)  { { :test => Spec::Action::Success } }
   let(:request) { Request.new(action_name, env, input) }
   let(:env)     { mock }
   let(:input)   { mock }
@@ -19,22 +19,7 @@ describe Dispatcher, '#call' do
   context 'when the action is registered' do
     let(:action_name) { :test }
 
-    context 'without callbacks' do
-      it { should eql(expected_response) }
-    end
-
-    context 'with observers' do
-      let(:config) {
-        config = super()
-        config['test']['observer'] = 'Spec::Observer'
-        config
-      }
-
-      it 'should call callback with response' do
-        Spec::Observer.should_receive(:call).with(expected_response)
-        should eql(expected_response)
-      end
-    end
+    it { should eql(expected_response) }
   end
 
   context 'when the action is not registered' do
