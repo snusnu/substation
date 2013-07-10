@@ -1,4 +1,10 @@
-# v0.0.9 (not yet released)
+# v0.0.10 (not yet released)
+
+*
+
+[Compare v0.0.9..master](https://github.com/snusnu/substation/compare/v0.0.9...master)
+
+# v0.0.9 2013-07-10
 
 * [BREAKING CHANGE] Refactor `Substation::Processor` classes.
 
@@ -86,7 +92,7 @@
           end
         end
 
-[Compare v0.0.8..master](https://github.com/snusnu/substation/compare/v0.0.8...master)
+[Compare v0.0.8..v0.0.9](https://github.com/snusnu/substation/compare/v0.0.8...v0.0.9)
 
 # v0.0.8 2013-06-19
 
