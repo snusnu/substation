@@ -335,11 +335,9 @@ class Demo
   end
 
   ACTIONS = {
-
     :HTML => {
-      :create_person   => Web::HTML::CREATE_PERSON,
+      :create_person => Web::HTML::CREATE_PERSON,
     }
-
   }.freeze
 
   APP_ENV = Object.new
