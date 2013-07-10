@@ -5,7 +5,7 @@ require 'app'
 describe 'a typical substation application' do
   subject { Demo::APP.call(name, input) }
 
-  let(:request) { Substation::Request.new(:create_person, env, input) }
+  let(:request) { Substation::Request.new(name, env, input) }
   let(:name)    { :create_person }
   let(:env)     { Demo::APP_ENV }
 
