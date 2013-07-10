@@ -95,6 +95,8 @@ module Substation
         Chain.new(new(other, &block).processors, failure_chain)
       end
 
+      UNKNOWN_PROCESSOR_MSG = 'No processor named %s is registered'.freeze
+
       include Equalizer.new(:processors)
 
       # Initialize a new instance
@@ -109,18 +111,9 @@ module Substation
       #
       # @api private
       def initialize(processors, &block)
-        @processors = {}
+        @processors = []
         chain(processors)
         instance_eval(&block) if block
-      end
-
-      # The processors to be used within a {Chain}
-      #
-      # @return [Array<#call>]
-      #
-      # @api private
-      def processors
-        @processors.values
       end
 
       # Use the given +processor+ within a chain
@@ -132,7 +125,7 @@ module Substation
       #
       # @api private
       def use(processor)
-        @processors[processor.name] = processor
+        @processors << processor
         self
       end
 
@@ -161,8 +154,17 @@ module Substation
       #
       # @api private
       def failure_chain(name, chain)
-        @processors[name] = processor(name).with_failure_chain(chain)
+        replace_processor(processor(name), chain)
         self
+      end
+
+      # The processors to be used within a {Chain}
+      #
+      # @return [Array<#call>]
+      #
+      # @api private
+      def processors
+        @processors.dup.freeze
       end
 
       private
@@ -175,14 +177,65 @@ module Substation
       # @return [#call]
       #   the processor identified by +name+
       #
-      # @raise [UnknownProcessor]
+      # @return [nil]
       #   if no processor identified by +name+ is registered
       #
       # @api private
       def processor(name)
-        @processors.fetch(name) {
-          raise UnknownProcessor, "No processor named #{name.inspect} is registered"
-        }
+        detect(name) || raise_unknown_processor(name)
+      end
+
+      # Replace +processor+'s failure chain with +chain+
+      #
+      # @param [#call] processor
+      # @param [#call] chain
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def replace_processor(processor, chain)
+        @processors[index(processor)] = processor.with_failure_chain(chain)
+      end
+
+      # Return the processor's index inside #processors
+      #
+      # @param [#call] processor
+      #
+      # @return [Integer]
+      #
+      # @api private
+      def index(processor)
+        @processors.index(processor)
+      end
+
+      # Return the first processor with the given +name+
+      #
+      # @param [Symbol] name
+      #   the name of the processor to detect
+      #
+      # @return [#call]
+      #   if a processor with the given +name+ is registered
+      #
+      # @return [nil]
+      #   otherwise
+      #
+      # @api private
+      def detect(name)
+        @processors.detect { |processor| processor.name == name }
+      end
+
+      # Raise {UnknownProcessor}
+      #
+      # @param [Symbol] name
+      #   the unknown processor's name
+      #
+      # @raise [UnknownProcessor]
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def raise_unknown_processor(name)
+        raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % (name.inspect)
       end
 
     end # class DSL

@@ -38,7 +38,7 @@ describe 'a typical substation application' do
       let(:action_response) { Substation::Response::Success.new(processed_request, processed_input) }
     end
 
-    it { pending { should eql(response) } }
+    it { should eql(response) }
   end
 
   context 'with an input that produces an application error' do
@@ -72,7 +72,7 @@ describe 'a typical substation application' do
 
     it_behaves_like 'no action invocation'
 
-    it { pending { should eql(response) } }
+    it { should eql(response) }
   end
 
   context 'with invalid input' do

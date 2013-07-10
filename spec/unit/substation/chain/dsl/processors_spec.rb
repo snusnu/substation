@@ -14,8 +14,13 @@ describe Chain::DSL, '#processors' do
     let(:block)  { ->(_) { use(Spec::FAKE_PROCESSOR) } }
 
     it { should include(processor) }
+    it { should be_frozen }
 
     its(:length) { should == 1 }
+
+    it 'should return a copy of the internal state' do
+      expect(subject).to_not be(object.processors)
+    end
   end
 
   context 'and no block is given' do
@@ -24,7 +29,12 @@ describe Chain::DSL, '#processors' do
     let(:failure_chain) { mock }
 
     it { should include(processor) }
+    it { should be_frozen }
 
     its(:length) { should == 1 }
+
+    it 'should return a copy of the internal state' do
+      expect(subject).to_not be(object.processors)
+    end
   end
 end
