@@ -197,7 +197,7 @@ module Substation
           return response unless processor.success?(response)
           processor.result(response)
         rescue => exception
-          return on_failure(request, result, exception)
+          return on_failure(request, result.data, exception)
         end
       }
     end

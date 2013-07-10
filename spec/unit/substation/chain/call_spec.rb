@@ -103,7 +103,7 @@ describe Chain, '#call' do
       }
 
       let(:response) { Response::Failure.new(request, data) }
-      let(:data)     { Chain::FailureData.new(request, RuntimeError.new('exception_1')) }
+      let(:data)     { Chain::FailureData.new(input, RuntimeError.new('exception_1')) }
 
       it { should eql(response) }
 
@@ -166,7 +166,7 @@ describe Chain, '#call' do
       }
 
       let(:response)        { Response::Failure.new(request, data) }
-      let(:data)            { Chain::FailureData.new(current_request, RuntimeError.new('exception_2')) }
+      let(:data)            { Chain::FailureData.new(:success_1, RuntimeError.new('exception_2')) }
       let(:current_request) { Request.new(name, env, :success_1) }
 
       it { should eql(response) }
@@ -214,7 +214,7 @@ describe Chain, '#call' do
       }
 
       let(:response)         { Response::Failure.new(request, data) }
-      let(:data)             { Chain::FailureData.new(current_response, RuntimeError.new('exception_3')) }
+      let(:data)             { Chain::FailureData.new(:success_2, RuntimeError.new('exception_3')) }
       let(:current_request)  { Request.new(name, env, :success_1) }
       let(:current_response) { Response::Success.new(current_request, :success_2) }
 
