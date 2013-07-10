@@ -8,11 +8,7 @@ describe Chain::DSL, '#processors' do
   let(:processor) { Spec::FAKE_PROCESSOR }
   let(:name)      { mock }
 
-  context 'and a block is given' do
-    let(:object) { described_class.new(chain, &block) }
-    let(:chain)  { EMPTY_ARRAY }
-    let(:block)  { ->(_) { use(Spec::FAKE_PROCESSOR) } }
-
+  shared_examples_for 'Chain::DSL#processors' do
     it { should include(processor) }
     it { should be_frozen }
 
@@ -23,18 +19,19 @@ describe Chain::DSL, '#processors' do
     end
   end
 
+  context 'and a block is given' do
+    let(:object) { described_class.new(chain, &block) }
+    let(:chain)  { EMPTY_ARRAY }
+    let(:block)  { ->(_) { use(Spec::FAKE_PROCESSOR) } }
+
+    it_behaves_like 'Chain::DSL#processors'
+  end
+
   context 'and no block is given' do
     let(:object) { described_class.new(chain) }
     let(:chain)  { Chain.new([ processor ], failure_chain) }
     let(:failure_chain) { mock }
 
-    it { should include(processor) }
-    it { should be_frozen }
-
-    its(:length) { should == 1 }
-
-    it 'should return a copy of the internal state' do
-      expect(subject).to_not be(object.processors)
-    end
+    it_behaves_like 'Chain::DSL#processors'
   end
 end
