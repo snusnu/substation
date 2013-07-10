@@ -351,4 +351,8 @@ class Demo
     dispatcher.call(name, input)
   end
 
+  def action_names
+    dispatcher.action_names
+  end
+
 end # class Demo

@@ -9,7 +9,24 @@ describe 'a typical substation application' do
   let(:name)    { :create_person }
   let(:env)     { Demo::APP_ENV }
 
+  shared_examples_for 'all invocations' do
+    it { should eql(response) }
+
+    it 'indicates success via #success?' do
+      expect(subject.success?).to be(success_status)
+    end
+
+    it 'provides the processed input in Response#input' do
+      expect(subject.input).to eql(input_data)
+    end
+  end
+
   shared_examples_for 'an action invocation' do
+    let(:input_data)     { processed_input }
+    let(:success_status) { true }
+
+    it_behaves_like 'all invocations'
+
     it 'notifies all observers' do
       Demo::Observers::LOG_EVENT.should_receive(:call).with(action_response)
       Demo::Observers::SEND_EMAIL.should_receive(:call).with(action_response)
@@ -18,10 +35,23 @@ describe 'a typical substation application' do
   end
 
   shared_examples_for 'no action invocation' do
+    let(:input_data)     { processed_input }
+    let(:success_status) { false }
+
+    it_behaves_like 'all invocations'
+
     it 'does not notify any observers' do
       Demo::Observers::LOG_EVENT.should_not_receive(:call)
       Demo::Observers::SEND_EMAIL.should_not_receive(:call)
       subject
+    end
+  end
+
+  context 'with registered chains' do
+    let(:input) { mock }
+
+    it 'lists all the registered names' do
+      expect(Demo::APP.action_names).to eql(Set[ :create_person ])
     end
   end
 
@@ -37,8 +67,6 @@ describe 'a typical substation application' do
     it_behaves_like 'an action invocation' do
       let(:action_response) { Substation::Response::Success.new(processed_request, processed_input) }
     end
-
-    it { should eql(response) }
   end
 
   context 'with an input that produces an application error' do
@@ -53,9 +81,8 @@ describe 'a typical substation application' do
 
     it_behaves_like 'an action invocation' do
       let(:action_response) { Substation::Response::Failure.new(processed_request, processed_input) }
+      let(:success_status)  { false }
     end
-
-    it { should eql(response) }
   end
 
   context 'with an input that raises an exception while processing' do
@@ -70,9 +97,9 @@ describe 'a typical substation application' do
     let(:rendered)          { Demo::Renderer::InternalError.call(error_response) }
     let(:response)          { Substation::Response::Failure.new(request, rendered) }
 
-    it_behaves_like 'no action invocation'
-
-    it { should eql(response) }
+    it_behaves_like 'no action invocation' do
+      let(:input_data) { input }
+    end
   end
 
   context 'with invalid input' do
@@ -86,8 +113,6 @@ describe 'a typical substation application' do
     let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
     it_behaves_like 'no action invocation'
-
-    it { should eql(response) }
   end
 
   context 'with malformed input' do
@@ -99,9 +124,9 @@ describe 'a typical substation application' do
     let(:rendered)          { Demo::Renderer::SanitizationError.call(error_response) }
     let(:response)          { Substation::Response::Failure.new(request, rendered) }
 
-    it_behaves_like 'no action invocation'
-
-    it { should eql(response) }
+    it_behaves_like 'no action invocation' do
+      let(:input_data) { input }
+    end
   end
 
   context 'with input from an unknown user' do
@@ -115,8 +140,6 @@ describe 'a typical substation application' do
     let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
     it_behaves_like 'no action invocation'
-
-    it { should eql(response) }
   end
 
   context 'with input from an unauthorized user' do
@@ -130,7 +153,5 @@ describe 'a typical substation application' do
     let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
     it_behaves_like 'no action invocation'
-
-    it { should eql(response) }
   end
 end
