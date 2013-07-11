@@ -164,7 +164,6 @@ class Demo
 
       class Collection < Presenter::Collection
         member(Person)
-        alias_method :people, :each
       end
     end
   end
