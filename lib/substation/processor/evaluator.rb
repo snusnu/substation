@@ -6,6 +6,86 @@ module Substation
     # Abstract processor to evaluate a request coming into a chain
     class Evaluator
 
+      # A result object compatible with the {Evaluator} api contract
+      class Result
+        include AbstractType
+        include Concord::Public.new(:output)
+
+        # A successful evaluation result
+        class Success < self
+
+          # Test wether evaluation was successful
+          #
+          # @return [true]
+          #
+          # @api private
+          def success?
+            true
+          end
+
+        end # class Success
+
+        # An errorneous evaluation result
+        class Failure < self
+
+          # Test wether evaluation was successful
+          #
+          # @return [false]
+          #
+          # @api private
+          def success?
+            false
+          end
+
+        end # class Failure
+      end # class Result
+
+      # Helps returning an api compatible result from custom Evaluator handlers
+      module Handler
+
+        # Return a successful result
+        #
+        # @param [Object] output
+        #   the data associated with the result
+        #
+        # @return [Result::Success]
+        #
+        # @api private
+        def success(output)
+          respond_with(Result::Success, output)
+        end
+
+        # Return an errorneous result
+        #
+        # @param [Object] output
+        #   the data associated with the result
+        #
+        # @return [Result::Failure]
+        #
+        # @api private
+        def error(output)
+          respond_with(Result::Failure, output)
+        end
+
+        private
+
+        # Return a new result subclass instance
+        #
+        # @param [Result::Success, Result::Failure] klass
+        #   the result class
+        #
+        # @param [Object] output
+        #   the data associated with the result
+        #
+        # @return [Response]
+        #
+        # @api private
+        def respond_with(klass, output)
+          klass.new(output)
+        end
+
+      end # module Handler
+
       # Processor to evaluate request input data
       class Data < self
         include Incoming

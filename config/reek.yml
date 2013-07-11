@@ -113,6 +113,7 @@ UtilityFunction:
   enabled: true
   exclude:
   - Substation::Processor::Outgoing#respond_with # defined in a module
+  - Substation::Processor::Evaluator::Handler#respond_with # defined in a module
   - Substation::Processor::Evaluator#on_success # inside a method object
   - Substation::Processor#success? # in a module to be included in a method object
   - Substation::Environment#action # DSL method

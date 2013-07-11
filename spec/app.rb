@@ -13,55 +13,30 @@ class Demo
 
   module Handler
 
-    class Result
-      include Concord::Public.new(:output)
-
-      class Success < self
-        def success?
-          true
-        end
-      end
-
-      class Failure < self
-        def success?
-          false
-        end
-      end
-    end
-
     class Authenticator
-
-      include Concord.new(:request)
+      extend Substation::Processor::Evaluator::Handler
 
       def self.call(request)
-        new(request).call
-      end
-
-      def call
         if request.input.name != 'unknown'
-          Result::Success.new(request.input)
+          success(request.input)
         else
-          Result::Failure.new(request.input)
+          error(request.input)
         end
       end
     end
 
     class Authorizer
-
-      include Concord.new(:request)
+      extend Substation::Processor::Evaluator::Handler
 
       def self.call(request)
-        new(request).call
-      end
-
-      def call
         if request.input.name != 'forbidden'
-          Result::Success.new(request.input)
+          success(request.input)
         else
-          Result::Failure.new(request.input)
+          error(request.input)
         end
       end
     end
+
   end
 
   module Models
