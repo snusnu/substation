@@ -205,8 +205,10 @@ module Substation
         # @api private
         def define_api_method(host, method_name, class_name)
           base = base_response # support the closure
-          host.define_method(method_name) do |output|
-            respond_with(base.const_get(class_name), output)
+          host.class_eval do
+            define_method(method_name) do |output|
+              respond_with(base.const_get(class_name), output)
+            end
           end
         end
 
@@ -219,9 +221,11 @@ module Substation
         #
         # @api private
         def define_abstract_helper_method(host)
-          host.define_method(:respond_with) do |_klass, _output|
-            msg = "#{self.class}##{__method__} must be implemented"
-            raise NotImplementedError, msg
+          host.class_eval do
+            define_method(:respond_with) do |_klass, _output|
+              msg = "#{self.class}##{__method__} must be implemented"
+              raise NotImplementedError, msg
+            end
           end
         end
       end # module Responder
