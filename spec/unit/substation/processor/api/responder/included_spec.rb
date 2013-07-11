@@ -17,7 +17,7 @@ describe Processor::API::Responder, '#included' do
       end
     end
 
-    [ :success, :error ].each do |method_name|
+    described_class::API_METHOD_MAPPING.keys.each do |method_name|
       it "raises NotImplementedError when calling ##{method_name}" do
         msg = "#{subject.class}#respond_with must be implemented"
         expect {
@@ -38,7 +38,7 @@ describe Processor::API::Responder, '#included' do
       end
     end
 
-    [ :success, :error ].each do |method_name|
+    described_class::API_METHOD_MAPPING.keys.each do |method_name|
       it "defines public ##{method_name} on its host" do
         expect(subject.public_send(method_name, output)).to eql(send(method_name))
       end
