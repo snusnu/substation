@@ -13,10 +13,16 @@ class Demo
 
   module Handler
 
-    class Authenticator
-      extend Substation::Processor::Evaluator::Handler
+    def call(request)
+      new(request).call
+    end
 
-      def self.call(request)
+    class Authenticator
+      extend Handler
+      include Substation::Processor::Evaluator::Handler
+      include Concord.new(:request)
+
+      def call
         if request.input.name != 'unknown'
           success(request.input)
         else
@@ -26,9 +32,11 @@ class Demo
     end
 
     class Authorizer
-      extend Substation::Processor::Evaluator::Handler
+      extend Handler
+      include Substation::Processor::Evaluator::Handler
+      include Concord.new(:request)
 
-      def self.call(request)
+      def call
         if request.input.name != 'forbidden'
           success(request.input)
         else
