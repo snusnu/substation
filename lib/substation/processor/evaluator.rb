@@ -13,30 +13,12 @@ module Substation
 
         # A successful evaluation result
         class Success < self
-
-          # Test wether evaluation was successful
-          #
-          # @return [true]
-          #
-          # @api private
-          def success?
-            true
-          end
-
+          include API::Success
         end # class Success
 
         # An errorneous evaluation result
         class Failure < self
-
-          # Test wether evaluation was successful
-          #
-          # @return [false]
-          #
-          # @api private
-          def success?
-            false
-          end
-
+          include API::Failure
         end # class Failure
       end # class Result
 

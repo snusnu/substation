@@ -142,38 +142,12 @@ module Substation
 
     # An errorneous {Response}
     class Failure < self
-
-      # Tests wether this response was successful
-      #
-      # @example
-      #
-      #   response = dispatcher.call(:failing_action, :some_input)
-      #   response.success? # => false
-      #
-      # @return [false]
-      #
-      # @api public
-      def success?
-        false
-      end
+      include Processor::API::Failure
     end
 
     # A successful {Response}
     class Success < self
-
-      # Tests wether this response was successful
-      #
-      # @example
-      #
-      #   response = dispatcher.call(:successful_action, :some_input)
-      #   response.success? # => true
-      #
-      # @return [true]
-      #
-      # @api public
-      def success?
-        true
-      end
+      include Processor::API::Success
     end
   end
 end

@@ -118,5 +118,35 @@ module Substation
       end
 
     end # module Outgoing
+
+    # Namespace for modules that help with processor api compatibility
+    module API
+
+      # Indicate successful processing
+      module Success
+
+        # Test wether evaluation was successful
+        #
+        # @return [true]
+        #
+        # @api private
+        def success?
+          true
+        end
+      end
+
+      # Indicate errorneous processing
+      module Failure
+
+        # Test wether evaluation was successful
+        #
+        # @return [false]
+        #
+        # @api private
+        def success?
+          false
+        end
+      end
+    end
   end # module Processor
 end # module Substation

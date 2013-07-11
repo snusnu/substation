@@ -48,16 +48,16 @@ module Substation
 
 end
 
+require 'substation/processor'
+require 'substation/processor/evaluator'
+require 'substation/processor/wrapper'
+require 'substation/processor/transformer'
 require 'substation/request'
 require 'substation/response'
 require 'substation/action'
 require 'substation/chain'
 require 'substation/chain/dsl'
 require 'substation/chain/failure_data'
-require 'substation/processor'
-require 'substation/processor/evaluator'
-require 'substation/processor/wrapper'
-require 'substation/processor/transformer'
 require 'substation/environment'
 require 'substation/environment/dsl'
 require 'substation/dispatcher'
