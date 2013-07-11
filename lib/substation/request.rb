@@ -6,6 +6,7 @@ module Substation
   class Request
 
     include Concord.new(:name, :env, :input)
+    include Processor::API::Responder.new(Response)
     include Adamantium::Flat
 
     # The name of the request
@@ -46,48 +47,6 @@ module Substation
     attr_reader :input
 
     alias_method :data, :input
-
-    # Create a new successful response
-    #
-    # @example
-    #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       data = perform_use_case
-    #       request.success(data)
-    #     end
-    #   end
-    #
-    # @param [Object] output
-    #   the data associated with the response
-    #
-    # @return [Response::Success]
-    #
-    # @api public
-    def success(output)
-      respond_with(Response::Success, output)
-    end
-
-    # Create a new failure response
-    #
-    # @example
-    #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       error = perform_use_case
-    #       request.error(error)
-    #     end
-    #   end
-    #
-    # @param [Object] output
-    #   the data associated with the response
-    #
-    # @return [Response::Failure]
-    #
-    # @api public
-    def error(output)
-      respond_with(Response::Failure, output)
-    end
 
     private
 

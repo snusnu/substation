@@ -39,6 +39,7 @@ LongParameterList:
   - Substation::Chain::DSL::Builder#define_dsl_method
   - Substation::Chain#self.failure_response
   - Substation::Chain#on_failure
+  - Substation::Processor::API::Responder#define_api_method
   max_params: 2
 LongYieldList:
   enabled: true
@@ -48,6 +49,8 @@ NestedIterators:
   enabled: true
   exclude:
   - Substation::Chain::DSL::Builder#define_dsl_method
+  - Substation::Processor::API::Responder#define_abstract_helper_method
+  - Substation::Processor::API::Responder#define_api_method
   max_allowed_nesting: 1
   ignore_iterators: []
 NilCheck:
