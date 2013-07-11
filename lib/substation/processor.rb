@@ -147,6 +147,85 @@ module Substation
           false
         end
       end
+
+      # Helps returning an api compatible result from custom Evaluator handlers
+      class Responder < Module
+
+        include Concord.new(:base_response)
+        include Adamantium::Flat
+
+        # Mapping of method names to class names
+        API_METHOD_MAPPING = {
+          :success => :Success,
+          :error   => :Failure
+        }.freeze
+
+        # Hook called when module is included
+        #
+        # @param [Class|Module] host
+        #   the object the module is being included in
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def included(host)
+          define_api_methods(host)
+          define_abstract_helper_method(host)
+        end
+
+        private
+
+        # Defines public responder methods on host
+        #
+        # @param [Class, Module] host
+        #   the object hosting this module
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def define_api_methods(host)
+          API_METHOD_MAPPING.each do |method_name, class_name|
+            define_api_method(host, method_name, class_name)
+          end
+        end
+
+        # Defines a public responder method on host
+        #
+        # @param [Class, Module] host
+        #   the object hosting this module
+        #
+        # @param [Symbol] method_name
+        #   the responder method's name
+        #
+        # @param [Symbol] class_name
+        #   the name of the class constructing the response
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def define_api_method(host, method_name, class_name)
+          base = base_response # support the closure
+          host.define_method(method_name) do |output|
+            respond_with(base.const_get(class_name), output)
+          end
+        end
+
+        # Defines private abstract responder helper method on host
+        #
+        # @param [Class, Module] host
+        #   the object hosting this module
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def define_abstract_helper_method(host)
+          host.define_method(:respond_with) do |_klass, _output|
+            msg = "#{self.class}##{__method__} must be implemented"
+            raise NotImplementedError, msg
+          end
+        end
+      end # module Responder
+
     end
   end # module Processor
 end # module Substation
