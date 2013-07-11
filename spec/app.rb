@@ -314,22 +314,37 @@ class Demo
     end
 
     class Development < self
-      def development?; true end
+      def development?
+        true
+      end
     end
 
     class Test < self
-      def test?; true end
+      def test?
+        true
+      end
     end
 
     class Production < self
-      def production?; true end
+      def production?
+        true
+      end
     end
 
+    include AbstractType
     include Concord.new(:name, :storage, :logger)
 
-    def development?; false end
-    def test?;        false end
-    def production?;  false end
+    def development?
+      false
+    end
+
+    def test?
+      false
+    end
+
+    def production?
+      false
+    end
   end
 
   logger   = Object.new # some logger instance
