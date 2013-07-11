@@ -185,7 +185,8 @@ module Substation
         # @api private
         def define_api_methods(host)
           API_METHOD_MAPPING.each do |method_name, class_name|
-            define_api_method(host, method_name, class_name)
+            klass = base_response.const_get(class_name)
+            define_api_method(host, method_name, klass)
           end
         end
 
@@ -197,17 +198,16 @@ module Substation
         # @param [Symbol] method_name
         #   the responder method's name
         #
-        # @param [Symbol] class_name
-        #   the name of the class constructing the response
+        # @param [Class] klass
+        #   the class constructing the response
         #
         # @return [undefined]
         #
         # @api private
-        def define_api_method(host, method_name, class_name)
-          base = base_response # support the closure
+        def define_api_method(host, method_name, klass)
           host.class_eval do
             define_method(method_name) do |output|
-              respond_with(base.const_get(class_name), output)
+              respond_with(klass, output)
             end
           end
         end
