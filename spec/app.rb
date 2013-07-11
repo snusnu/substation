@@ -280,6 +280,8 @@ class Demo
 
   end
 
+  APP_ENV = Object.new
+
   module Web
 
     SANITIZATION_ERROR = Demo::ENV.chain { wrap Error::SanitizationError }
@@ -330,29 +332,12 @@ class Demo
         wrap Views::Person
       end
 
+      # The application
+      APP = Demo::ENV.dispatcher(APP_ENV) do
+        dispatch :create_person, CREATE_PERSON
+      end
+
     end # module HTML
 
-  end
-
-  ACTIONS = {
-    :HTML => {
-      :create_person => Web::HTML::CREATE_PERSON,
-    }
-  }.freeze
-
-  APP_ENV = Object.new
-
-  include Concord.new(:dispatcher)
-  include Adamantium::Flat
-
-  APP = new(Substation::Dispatcher.new(ACTIONS[:HTML], APP_ENV))
-
-  def call(name, input = nil)
-    dispatcher.call(name, input)
-  end
-
-  def action_names
-    dispatcher.action_names
-  end
-
+  end # module Web
 end # class Demo

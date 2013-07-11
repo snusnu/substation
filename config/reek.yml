@@ -73,6 +73,7 @@ TooManyStatements:
   exclude:
   - Substation::Chain#call
   - Substation::Processor::Evaluator#call
+  - Substation::Dispatcher::DSL#dispatch
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true
@@ -115,4 +116,5 @@ UtilityFunction:
   - Substation::Processor::Evaluator#on_success # inside a method object
   - Substation::Processor#success? # in a module to be included in a method object
   - Substation::Environment#action # DSL method
+  - Substation::Environment#dispatcher # DSL method
   max_helper_calls: 0

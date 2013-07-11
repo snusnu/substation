@@ -9,6 +9,21 @@ module Substation
   # application use case.
   class Dispatcher
 
+    # Build a new instance
+    #
+    # @param [Object] env
+    #   the application environment
+    #
+    # @param [Proc] block
+    #   a block to be instance_eval'ed inside {DSL}
+    #
+    # @return [Dispatcher]
+    #
+    # @api private
+    def self.build(env, &block)
+      new(DSL.new(&block).dispatch_table, env)
+    end
+
     include Concord.new(:actions, :env)
     include Adamantium::Flat
 

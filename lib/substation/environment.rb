@@ -64,6 +64,24 @@ module Substation
       Action.new(handler, observers)
     end
 
+    # Build a new {Dispatcher} instance
+    #
+    # @see Dispatcher.build
+    #
+    # @param [Object] env
+    #   the application environment
+    #
+    # @param [Proc] block
+    #   a block to be instance_eval'd inside a {Dispatcher::DSL}
+    #   instance
+    #
+    # @return [Dispatcher]
+    #
+    # @api private
+    def dispatcher(env, &block)
+      Dispatcher.build(env, &block)
+    end
+
     protected
 
     # The registry used by this {Environment}

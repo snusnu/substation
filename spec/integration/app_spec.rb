@@ -3,7 +3,7 @@
 require 'app'
 
 describe 'a typical substation application' do
-  subject { Demo::APP.call(name, input) }
+  subject { Demo::Web::HTML::APP.call(name, input) }
 
   let(:request) { Substation::Request.new(name, env, input) }
   let(:name)    { :create_person }
@@ -51,7 +51,7 @@ describe 'a typical substation application' do
     let(:input) { mock }
 
     it 'lists all the registered names' do
-      expect(Demo::APP.action_names).to eql(Set[ :create_person ])
+      expect(Demo::Web::HTML::APP.action_names).to eql(Set[ :create_person ])
     end
   end
 

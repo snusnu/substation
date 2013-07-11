@@ -43,6 +43,9 @@ module Substation
   # Raised when trying to dispatch to an unregistered action
   UnknownActionError = Class.new(StandardError)
 
+  # Raised when a callable is already registered under the a given name
+  AlreadyRegisteredError = Class.new(StandardError)
+
 end
 
 require 'substation/request'
@@ -58,3 +61,4 @@ require 'substation/processor/transformer'
 require 'substation/environment'
 require 'substation/environment/dsl'
 require 'substation/dispatcher'
+require 'substation/dispatcher/dsl'

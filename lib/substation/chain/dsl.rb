@@ -235,7 +235,7 @@ module Substation
       #
       # @api private
       def raise_unknown_processor(name)
-        raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % (name.inspect)
+        raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % name.inspect
       end
 
     end # class DSL
