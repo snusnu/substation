@@ -33,3 +33,6 @@ LineLength:
 
 MethodLength:
   Max: 12 # reek performs these checks anyway
+
+CaseIndentation:
+  Enabled: false
