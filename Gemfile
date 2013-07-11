@@ -3,9 +3,9 @@ source 'http://rubygems.org'
 gemspec
 
 group :test do
-  gem 'ducktrap'
-  gem 'vanguard'
-  gem 'anima'
+  gem 'ducktrap', '~> 0.0.1'
+  gem 'vanguard', '~> 0.0.3'
+  gem 'anima',    '~> 0.0.6'
 end
 
 group :development do
