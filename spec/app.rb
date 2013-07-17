@@ -2,10 +2,11 @@
 
 require 'pp'
 
-require 'substation'
+require 'multi_json'
 require 'anima'
 require 'ducktrap'
 require 'vanguard'
+require 'substation'
 
 class Demo
 
@@ -60,40 +61,170 @@ class Demo
     end
   end
 
+  class Input
+    class Incomplete
+      include Concord::Public.new(:session, :data)
+    end
+    class Accepted
+      include Concord::Public.new(:actor, :data)
+    end
+  end
+
+  class Actor
+    class Session
+      include Equalizer.new(:data)
+
+      attr_reader :account_id
+
+      def initialize(data)
+        @data       = data
+        @account_id = @data.fetch('account_id')
+      end
+
+      protected
+
+      attr_reader :data
+    end
+
+    def self.coerce(session_data, person)
+      new(Session.new(session_data), person)
+    end
+
+    include Concord::Public.new(:session, :person)
+  end
+
+  ACCOUNTS = {
+    1 => { :name => 'Jane', :privileges => [ :create_person ] },
+    2 => { :name => 'Mr.X', :privileges => [] }
+  }
+
   module Handler
+
+    include Adamantium::Flat
 
     def call(request)
       new(request).call
     end
 
-    class Authenticator
-      extend Handler
-      include Substation::Processor::Evaluator::Handler
-      include Concord.new(:request)
+    module Wrapper
+      module Outgoing
+        DECOMPOSER = ->(response) { response.data }
+        COMPOSER   = ->(response, output) { output }
+        EXECUTOR   = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
+      end
+    end
+
+    class Deserializer
+      extend  Handler
+      include Concord.new(:input)
+
+      DECOMPOSER = ->(request) {
+        request.input
+      }
+
+      COMPOSER = ->(request, output) {
+        Input::Incomplete.new(output.fetch('session'), output.fetch('data'))
+      }
+
+      EXECUTOR = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
 
       def call
-        if request.input.name != 'unknown'
-          success(request.input)
-        else
-          error(request.input)
-        end
+        {
+          'session' => deserialize(input.fetch('session')),
+          'data'    => deserialize(input.fetch('data'))
+        }
+      end
+
+      private
+
+      def deserialize(json)
+        MultiJson.load(json)
+      end
+    end
+
+    class Authenticator
+      extend Handler
+
+      def initialize(request)
+        @request    = request
+        @input      = @request.input
+        @account_id = @request.input.session.fetch('account_id')
+      end
+
+      def call
+        authenticated? ? request.success(input) : request.error(input)
+      end
+
+      private
+
+      attr_reader :request
+      attr_reader :input
+
+      def authenticated?
+        Demo::ACCOUNTS.include?(@account_id)
       end
     end
 
     class Authorizer
       extend Handler
-      include Substation::Processor::Evaluator::Handler
-      include Concord.new(:request)
+
+      def initialize(request)
+        @request    = request
+        @input      = @request.input
+        @account_id = @request.input.session.fetch('account_id')
+        @privilege  = @request.name
+      end
 
       def call
-        if request.input.name != 'forbidden'
-          success(request.input)
-        else
-          error(request.input)
-        end
+        authorized? ? request.success(input) : request.error(input)
+      end
+
+      private
+
+      attr_reader :request
+      attr_reader :input
+
+      def authorized?
+        Demo::ACCOUNTS.fetch(@account_id)[:privileges].include?(@privilege)
       end
     end
 
+    class Acceptor
+      extend  Handler
+      include Equalizer.new(:session)
+
+      DECOMPOSER = ->(request) {
+        request.input.session
+      }
+
+      COMPOSER = ->(request, output) {
+        Input::Accepted.new(output, request.input.data)
+      }
+
+      EXECUTOR = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
+
+      def initialize(session)
+        @session    = session
+        @account_id = @session.fetch('account_id')
+      end
+
+      def call
+        Actor.coerce(session, person)
+      end
+
+      private
+
+      attr_reader :session
+      attr_reader :account_id
+
+      def person
+        Models::Person.new(:id => account_id, :name => name)
+      end
+
+      def name
+        Demo::ACCOUNTS.fetch(account_id)[:name]
+      end
+    end
   end
 
   module Models
@@ -102,7 +233,22 @@ class Demo
     end
   end
 
-  module Sanitizers
+  module Sanitizer
+
+    # substation support
+
+    DECOMPOSER = ->(request) {
+      request.input.data
+    }
+
+    COMPOSER = ->(request, output) {
+      Input::Incomplete.new(request.input.session, output)
+    }
+
+    EXECUTOR = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
+
+    # sanitizers
+
     ID_TRAP = Ducktrap.build do
       custom do
         forward { |input| input.merge(:id => nil) }
@@ -127,7 +273,22 @@ class Demo
     end
   end
 
-  module Validators
+  module Validator
+
+    # substation support
+
+    DECOMPOSER = ->(request) {
+      request.input.data
+    }
+
+    COMPOSER = ->(request, output) {
+      Input::Incomplete.new(request.input.session, output)
+    }
+
+    EXECUTOR = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
+
+    # validators
+
     NEW_PERSON = Vanguard::Validator.build do
       validates_presence_of :name
       validates_length_of :name, :length => 3..20
@@ -169,7 +330,7 @@ class Demo
     class CreatePerson < self
       def initialize(*)
         super
-        @person = input
+        @person = input.data
       end
 
       def call
@@ -262,25 +423,25 @@ class Demo
 
     class SanitizationError
       def self.call(response)
-        "Don't mess with the input params: #{response.input.inspect}"
+        "Don't mess with the input params: #{response.input.data.inspect}"
       end
     end
 
     class AuthenticationError
       def self.call(response)
-        "Failed to authenticate: #{response.input.inspect}"
+        "Failed to authenticate: #{response.input.data.inspect}"
       end
     end
 
     class AuthorizationError
       def self.call(response)
-        "Failed to authorize: #{response.input.inspect}"
+        "Failed to authorize: #{response.input.data.inspect}"
       end
     end
 
     class ValidationError
       def self.call(response)
-        "Failed to validate: #{response.input.inspect}"
+        "Failed to validate: #{response.input.data.inspect}"
       end
     end
 
@@ -310,13 +471,15 @@ class Demo
   end
 
   ENV = Substation::Environment.build do
-    register :sanitize,     Substation::Processor::Evaluator::Data
+    register :deserialize,  Substation::Processor::Transformer::Incoming, Handler::Deserializer::EXECUTOR
+    register :sanitize,     Substation::Processor::Evaluator::Request, Sanitizer::EXECUTOR
     register :authenticate, Substation::Processor::Evaluator::Request
     register :authorize,    Substation::Processor::Evaluator::Request
-    register :validate,     Substation::Processor::Evaluator::Data
+    register :validate,     Substation::Processor::Evaluator::Request, Validator::EXECUTOR
+    register :accept,       Substation::Processor::Transformer::Incoming, Handler::Acceptor::EXECUTOR
     register :call,         Substation::Processor::Evaluator::Pivot
-    register :wrap,         Substation::Processor::Wrapper
-    register :render,       Substation::Processor::Transformer
+    register :wrap,         Substation::Processor::Wrapper::Outgoing, Handler::Wrapper::Outgoing::EXECUTOR
+    register :render,       Substation::Processor::Transformer::Outgoing
   end
 
   CREATE_PERSON = ENV.action Action::CreatePerson, [
@@ -341,8 +504,9 @@ class Demo
     end
 
     CREATE_PERSON = ENV.chain(AUTHORIZE) do
-      validate Validators::NEW_PERSON, VALIDATION_ERROR
-      call Demo::CREATE_PERSON, APPLICATION_ERROR
+      validate Validator::NEW_PERSON, VALIDATION_ERROR
+      accept   Handler::Acceptor
+      call     Demo::CREATE_PERSON, APPLICATION_ERROR
     end
 
   end
@@ -361,8 +525,9 @@ class Demo
     end
 
     CREATE_PERSON = Demo::ENV.chain do
-      sanitize Sanitizers::NEW_PERSON, SANITIZATION_ERROR
-      chain App::CREATE_PERSON
+      deserialize Handler::Deserializer
+      sanitize    Sanitizer::NEW_PERSON, SANITIZATION_ERROR
+      chain       App::CREATE_PERSON
     end
 
     module HTML

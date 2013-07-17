@@ -50,8 +50,8 @@ module Substation
         #
         # @api private
         def compile_dsl
-          @registry.each_with_object(Class.new(DSL)) { |(name, processor), dsl|
-            define_dsl_method(name, processor, dsl)
+          @registry.each_with_object(Class.new(DSL)) { |(name, builder), dsl|
+            define_dsl_method(name, builder, dsl)
           }
         end
 
@@ -60,8 +60,8 @@ module Substation
         # @param [Symbol] name
         #   the name of the method
         #
-        # @param [#call] processor
-        #   the processor to use within the chain
+        # @param [Processor::Builder] builder
+        #   the processor builder to use within the chain
         #
         # @param [Class<DSL>] dsl
         #   the {DSL} subclass to define the method on
@@ -69,9 +69,11 @@ module Substation
         # @return [undefined]
         #
         # @api private
-        def define_dsl_method(name, processor, dsl)
+        def define_dsl_method(name, builder, dsl)
           dsl.class_eval do
-            define_method(name) { |*args| use(processor.new(name, *args)) }
+            define_method(name) { |handler, failure_chain = Chain::EMPTY|
+              use(builder.call(handler, failure_chain))
+            }
           end
         end
 

@@ -5,6 +5,30 @@ module Substation
   # Namespace for chain processors
   module Processor
 
+    include Equalizer.new(:name, :config)
+
+    def initialize(name, config)
+      @name          = name
+      @config        = config
+      @handler       = @config.handler
+      @failure_chain = @config.failure_chain
+      @executor      = @config.executor
+    end
+
+    # This processor's name
+    #
+    # @return [Symbol]
+    #
+    # @api private
+    attr_reader :name
+
+    # This processor's config
+    #
+    # @return [Builder::Config]
+    #
+    # @api private
+    attr_reader :config
+
     # Test wether chain processing should continue
     #
     # @param [Response] response
@@ -31,15 +55,75 @@ module Substation
       response
     end
 
-    module Fallible
-      include Concord.new(:name, :handler, :failure_chain)
+    protected
 
-      # This processor's name
-      #
-      # @return [Symbol]
-      #
-      # @api private
-      attr_reader :name
+    attr_reader :handler
+    attr_reader :failure_chain
+    attr_reader :executor
+
+    private
+
+    # Transform response data into something else
+    #
+    # @param [Response] response
+    #   the response to process
+    #
+    # @return [Response]
+    #
+    # @api private
+    def invoke(state)
+      handler.call(decompose(state))
+    end
+
+    def decompose(input)
+      executor.decompose(input)
+    end
+
+    def compose(input, output)
+      executor.compose(input, output)
+    end
+
+    # Supports building new {Processor} instances
+    class Builder
+
+      # Wraps {Processor} configuration
+      class Config
+        include Concord::Public.new(:handler, :failure_chain, :executor)
+
+        def with_failure_chain(chain)
+          self.class.new(handler, chain, executor)
+        end
+      end
+
+      include Concord.new(:name, :klass, :executor)
+
+      def call(handler, failure_chain)
+        klass.new(name, Config.new(handler, failure_chain, executor))
+      end
+    end
+
+    # Supports executing new {Processor} handler instances
+    class Executor
+
+      include Concord.new(:decomposer, :composer)
+      include Adamantium::Flat
+
+      decompose = ->(input)         { input  }
+      compose   = ->(input, output) { output }
+
+      NULL = new(decompose, compose)
+
+      def decompose(input)
+        decomposer.call(input)
+      end
+
+      def compose(input, output)
+        composer.call(input, output)
+      end
+    end
+
+    # Supports {Processor} instances with a defined failure {Chain}
+    module Fallible
 
       # Return a new processor with +chain+ as failure_chain
       #
@@ -50,10 +134,11 @@ module Substation
       #
       # @api private
       def with_failure_chain(chain)
-        self.class.new(name, handler, chain)
+        self.class.new(name, config.with_failure_chain(chain))
       end
     end
 
+    # Supports incoming {Processor} instances
     module Incoming
       include Processor
       include Fallible
@@ -72,28 +157,22 @@ module Substation
       end
     end
 
+    # Supports pivot {Processor} instances
     module Pivot
       include Processor
       include Fallible
     end
 
+    # Supports outgoing {Processor} instances
     module Outgoing
-      include Concord.new(:name, :handler)
       include Processor
-
-      # This processor's name
-      #
-      # @return [Symbol]
-      #
-      # @api private
-      attr_reader :name
 
       # Test wether chain processing should continue
       #
       # @param [Response] _response
       #   the response returned from invoking the processor
       #
-      # @return [false]
+      # @return [true]
       #
       # @api private
       def success?(_response)

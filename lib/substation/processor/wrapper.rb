@@ -4,10 +4,32 @@ module Substation
   module Processor
 
     # A processor that wraps output data in a new handler instance
-    class Wrapper
+    module Wrapper
 
-      include Processor::Outgoing
+      # A wrapper used to wrap incoming request data
+      class Incoming
+        include Processor::Incoming
+        include Wrapper
+
+        def call(request)
+          request.success(compose(request, invoke(request)))
+        end
+      end
+
+      # A wrapper used to wrap outgoing response data
+      class Outgoing
+        include Processor::Outgoing
+        include Wrapper
+
+        def call(response)
+          respond_with(response, compose(response, invoke(response)))
+        end
+      end
+
+      include AbstractType
       include Adamantium::Flat
+
+      abstract_method :call
 
       # Wrap response data in an instance of {#handler}
       #
@@ -17,8 +39,8 @@ module Substation
       # @return [Response]
       #
       # @api private
-      def call(response)
-        respond_with(response, handler.new(response.data))
+      def invoke(state)
+        handler.new(decompose(state))
       end
 
     end # class Wrapper

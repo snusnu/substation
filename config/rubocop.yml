@@ -36,3 +36,6 @@ MethodLength:
 
 CaseIndentation:
   Enabled: false
+
+Lambda:
+  Enabled: false # i personally like the look of multiline ->(arg) {} lambdas

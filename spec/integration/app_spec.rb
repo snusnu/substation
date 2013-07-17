@@ -9,6 +9,19 @@ describe 'a typical substation application' do
   let(:name)    { :create_person }
   let(:env)     { Demo::APP_ENV }
 
+  let(:session_data) { { 'account_id' => account_id } }
+
+  let(:input) {
+    {
+      'session' => MultiJson.dump(session_data),
+      'data'    => MultiJson.dump(data)
+    }
+  }
+
+  let(:authorized_id)   { 1 }
+  let(:unauthorized_id) { 2 }
+  let(:unknown_id)      { 3 }
+
   shared_examples_for 'all invocations' do
     it { should eql(response) }
 
@@ -17,14 +30,11 @@ describe 'a typical substation application' do
     end
 
     it 'provides the processed input in Response#input' do
-      expect(subject.input).to eql(input_data)
+      expect(subject.input).to eql(processed_input)
     end
   end
 
   shared_examples_for 'an action invocation' do
-    let(:input_data)     { processed_input }
-    let(:success_status) { true }
-
     it_behaves_like 'all invocations'
 
     it 'notifies all observers' do
@@ -35,7 +45,6 @@ describe 'a typical substation application' do
   end
 
   shared_examples_for 'no action invocation' do
-    let(:input_data)     { processed_input }
     let(:success_status) { false }
 
     it_behaves_like 'all invocations'
@@ -48,7 +57,8 @@ describe 'a typical substation application' do
   end
 
   context 'with registered chains' do
-    let(:input) { mock }
+    let(:input)      { mock }
+    let(:account_id) { authorized_id }
 
     it 'lists all the registered names' do
       expect(Demo::Web::HTML::APP.action_names).to eql(Set[ :create_person ])
@@ -56,58 +66,71 @@ describe 'a typical substation application' do
   end
 
   context 'with valid input' do
-    let(:input) { { 'name' => 'John' } }
+    let(:data)       { { 'name' => 'John' } }
+    let(:account_id) { authorized_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'John') }
-    let(:presenter)         { Demo::Presenters::Person.new(processed_input) }
+    let(:processed_input)   { Demo::Input::Accepted.new(actor, person) }
+    let(:actor)             { Demo::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)     { Demo::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'John') }
+    let(:presenter)         { Demo::Presenters::Person.new(person) }
     let(:view)              { Demo::Views::Person.new(presenter) }
     let(:response)          { Substation::Response::Success.new(processed_request, view) }
 
     it_behaves_like 'an action invocation' do
-      let(:action_response) { Substation::Response::Success.new(processed_request, processed_input) }
+      let(:action_response) { Substation::Response::Success.new(processed_request, person) }
+      let(:success_status) { true }
     end
   end
 
   context 'with an input that produces an application error' do
-    let(:input) { { 'name' => 'error' } }
+    let(:data)       { { 'name' => 'error' } }
+    let(:account_id) { authorized_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'error') }
-    let(:error)             { Demo::Error::ApplicationError.new(processed_input) }
+    let(:processed_input)   { Demo::Input::Accepted.new(actor, person) }
+    let(:actor)             { Demo::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)     { Demo::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'error') }
+    let(:error)             { Demo::Error::ApplicationError.new(person) }
     let(:error_response)    { Substation::Response::Failure.new(processed_request, error) }
     let(:rendered)          { Demo::Renderer::ApplicationError.call(error_response) }
     let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
     it_behaves_like 'an action invocation' do
-      let(:action_response) { Substation::Response::Failure.new(processed_request, processed_input) }
+      let(:action_response) { Substation::Response::Failure.new(processed_request, person) }
       let(:success_status)  { false }
     end
   end
 
   context 'with an input that raises an exception while processing' do
-    let(:input) { { 'name' => 'exception' } }
+    let(:data)       { { 'name' => 'exception' } }
+    let(:account_id) { authorized_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'exception') }
+    let(:processed_input)   { Demo::Input::Accepted.new(actor, person) }
+    let(:actor)             { Demo::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)     { Demo::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'exception') }
     let(:failure_data)      { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
     let(:error)             { Demo::Error::InternalError.new(failure_data) }
     let(:view)              { Demo::Views::InternalError.new(error) }
     let(:error_response)    { Substation::Response::Failure.new(processed_request, view) }
     let(:rendered)          { Demo::Renderer::InternalError.call(error_response) }
-    let(:response)          { Substation::Response::Failure.new(request, rendered) }
+    let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
-    it_behaves_like 'no action invocation' do
-      let(:input_data) { input }
-    end
+    it_behaves_like 'no action invocation'
   end
 
   context 'with invalid input' do
-    let(:input) { { 'name' => 'X' } }
+    let(:data)       { { 'name' => 'X' } }
+    let(:account_id) { authorized_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'X') }
-    let(:error)             { Demo::Error::ValidationError.new(processed_input) }
+    let(:processed_input)   { Demo::Input::Incomplete.new(session_data, person) }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'X') }
+    let(:error)             { Demo::Error::ValidationError.new(person) }
     let(:error_response)    { Substation::Response::Failure.new(processed_request, error) }
     let(:rendered)          { Demo::Renderer::ValidationError.call(error_response) }
     let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
@@ -116,24 +139,27 @@ describe 'a typical substation application' do
   end
 
   context 'with malformed input' do
-    let(:input) { { 'evil' => 'params' } }
+    let(:data)       { { 'malformed' => 'input' } }
+    let(:account_id) { authorized_id }
 
-    let(:error)             { Demo::Error::SanitizationError.new(input) }
+    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
+    let(:processed_input)   { Demo::Input::Incomplete.new(session_data, data) }
+    let(:error)             { Demo::Error::SanitizationError.new(processed_input) }
     let(:view)              { Demo::Views::SanitizationError.new(error) }
-    let(:error_response)    { Substation::Response::Failure.new(request, view) }
+    let(:error_response)    { Substation::Response::Failure.new(processed_request, view) }
     let(:rendered)          { Demo::Renderer::SanitizationError.call(error_response) }
-    let(:response)          { Substation::Response::Failure.new(request, rendered) }
+    let(:response)          { Substation::Response::Failure.new(processed_request, rendered) }
 
-    it_behaves_like 'no action invocation' do
-      let(:input_data) { input }
-    end
+    it_behaves_like 'no action invocation'
   end
 
   context 'with input from an unknown user' do
-    let(:input) { { 'name' => 'unknown' } }
+    let(:data)       { { 'name' => 'unknown' } }
+    let(:account_id) { unknown_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'unknown') }
+    let(:processed_input)   { Demo::Input::Incomplete.new(session_data, person) }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'unknown') }
     let(:error)             { Demo::Error::AuthenticationError.new(processed_input) }
     let(:error_response)    { Substation::Response::Failure.new(processed_request, error) }
     let(:rendered)          { Demo::Renderer::AuthenticationError.call(error_response) }
@@ -143,10 +169,12 @@ describe 'a typical substation application' do
   end
 
   context 'with input from an unauthorized user' do
-    let(:input) { { 'name' => 'forbidden' } }
+    let(:data)       { { 'name' => 'forbidden' } }
+    let(:account_id) { unauthorized_id }
 
     let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Models::Person.new(:id => nil, :name => 'forbidden') }
+    let(:processed_input)   { Demo::Input::Incomplete.new(session_data, person) }
+    let(:person)            { Demo::Models::Person.new(:id => nil, :name => 'forbidden') }
     let(:error)             { Demo::Error::AuthorizationError.new(processed_input) }
     let(:error_response)    { Substation::Response::Failure.new(processed_request, error) }
     let(:rendered)          { Demo::Renderer::AuthorizationError.call(error_response) }

@@ -68,29 +68,9 @@ module Substation
 
       end # module Handler
 
-      # Processor to evaluate request input data
-      class Data < self
-        include Incoming
-
-        private
-
-        # Invoke the handler
-        #
-        # @param [Request] request
-        #   the request to evaluate
-        #
-        # @return [Response]
-        #
-        # @api private
-        def invoke(request)
-          handler.call(request.input)
-        end
-
-      end
-
       # Processor to evaluate an incoming request
       class Request < self
-        include Incoming
+        include Processor::Incoming
       end
 
       # Processor to evaluate a pivot chain handler
@@ -137,18 +117,6 @@ module Substation
 
       private
 
-      # Invoke the handler
-      #
-      # @param [Request] request
-      #   the request to evaluate
-      #
-      # @return [Response]
-      #
-      # @api private
-      def invoke(request)
-        handler.call(request)
-      end
-
       # Return a successful response
       #
       # @param [Request] request
@@ -161,7 +129,7 @@ module Substation
       #
       # @api private
       def on_success(request, result)
-        request.success(result.output)
+        request.success(compose(request, result.output))
       end
 
       # Return a failure response by invoking a failure chain
@@ -176,7 +144,7 @@ module Substation
       #
       # @api private
       def on_failure(request, result)
-        failure_chain.call(request.error(result.output))
+        failure_chain.call(request.error(compose(request, result.output)))
       end
     end # class Evaluator
   end # module Processor
