@@ -6,6 +6,7 @@ class Demo
 
       class Authenticator
         extend Handler
+        include Substation::Processor::Evaluator::Handler
 
         def initialize(request)
           @request    = request
@@ -14,7 +15,7 @@ class Demo
         end
 
         def call
-          authenticated? ? request.success(input) : request.error(input)
+          authenticated? ? success(input) : error(input)
         end
 
         private
