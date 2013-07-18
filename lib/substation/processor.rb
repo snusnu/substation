@@ -55,13 +55,11 @@ module Substation
       response
     end
 
-    protected
+    private
 
     attr_reader :handler
     attr_reader :failure_chain
     attr_reader :executor
-
-    private
 
     # Transform response data into something else
     #
