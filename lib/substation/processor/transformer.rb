@@ -8,8 +8,8 @@ module Substation
 
       # A transformer used to transform an incoming request
       class Incoming
-        include Transformer
         include Processor::Incoming
+        include Transformer
 
         def call(request)
           request.success(compose(request, invoke(request)))
@@ -18,8 +18,8 @@ module Substation
 
       # A transformer used to transform an outgoing response
       class Outgoing
-        include Transformer
         include Processor::Outgoing
+        include Transformer
 
         def call(response)
           respond_with(response, compose(response, invoke(response)))
