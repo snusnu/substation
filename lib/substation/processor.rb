@@ -81,45 +81,6 @@ module Substation
       executor.compose(input, output)
     end
 
-    # Supports building new {Processor} instances
-    class Builder
-
-      # Wraps {Processor} configuration
-      class Config
-        include Concord::Public.new(:handler, :failure_chain, :executor)
-
-        def with_failure_chain(chain)
-          self.class.new(handler, chain, executor)
-        end
-      end
-
-      include Concord.new(:name, :klass, :executor)
-
-      def call(handler, failure_chain)
-        klass.new(name, Config.new(handler, failure_chain, executor))
-      end
-    end
-
-    # Supports executing new {Processor} handler instances
-    class Executor
-
-      include Concord.new(:decomposer, :composer)
-      include Adamantium::Flat
-
-      decompose = ->(input)         { input  }
-      compose   = ->(input, output) { output }
-
-      NULL = new(decompose, compose)
-
-      def decompose(input)
-        decomposer.call(input)
-      end
-
-      def compose(input, output)
-        composer.call(input, output)
-      end
-    end
-
     # Supports {Processor} instances with a defined failure {Chain}
     module Fallible
 
@@ -196,34 +157,5 @@ module Substation
 
     end # module Outgoing
 
-    # Namespace for modules that help with processor api compatibility
-    module API
-
-      # Indicate successful processing
-      module Success
-
-        # Test wether evaluation was successful
-        #
-        # @return [true]
-        #
-        # @api private
-        def success?
-          true
-        end
-      end
-
-      # Indicate errorneous processing
-      module Failure
-
-        # Test wether evaluation was successful
-        #
-        # @return [false]
-        #
-        # @api private
-        def success?
-          false
-        end
-      end
-    end
   end # module Processor
 end # module Substation

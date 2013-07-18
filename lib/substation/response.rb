@@ -140,14 +140,5 @@ module Substation
       Request.new(request.name, env, output)
     end
 
-    # An errorneous {Response}
-    class Failure < self
-      include Processor::API::Failure
-    end
-
-    # A successful {Response}
-    class Success < self
-      include Processor::API::Success
-    end
-  end
-end
+  end # class Response
+end # module Substation
