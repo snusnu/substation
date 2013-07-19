@@ -9,27 +9,14 @@ module Substation
       # A transformer used to transform an incoming request
       class Incoming
         include Processor::Incoming
-        include Transformer
-
-        def call(request)
-          request.success(compose(request, invoke(request)))
-        end
+        include Processor::Call::Incoming
       end
 
       # A transformer used to transform an outgoing response
       class Outgoing
         include Processor::Outgoing
-        include Transformer
-
-        def call(response)
-          respond_with(response, compose(response, invoke(response)))
-        end
+        include Processor::Call::Outgoing
       end
-
-      include AbstractType
-      include Adamantium::Flat
-
-      abstract_method :call
 
     end # class Transformer
   end # module Processor

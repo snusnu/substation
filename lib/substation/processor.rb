@@ -6,7 +6,19 @@ module Substation
   module Processor
 
     include Equalizer.new(:name, :config)
+    include Adamantium::Flat
 
+    # Initialize a new instance
+    #
+    # @param [Symbol] name
+    #   the processor's name
+    #
+    # @param [Builder::Config] config
+    #   the processor's configuration
+    #
+    # @return [undefined]
+    #
+    # @api private
     def initialize(name, config)
       @name          = name
       @config        = config
@@ -61,6 +73,10 @@ module Substation
     attr_reader :failure_chain
     attr_reader :executor
 
+    def execute(state)
+      compose(state, invoke(decompose(state)))
+    end
+
     # Transform response data into something else
     #
     # @param [Response] response
@@ -70,13 +86,34 @@ module Substation
     #
     # @api private
     def invoke(state)
-      handler.call(decompose(state))
+      handler.call(state)
     end
 
+    # Decompose +input+ before processing
+    #
+    # @param [Request, Response] input
+    #   the object to decompose
+    #
+    # @return [Object]
+    #   the decomposed object
+    #
+    # @api private
     def decompose(input)
       executor.decompose(input)
     end
 
+    # Compose a new object based on +input+ and +output+
+    #
+    # @param [Request, Response] input
+    #   the input as it was before calling {#decompose}
+    #
+    # @param [Object] output
+    #   the data used to compose a new object
+    #
+    # @return [Object]
+    #   the composed object
+    #
+    # @api private
     def compose(input, output)
       executor.compose(input, output)
     end
@@ -156,6 +193,43 @@ module Substation
       end
 
     end # module Outgoing
+
+    # Namespace for modules providing {#call} implementations
+    module Call
+
+      # Provides {Processor#call} for incoming processors
+      module Incoming
+
+        # Call the processor
+        #
+        # @param [Request] request
+        #   the request to process
+        #
+        # @return [Response::Success]
+        #
+        # @api private
+        def call(request)
+          request.success(execute(request))
+        end
+      end
+
+      # Provides {Processor#call} for outgoing processors
+      module Outgoing
+
+        # Call the processor
+        #
+        # @param [Response] response
+        #   the response to process
+        #
+        # @return [Response]
+        #   a new instance of the same class as +response+
+        #
+        # @api private
+        def call(response)
+          respond_with(response, execute(response))
+        end
+      end
+    end
 
   end # module Processor
 end # module Substation

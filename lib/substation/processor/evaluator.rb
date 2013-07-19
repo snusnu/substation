@@ -33,7 +33,6 @@ module Substation
         end
       end
 
-      include Adamantium::Flat
       include AbstractType
 
       # Evaluate a chain's request input data
@@ -45,7 +44,7 @@ module Substation
       #
       # @api private
       def call(request)
-        result = invoke(request)
+        result = invoke(decompose(request))
         if result.success?
           on_success(request, result)
         else
@@ -67,7 +66,7 @@ module Substation
       #
       # @api private
       def on_success(request, result)
-        request.success(compose(request, result.output))
+        request.success(output(request, result))
       end
 
       # Return a failure response by invoking a failure chain
@@ -82,7 +81,11 @@ module Substation
       #
       # @api private
       def on_failure(request, result)
-        failure_chain.call(request.error(compose(request, result.output)))
+        failure_chain.call(request.error(output(request, result)))
+      end
+
+      def output(request, result)
+        compose(request, result.output)
       end
     end # class Evaluator
   end # module Processor
