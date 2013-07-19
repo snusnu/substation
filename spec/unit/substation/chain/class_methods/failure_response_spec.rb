@@ -5,12 +5,14 @@ require 'spec_helper'
 describe Chain, '.failure_response' do
   subject { described_class.failure_response(request, data, exception) }
 
-  let(:request)   { mock(:env => mock, :input => mock) }
-  let(:data)      { mock }
-  let(:exception) { mock }
+  include_context 'Request#initialize'
 
-  let(:expected)     { Response::Failure.new(request, failure_data) }
-  let(:failure_data) { described_class::FailureData.new(data, exception) }
+  let(:data)      { double('data') }
+  let(:exception) { double('exception') }
+
+  let(:expected)         { Response::Failure.new(expected_request, failure_data) }
+  let(:expected_request) { request.with_input(data) }
+  let(:failure_data)     { described_class::FailureData.new(data, exception) }
 
   it { should eql(expected) }
 end

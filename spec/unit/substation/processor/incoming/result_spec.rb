@@ -6,20 +6,15 @@ describe Processor::Incoming, '#result' do
 
   subject { object.result(response) }
 
-  let(:object) {
-    Class.new {
-      include Substation::Processor::Incoming
-    }.new(processor_name, handler, failure_chain)
-  }
+  include_context 'Processor#initialize'
 
-  let(:processor_name) { mock }
-  let(:response)       { Response::Success.new(request, input) }
-  let(:request)        { Request.new(action_name, env, input) }
-  let(:action_name)    { mock }
-  let(:env)            { mock }
-  let(:input)          { mock }
-  let(:failure_chain)  { mock }
-  let(:handler)        { mock }
+  let(:klass) { Class.new { include Substation::Processor::Incoming } }
+
+  let(:response) { Response::Success.new(request, input) }
+  let(:request)  { Request.new(name, env, input) }
+  let(:name)     { double }
+  let(:env)      { double }
+  let(:input)    { double }
 
   it { should eql(request) }
 end

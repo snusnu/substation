@@ -49,7 +49,8 @@ module Spec
   end
 
   class Processor
-    include Substation::Processor::Fallible
+    include Substation::Processor::Incoming
+    include Substation::Processor::Call::Incoming
     attr_reader :name
   end
 
@@ -104,9 +105,16 @@ module Spec
 
   end
 
-  FAKE_HANDLER   = Object.new
-  FAKE_ENV       = Object.new
-  FAKE_PROCESSOR = Processor.new(:test, FAKE_HANDLER, [])
+  FAKE_ENV     = Object.new
+  FAKE_HANDLER = Object.new
+
+  FAKE_CONFIG = Substation::Processor::Config.new(
+    FAKE_HANDLER,
+    Substation::Chain::EMPTY,
+    Substation::Processor::Executor::NULL
+  )
+
+  FAKE_PROCESSOR = Processor.new(:test, FAKE_CONFIG)
 
 end
 

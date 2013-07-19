@@ -6,23 +6,23 @@ describe Processor::Outgoing, '#call' do
 
   subject { object.call(request) }
 
-  let(:object) {
+  include_context 'Processor#initialize'
+
+  let(:klass) {
     Class.new {
       include Substation::Processor::Outgoing
       def call(request)
         response = request.success(request.input)
         respond_with(response, :altered)
       end
-    }.new(processor_name, handler)
+    }
   }
 
-  let(:processor_name) { mock }
-  let(:response)       { Response::Success.new(request, :altered) }
-  let(:request)        { Request.new(action_name, env, input) }
-  let(:action_name)    { mock }
-  let(:env)            { mock }
-  let(:input)          { mock }
-  let(:handler)        { mock }
+  let(:response) { Response::Success.new(request, :altered) }
+  let(:request)  { Request.new(name, env, input) }
+  let(:name)     { double }
+  let(:env)      { double }
+  let(:input)    { double }
 
   it { should eql(response) }
 end

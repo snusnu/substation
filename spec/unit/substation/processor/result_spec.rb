@@ -6,17 +6,14 @@ describe Processor, '#result' do
 
   subject { object.result(response) }
 
-  let(:object) {
-    Class.new {
-      include Substation::Processor
-    }.new
-  }
+  include_context 'Processor#initialize'
 
+  let(:klass)    { Class.new { include Substation::Processor } }
   let(:response) { Response::Success.new(request, input) }
   let(:request)  { Request.new(name, env, input) }
-  let(:name)     { mock }
-  let(:env)      { mock }
-  let(:input)    { mock }
+  let(:name)     { double }
+  let(:env)      { double }
+  let(:input)    { double }
 
   it { should be(response) }
 end
