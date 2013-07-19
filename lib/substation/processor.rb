@@ -13,7 +13,7 @@ module Substation
     # @param [Symbol] name
     #   the processor's name
     #
-    # @param [Builder::Config] config
+    # @param [Config] config
     #   the processor's configuration
     #
     # @return [undefined]
