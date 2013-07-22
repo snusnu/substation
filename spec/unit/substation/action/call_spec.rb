@@ -21,7 +21,7 @@ describe Action, '#call' do
     let(:observers) { [ Spec::Observer ] }
 
     before do
-      Spec::Observer.should_receive(:call).with(response)
+      expect(Spec::Observer).to receive(:call).with(response)
     end
 
     it { should eql(response) }

@@ -11,14 +11,14 @@ describe Chain, '#each' do
   let(:yields)     { [] }
 
   before do
-    object.should be_instance_of(described_class)
+    expect(object).to be_instance_of(described_class)
   end
 
   it_should_behave_like 'an #each method'
 
   it 'yields only processors' do
     subject
-    yields.each { |processor| processor.should be_instance_of(Spec::Processor) }
+    yields.each { |processor| expect(processor).to be_instance_of(Spec::Processor) }
   end
 
   it 'yields only processors with the expected handler' do
@@ -35,7 +35,7 @@ describe Chain do
   let(:processor)  { Spec::FAKE_PROCESSOR }
 
   before do
-    subject.should be_instance_of(described_class)
+    expect(subject).to be_instance_of(described_class)
   end
 
   it { should be_kind_of(Enumerable) }
