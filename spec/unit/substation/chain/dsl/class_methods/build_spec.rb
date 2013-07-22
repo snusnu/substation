@@ -5,20 +5,19 @@ require 'spec_helper'
 describe Chain::DSL, '.build' do
 
   let(:chain) { EMPTY_ARRAY }
-  let(:failure_chain) { Chain::EMPTY }
+  let(:failure_chain) { EMPTY_ARRAY }
 
   context 'and a block is given' do
     subject { described_class.build(chain, failure_chain, &block) }
 
-    let(:block)     { ->(_) { use(Spec::FAKE_PROCESSOR) } }
-    let(:processor) { Spec::FAKE_PROCESSOR }
+    let(:block) { ->(_) { use(Spec::FAKE_PROCESSOR) } }
 
-    it { should include(processor) }
+    it { should eql(Chain.new([Spec::FAKE_PROCESSOR], failure_chain)) }
   end
 
   context 'and no block is given' do
     subject { described_class.build(chain, failure_chain) }
 
-    its(:processors) { should be_empty }
+    it { should eql(Chain::EMPTY) }
   end
 end

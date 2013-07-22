@@ -71,7 +71,7 @@ module Substation
     include Adamantium::Flat
 
     # Empty chain
-    EMPTY = Class.new(self).new(EMPTY_ARRAY, EMPTY_ARRAY)
+    EMPTY = new(EMPTY_ARRAY, EMPTY_ARRAY)
 
     # Return a failure response
     #
