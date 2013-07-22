@@ -3,14 +3,11 @@
 require 'spec_helper'
 
 describe Request, '#error' do
+  subject { request.error(output) }
 
-  subject { object.error(output) }
+  include_context 'Request#initialize'
 
-  let(:object) { described_class.new(name, env, input) }
-  let(:name)   { double }
-  let(:env)    { double }
-  let(:input)  { double }
   let(:output) { double }
 
-  it { should eql(Response::Failure.new(object, output)) }
+  it { should eql(Response::Failure.new(request, output)) }
 end

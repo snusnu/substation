@@ -3,13 +3,9 @@
 require 'spec_helper'
 
 describe Request, '#name' do
+  subject { request.name }
 
-  subject { object.name }
-
-  let(:object) { described_class.new(name, env, input) }
-  let(:name)   { double }
-  let(:env)    { double }
-  let(:input)  { double }
+  include_context 'Request#initialize'
 
   it { should be(name) }
 end
