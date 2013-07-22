@@ -28,3 +28,11 @@ shared_context 'Processor::Config#initialize' do
   let(:failure_chain) { double('failure_chain') }
   let(:executor)      { double('executor') }
 end
+
+shared_context 'Processor::Executor#initialize' do
+  let(:object)     { described_class.new(decomposer, composer) }
+  let(:decomposer) { double('decomposer') }
+  let(:composer)   { double('composer') }
+  let(:decomposed) { double('decomposed') }
+  let(:composed)   { double('composed') }
+end
