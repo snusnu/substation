@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Processor::Config, '#failure_chain' do
-  subject { object.failure_chain }
+  subject { config.failure_chain }
 
   include_context 'Processor::Config#initialize'
 

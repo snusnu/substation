@@ -23,14 +23,14 @@ shared_context 'Processor::Call' do
 end
 
 shared_context 'Processor::Config#initialize' do
-  let(:object)        { described_class.new(handler, failure_chain, executor) }
+  let(:config)        { Processor::Config.new(handler, failure_chain, executor) }
   let(:handler)       { double('handler') }
   let(:failure_chain) { double('failure_chain') }
   let(:executor)      { double('executor') }
 end
 
 shared_context 'Processor::Executor#initialize' do
-  let(:object)     { described_class.new(decomposer, composer) }
+  let(:executor)   { Processor::Executor.new(decomposer, composer) }
   let(:decomposer) { double('decomposer') }
   let(:composer)   { double('composer') }
   let(:decomposed) { double('decomposed') }

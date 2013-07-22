@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Processor::Config, '#handler' do
-  subject { object.handler }
+  subject { config.handler }
 
   include_context 'Processor::Config#initialize'
 

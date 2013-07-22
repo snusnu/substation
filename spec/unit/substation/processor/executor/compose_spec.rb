@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Processor::Executor, '#compose' do
-  subject { object.compose(input, output) }
+  subject { executor.compose(input, output) }
 
   include_context 'Processor::Executor#initialize'
 
