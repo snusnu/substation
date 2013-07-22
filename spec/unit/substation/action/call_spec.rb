@@ -8,9 +8,9 @@ describe Action, '#call' do
   let(:object)      { described_class.new(handler, observers) }
   let(:handler)     { Spec::Action::Success }
   let(:request)     { Request.new(action_name, env, input) }
-  let(:action_name) { mock }
-  let(:env)         { mock }
-  let(:input)       { mock }
+  let(:action_name) { double }
+  let(:env)         { double }
+  let(:input)       { double }
 
   let(:response) { handler.call(request) }
 

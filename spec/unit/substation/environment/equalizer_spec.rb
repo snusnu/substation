@@ -8,8 +8,8 @@ describe Substation::Environment, 'equalizer behavior' do
   let(:object) { described_class.new(registry, dsl) }
   let(:other)  { described_class.new(other_registry, dsl) }
 
-  let(:registry) { mock }
-  let(:dsl)      { mock }
+  let(:registry) { double }
+  let(:dsl)      { double }
 
   context 'with an equal registry' do
     let(:other_registry) { registry }
@@ -18,7 +18,7 @@ describe Substation::Environment, 'equalizer behavior' do
   end
 
   context 'with a different registry' do
-    let(:other_registry) { mock }
+    let(:other_registry) { double }
 
     it { should be(false) }
   end

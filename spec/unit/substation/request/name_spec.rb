@@ -7,9 +7,9 @@ describe Request, '#name' do
   subject { object.name }
 
   let(:object) { described_class.new(name, env, input) }
-  let(:name)   { mock }
-  let(:env)    { mock }
-  let(:input)  { mock }
+  let(:name)   { double }
+  let(:env)    { double }
+  let(:input)  { double }
 
   it { should be(name) }
 end

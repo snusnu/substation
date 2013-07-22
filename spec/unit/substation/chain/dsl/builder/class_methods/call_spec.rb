@@ -7,8 +7,8 @@ describe Chain::DSL::Builder, '.call' do
 
   let(:registry) { { :test => Spec::Processor } }
 
-  let(:builder) { mock(:dsl => dsl) }
-  let(:dsl)     { mock }
+  let(:builder) { double(:dsl => dsl) }
+  let(:dsl)     { double }
 
   before do
     described_class.should_receive(:new).with(registry).and_return(builder)

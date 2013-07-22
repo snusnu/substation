@@ -7,10 +7,8 @@ describe Response::Failure, '#success?' do
 
   let(:object)  { described_class.new(request, output) }
   let(:request) { Request.new(name, env, input) }
-  let(:name)    { mock }
-  let(:env)     { mock }
-  let(:input)   { mock }
-  let(:output)  { mock }
-
-  it { should be(false) }
+  let(:name)    { double }
+  let(:env)     { double }
+  let(:input)   { double }
+  let(:output)  { double }
 end

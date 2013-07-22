@@ -8,10 +8,10 @@ describe Response, '#request' do
 
   let(:object)   { Class.new(described_class).new(request, output) }
   let(:request)  { Request.new(name, env, input) }
-  let(:name)     { mock }
-  let(:env)      { mock }
-  let(:input)    { mock }
-  let(:output)   { mock }
+  let(:name)     { double }
+  let(:env)      { double }
+  let(:input)    { double }
+  let(:output)   { double }
 
   it { should be(request) }
 end

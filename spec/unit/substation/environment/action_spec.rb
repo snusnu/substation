@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Environment, '#action' do
 
   let(:object)      { described_class.new(registry, chain_dsl) }
-  let(:registry)    { mock }
-  let(:chain_dsl)   { mock }
-  let(:handler)     { mock }
+  let(:registry)    { double }
+  let(:chain_dsl)   { double }
+  let(:handler)     { double }
 
   context 'when no observers are given' do
     subject { object.action(handler) }

@@ -11,7 +11,7 @@ describe Chain::DSL, '#failure_chain' do
   let(:block)    { ->(_) { register(:test, Spec::Processor) } }
 
   let(:processor)     { Spec::FAKE_PROCESSOR.with_failure_chain(failure_chain) }
-  let(:failure_chain) { mock }
+  let(:failure_chain) { double }
 
   context 'when the processor to alter is registered' do
     let(:name) { :test }

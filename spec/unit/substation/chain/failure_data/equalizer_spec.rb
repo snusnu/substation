@@ -6,7 +6,7 @@ describe Chain::FailureData, 'equalizer behavior' do
   subject { object == other }
 
   let(:object)    { described_class.new(data, exception) }
-  let(:data)      { mock }
+  let(:data)      { double }
   let(:exception) { RuntimeError.new }
 
   let(:other)     { described_class.new(other_data, other_exception) }
@@ -29,7 +29,7 @@ describe Chain::FailureData, 'equalizer behavior' do
   end
 
   context 'with different data associated' do
-    let(:other_data) { mock }
+    let(:other_data) { double }
 
     context 'and equal exception classes' do
       let(:other_exception) { RuntimeError.new }
