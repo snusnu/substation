@@ -6,7 +6,7 @@ shared_context 'Processor#initialize' do
   let(:processor_config) { Processor::Config.new(handler, failure_chain, executor) }
   let(:handler)          { double('handler') }
   let(:failure_chain)    { double(:call => failure_response) }
-  let(:failure_response) { double }
+  let(:failure_response) { double('failure_response') }
   let(:executor)         { Processor::Executor::NULL }
 end
 
@@ -16,8 +16,8 @@ shared_context 'Processor::Call' do
   include_context 'Processor#initialize'
 
   let(:response)      { Response::Success.new(request, original_data) }
-  let(:original_data) { double }
+  let(:original_data) { double('original_data') }
 
   let(:expected)      { Response::Success.new(request, expected_data) }
-  let(:expected_data) { double }
+  let(:expected_data) { double('expected_data') }
 end
