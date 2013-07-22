@@ -21,3 +21,10 @@ shared_context 'Processor::Call' do
   let(:expected)      { Response::Success.new(request, expected_data) }
   let(:expected_data) { double('expected_data') }
 end
+
+shared_context 'Processor::Config#initialize' do
+  let(:object)        { described_class.new(handler, failure_chain, executor) }
+  let(:handler)       { double('handler') }
+  let(:failure_chain) { double('failure_chain') }
+  let(:executor)      { double('executor') }
+end
