@@ -6,20 +6,21 @@ describe Chain, '#call' do
 
   subject { object.call(request) }
 
+  include_context 'Request#initialize'
+
   let(:object)          { described_class.new(processors, exception_chain) }
-  let(:exception_chain) { mock(:call => response) }
+  let(:exception_chain) { double(:call => response) }
   let(:processors)      { [ processor_1, processor_2, processor_3 ] }
-  let(:request)         { Request.new(name, env, input) }
-  let(:name)            { mock }
-  let(:env)             { mock }
-  let(:input)           { mock }
 
-  let(:failure_chain) { mock }
-  let(:handler)       { mock }
+  let(:processor_1_name) { double }
+  let(:processor_2_name) { double }
+  let(:processor_3_name) { double }
 
-  let(:processor_1_name) { mock }
-  let(:processor_2_name) { mock }
-  let(:processor_3_name) { mock }
+  let(:processor_config) { Processor::Config.new(handler, failure_chain, executor) }
+  let(:handler)          { double('handler') }
+  let(:failure_chain)    { double(:call => failure_response) }
+  let(:failure_response) { double }
+  let(:executor)         { Processor::Executor::NULL }
 
   context 'when all processors are successful' do
     let(:processor_1) {
@@ -28,7 +29,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, handler, failure_chain)
+      }.new(processor_1_name, processor_config)
     }
 
     let(:processor_2) {
@@ -37,7 +38,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_2)
         end
-      }.new(processor_2_name, handler, failure_chain)
+      }.new(processor_2_name, processor_config)
     }
 
     let(:processor_3) {
@@ -46,7 +47,7 @@ describe Chain, '#call' do
         def call(response)
           respond_with(response, :success_3)
         end
-      }.new(processor_3_name, handler)
+      }.new(processor_3_name, processor_config)
     }
 
     let(:response)        { Response::Success.new(current_request, :success_3) }
@@ -63,7 +64,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_2_name, handler, failure_chain)
+      }.new(processor_2_name, processor_config)
     }
 
     let(:processor_3) {
@@ -72,7 +73,7 @@ describe Chain, '#call' do
         def call(response)
           respond_with(response, :success_3)
         end
-      }.new(processor_3_name, handler)
+      }.new(processor_3_name, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -84,7 +85,7 @@ describe Chain, '#call' do
           def call(request)
             request.error(:error_1)
           end
-        }.new(processor_1_name, handler, failure_chain)
+        }.new(processor_1_name, processor_config)
       }
 
       let(:response) { Response::Failure.new(request, :error_1) }
@@ -99,7 +100,7 @@ describe Chain, '#call' do
           def call(request)
             raise RuntimeError, 'exception_1'
           end
-        }.new(processor_1_name, handler, failure_chain)
+        }.new(processor_1_name, processor_config)
       }
 
       let(:response) { Response::Failure.new(request, data) }
@@ -112,7 +113,7 @@ describe Chain, '#call' do
       end
 
       it 'calls the failure chain' do
-        exception_chain.should_receive(:call).with(response)
+        expect(exception_chain).to receive(:call).with(response)
         subject
       end
     end
@@ -125,7 +126,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, handler, failure_chain)
+      }.new(processor_1_name, processor_config)
     }
 
     let(:processor_3) {
@@ -134,7 +135,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(processor_3_name, handler)
+      }.new(processor_3_name, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -146,7 +147,7 @@ describe Chain, '#call' do
           def call(request)
             request.error(:error_2)
           end
-        }.new(processor_2_name, handler, failure_chain)
+        }.new(processor_2_name, processor_config)
       }
 
       let(:response)        { Response::Failure.new(current_request, :error_2) }
@@ -162,10 +163,10 @@ describe Chain, '#call' do
           def call(request)
             raise RuntimeError, 'exception_2'
           end
-        }.new(processor_2_name, handler, failure_chain)
+        }.new(processor_2_name, processor_config)
       }
 
-      let(:response)        { Response::Failure.new(request, data) }
+      let(:response)        { Response::Failure.new(request.with_input(:success_1), data) }
       let(:data)            { Chain::FailureData.new(:success_1, RuntimeError.new('exception_2')) }
       let(:current_request) { Request.new(name, env, :success_1) }
 
@@ -176,7 +177,7 @@ describe Chain, '#call' do
       end
 
       it 'calls the failure chain' do
-        exception_chain.should_receive(:call).with(response)
+        expect(exception_chain).to receive(:call).with(response)
         subject
       end
     end
@@ -189,7 +190,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, handler, failure_chain)
+      }.new(processor_1_name, processor_config)
     }
 
     let(:processor_2) {
@@ -198,7 +199,7 @@ describe Chain, '#call' do
         def call(response)
           response.success(:success_2)
         end
-      }.new(processor_2_name, handler, failure_chain)
+      }.new(processor_2_name, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -210,10 +211,10 @@ describe Chain, '#call' do
           def call(response)
             raise RuntimeError, 'exception_3'
           end
-        }.new(processor_3_name, handler)
+        }.new(processor_3_name, processor_config)
       }
 
-      let(:response)         { Response::Failure.new(request, data) }
+      let(:response)         { Response::Failure.new(request.with_input(:success_2), data) }
       let(:data)             { Chain::FailureData.new(:success_2, RuntimeError.new('exception_3')) }
       let(:current_request)  { Request.new(name, env, :success_1) }
       let(:current_response) { Response::Success.new(current_request, :success_2) }
@@ -225,7 +226,7 @@ describe Chain, '#call' do
       end
 
       it 'calls the failure chain' do
-        exception_chain.should_receive(:call).with(response)
+        expect(exception_chain).to receive(:call).with(response)
         subject
       end
     end
