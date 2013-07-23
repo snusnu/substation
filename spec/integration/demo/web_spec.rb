@@ -38,8 +38,8 @@ describe 'a typical substation application' do
     it_behaves_like 'all invocations'
 
     it 'notifies all observers' do
-      Demo::Core::Observers::LOG_EVENT.should_receive(:call).with(action_response)
-      Demo::Core::Observers::SEND_EMAIL.should_receive(:call).with(action_response)
+      expect(Demo::Core::Observers::LOG_EVENT).to receive(:call).with(action_response)
+      expect(Demo::Core::Observers::SEND_EMAIL).to receive(:call).with(action_response)
       subject
     end
   end
@@ -50,8 +50,8 @@ describe 'a typical substation application' do
     it_behaves_like 'all invocations'
 
     it 'does not notify any observers' do
-      Demo::Core::Observers::LOG_EVENT.should_not_receive(:call)
-      Demo::Core::Observers::SEND_EMAIL.should_not_receive(:call)
+      expect(Demo::Core::Observers::LOG_EVENT).to_not receive(:call)
+      expect(Demo::Core::Observers::SEND_EMAIL).to_not receive(:call)
       subject
     end
   end
