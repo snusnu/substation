@@ -2,5 +2,5 @@
 
 module Substation
   # Gem version
-  VERSION = '0.0.10'.freeze
+  VERSION = '0.0.11.beta1'.freeze
 end

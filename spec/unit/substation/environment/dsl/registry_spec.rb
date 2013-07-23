@@ -2,13 +2,17 @@
 
 require 'spec_helper'
 
-describe Substation::Environment::DSL, '#registry' do
+describe Environment::DSL, '#registry' do
   subject { object.registry }
 
   context 'when a block is given' do
     let(:object)   { described_class.new(&block) }
     let(:block)    { ->(_) { register :test, Spec::Processor } }
-    let(:expected) { { :test => Spec::Processor } }
+    let(:expected) {
+      {
+        :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
+      }
+    }
 
     it { should eql(expected) }
   end

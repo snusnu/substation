@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Environment, '#dispatcher' do
 
   let(:object)      { described_class.new(registry, chain_dsl) }
-  let(:registry)    { mock }
-  let(:chain_dsl)   { mock }
-  let(:env)         { mock }
+  let(:registry)    { double }
+  let(:chain_dsl)   { double }
+  let(:env)         { double }
 
   context 'when no block is given' do
     subject { object.dispatcher(env) }

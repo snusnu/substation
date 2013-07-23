@@ -49,8 +49,8 @@ module Substation
       # @return [self]
       #
       # @api private
-      def register(name, processor)
-        @registry[name.to_sym] = processor
+      def register(name, processor, executor = Processor::Executor::NULL)
+        @registry[name.to_sym] = Processor::Builder.new(name, processor, executor)
         self
       end
 

@@ -10,8 +10,8 @@ describe Substation::Environment, '#chain' do
   let(:registry) { described_class::DSL.registry(&r_block) }
   let(:r_block)  { ->(_) { register(:test, Spec::Processor) } }
 
-  let(:other)         { mock('other', :each => EMPTY_ARRAY) }
-  let(:failure_chain) { mock('failure_chain') }
+  let(:other)         { double('other', :each => EMPTY_ARRAY) }
+  let(:failure_chain) { double('failure_chain') }
   let(:block)         { ->(_) { test Spec::FAKE_HANDLER, Chain::EMPTY } }
 
   context 'when other, failure_chain and block are given' do

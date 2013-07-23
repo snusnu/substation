@@ -29,10 +29,13 @@ SingleLineMethods:
   Enabled: false
 
 LineLength:
-  Max: 106 # the offending lines are in specs, sadly this means global disabling for now 
+  Max: 112 # the offending lines are in specs, sadly this means global disabling for now 
 
 MethodLength:
   Max: 12 # reek performs these checks anyway
 
 CaseIndentation:
   Enabled: false
+
+Lambda:
+  Enabled: false # i personally like the look of multiline ->(arg) {} lambdas

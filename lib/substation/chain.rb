@@ -71,7 +71,7 @@ module Substation
     include Adamantium::Flat
 
     # Empty chain
-    EMPTY = Class.new(self).new(EMPTY_ARRAY, EMPTY_ARRAY)
+    EMPTY = new(EMPTY_ARRAY, EMPTY_ARRAY)
 
     # Return a failure response
     #
@@ -88,7 +88,7 @@ module Substation
     #
     # @api private
     def self.failure_response(request, data, exception)
-      Response::Failure.new(request, FailureData.new(data, exception))
+      Response::Failure.new(request.with_input(data), FailureData.new(data, exception))
     end
 
     # Call the chain

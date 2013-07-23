@@ -6,9 +6,9 @@ describe Dispatcher::DSL, '#dispatch' do
   subject { object.dispatch(name, callable) }
 
   let(:object)       { described_class.new }
-  let(:callable)     { mock }
-  let(:name)         { mock(:to_sym => coerced_name) }
-  let(:coerced_name) { mock }
+  let(:callable)     { double }
+  let(:name)         { double(:to_sym => coerced_name) }
+  let(:coerced_name) { double }
 
   context 'when name is not yet registered' do
     it_behaves_like 'a command method'

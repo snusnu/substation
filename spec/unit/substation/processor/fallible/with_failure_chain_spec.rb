@@ -5,14 +5,18 @@ require 'spec_helper'
 describe Processor::Fallible, '#with_failure_chain' do
   subject { object.with_failure_chain(chain) }
 
-  let(:object)        { klass.new(name, handler, failure_chain) }
-  let(:klass)         { Class.new { include Processor::Fallible } }
-  let(:name)          { mock }
-  let(:handler)       { mock }
-  let(:failure_chain) { mock }
-  let(:chain)         { mock }
+  include_context 'Processor#initialize'
 
-  let(:expected) { klass.new(name, handler, chain) }
+  let(:klass) {
+    Class.new {
+      include Processor::Incoming
+      include Processor::Fallible
+    }
+  }
+
+  let(:expected)        { klass.new(processor_name, expected_config) }
+  let(:expected_config) { processor_config.with_failure_chain(chain) }
+  let(:chain)           { double }
 
   it { should eql(expected) }
 end

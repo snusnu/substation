@@ -7,17 +7,32 @@ describe Chain::DSL::Builder, '#dsl' do
 
   let(:dsl)        { builder.dsl }
   let(:builder)    { described_class.new(registry) }
-  let(:registry)   { { :test => Spec::Processor } }
+  let(:registry)   { { name => processor_builder } }
+  let(:name)       { :test }
   let(:processors) { [] }
-  let(:block)      { ->(_) { test(Spec::FAKE_HANDLER, EMPTY_ARRAY) } }
 
-  let(:processor)  { Spec::FAKE_PROCESSOR }
+  let(:processor)         { processor_builder.call(Spec::FAKE_HANDLER, Chain::EMPTY) }
+  let(:processor_builder) { Processor::Builder.new(name, Spec::Processor, Processor::Executor::NULL) }
 
-  it 'should register instantiated processors' do
-    expect(subject.processors).to include(processor)
+  shared_examples_for 'Chain::DSL::Builder#dsl' do
+    it 'should register instantiated processors' do
+      expect(subject.processors).to include(processor)
+    end
+
+    it 'should create a subclass of Chain::DSL' do
+      expect(subject.class).to be < Chain::DSL
+    end
   end
 
-  it 'should create a subclass of Chain::DSL' do
-    expect(subject.class).to be < Chain::DSL
+  context 'when a failure chain was specified' do
+    let(:block) { ->(_) { test(Spec::FAKE_HANDLER, Chain::EMPTY) } }
+
+    it_behaves_like 'Chain::DSL::Builder#dsl'
+  end
+
+  context 'when no failure chain was specified' do
+    let(:block) { ->(_) { test(Spec::FAKE_HANDLER) } }
+
+    it_behaves_like 'Chain::DSL::Builder#dsl'
   end
 end

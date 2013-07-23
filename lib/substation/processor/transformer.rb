@@ -4,23 +4,20 @@ module Substation
   module Processor
 
     # A processor that transforms output data into something else
-    class Transformer
+    module Transformer
 
-      include Processor::Outgoing
-      include Adamantium::Flat
-
-      # Transform response data into something else
-      #
-      # @param [Response] response
-      #   the response to process
-      #
-      # @return [Response]
-      #
-      # @api private
-      def call(response)
-        respond_with(response, handler.call(response))
+      # A transformer used to transform an incoming request
+      class Incoming
+        include Processor::Incoming
+        include Processor::Call::Incoming
       end
 
-    end # class Wrapper
+      # A transformer used to transform an outgoing response
+      class Outgoing
+        include Processor::Outgoing
+        include Processor::Call::Outgoing
+      end
+
+    end # class Transformer
   end # module Processor
 end # module Substation

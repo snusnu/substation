@@ -5,6 +5,42 @@ module Substation
   # Namespace for chain processors
   module Processor
 
+    include Equalizer.new(:name, :config)
+    include Adamantium::Flat
+
+    # Initialize a new instance
+    #
+    # @param [Symbol] name
+    #   the processor's name
+    #
+    # @param [Config] config
+    #   the processor's configuration
+    #
+    # @return [undefined]
+    #
+    # @api private
+    def initialize(name, config)
+      @name          = name
+      @config        = config
+      @handler       = @config.handler
+      @failure_chain = @config.failure_chain
+      @executor      = @config.executor
+    end
+
+    # This processor's name
+    #
+    # @return [Symbol]
+    #
+    # @api private
+    attr_reader :name
+
+    # This processor's config
+    #
+    # @return [Builder::Config]
+    #
+    # @api private
+    attr_reader :config
+
     # Test wether chain processing should continue
     #
     # @param [Response] response
@@ -31,15 +67,84 @@ module Substation
       response
     end
 
-    module Fallible
-      include Concord.new(:name, :handler, :failure_chain)
+    private
 
-      # This processor's name
-      #
-      # @return [Symbol]
-      #
-      # @api private
-      attr_reader :name
+    # Return handler
+    #
+    # @return [#call]
+    #
+    # @api private
+    attr_reader :handler
+
+    # Return failure chain
+    #
+    # @return [Chain]
+    #
+    # @api private
+    attr_reader :failure_chain
+
+    # Return executor
+    #
+    # @return [Executor]
+    #
+    # @api private
+    attr_reader :executor
+
+    # Execute processor on state
+    #
+    # @param [Object] state
+    #   the state to execute with
+    #
+    # @return [Object]
+    #
+    # @api private
+    def execute(state)
+      compose(state, invoke(decompose(state)))
+    end
+
+    # Transform response data into something else
+    #
+    # @param [Response] response
+    #   the response to process
+    #
+    # @return [Response]
+    #
+    # @api private
+    def invoke(state)
+      handler.call(state)
+    end
+
+    # Decompose +input+ before processing
+    #
+    # @param [Request, Response] input
+    #   the object to decompose
+    #
+    # @return [Object]
+    #   the decomposed object
+    #
+    # @api private
+    def decompose(input)
+      executor.decompose(input)
+    end
+
+    # Compose a new object based on +input+ and +output+
+    #
+    # @param [Request, Response] input
+    #   the input as it was before calling {#decompose}
+    #
+    # @param [Object] output
+    #   the data used to compose a new object
+    #
+    # @return [Object]
+    #   the composed object
+    #
+    # @api private
+    def compose(input, output)
+      executor.compose(input, output)
+    end
+
+    # Supports {Processor} instances with a defined failure {Chain}
+    module Fallible
 
       # Return a new processor with +chain+ as failure_chain
       #
@@ -50,10 +155,11 @@ module Substation
       #
       # @api private
       def with_failure_chain(chain)
-        self.class.new(name, handler, chain)
+        self.class.new(name, config.with_failure_chain(chain))
       end
     end
 
+    # Supports incoming {Processor} instances
     module Incoming
       include Processor
       include Fallible
@@ -72,28 +178,22 @@ module Substation
       end
     end
 
+    # Supports pivot {Processor} instances
     module Pivot
       include Processor
       include Fallible
     end
 
+    # Supports outgoing {Processor} instances
     module Outgoing
-      include Concord.new(:name, :handler)
       include Processor
-
-      # This processor's name
-      #
-      # @return [Symbol]
-      #
-      # @api private
-      attr_reader :name
 
       # Test wether chain processing should continue
       #
       # @param [Response] _response
       #   the response returned from invoking the processor
       #
-      # @return [false]
+      # @return [true]
       #
       # @api private
       def success?(_response)
@@ -119,34 +219,42 @@ module Substation
 
     end # module Outgoing
 
-    # Namespace for modules that help with processor api compatibility
-    module API
+    # Namespace for modules providing {#call} implementations
+    module Call
 
-      # Indicate successful processing
-      module Success
+      # Provides {Processor#call} for incoming processors
+      module Incoming
 
-        # Test wether evaluation was successful
+        # Call the processor
         #
-        # @return [true]
+        # @param [Request] request
+        #   the request to process
+        #
+        # @return [Response::Success]
         #
         # @api private
-        def success?
-          true
+        def call(request)
+          request.success(execute(request))
         end
       end
 
-      # Indicate errorneous processing
-      module Failure
+      # Provides {Processor#call} for outgoing processors
+      module Outgoing
 
-        # Test wether evaluation was successful
+        # Call the processor
         #
-        # @return [false]
+        # @param [Response] response
+        #   the response to process
+        #
+        # @return [Response]
+        #   a new instance of the same class as +response+
         #
         # @api private
-        def success?
-          false
+        def call(response)
+          respond_with(response, execute(response))
         end
       end
     end
+
   end # module Processor
 end # module Substation

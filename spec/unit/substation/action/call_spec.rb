@@ -5,13 +5,10 @@ require 'spec_helper'
 describe Action, '#call' do
   subject { object.call(request) }
 
-  let(:object)      { described_class.new(handler, observers) }
-  let(:handler)     { Spec::Action::Success }
-  let(:request)     { Request.new(action_name, env, input) }
-  let(:action_name) { mock }
-  let(:env)         { mock }
-  let(:input)       { mock }
+  include_context 'Request#initialize'
 
+  let(:object)   { described_class.new(handler, observers) }
+  let(:handler)  { Spec::Action::Success }
   let(:response) { handler.call(request) }
 
   context 'when no observers are registered' do
@@ -24,7 +21,7 @@ describe Action, '#call' do
     let(:observers) { [ Spec::Observer ] }
 
     before do
-      Spec::Observer.should_receive(:call).with(response)
+      expect(Spec::Observer).to receive(:call).with(response)
     end
 
     it { should eql(response) }

@@ -9,7 +9,11 @@ describe Environment::DSL, '#register' do
   let(:name)      { :test }
   let(:processor) { Spec::Processor }
 
-  let(:expected) { { :test => Spec::Processor } }
+  let(:expected) {
+    {
+      :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
+    }
+  }
 
   it_behaves_like 'a command method'
 

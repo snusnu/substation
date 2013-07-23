@@ -5,11 +5,10 @@ require 'spec_helper'
 describe Processor::Outgoing, '#success?' do
   subject { object.success?(response) }
 
-  let(:object)   { klass.new(name, handler) }
-  let(:klass)    { Class.new { include Processor::Outgoing } }
-  let(:name)     { mock }
-  let(:handler)  { mock }
-  let(:response) { mock }
+  include_context 'Processor#initialize'
+
+  let(:klass)    { Class.new { include Substation::Processor::Outgoing } }
+  let(:response) { double }
 
   it { should be(true) }
 end

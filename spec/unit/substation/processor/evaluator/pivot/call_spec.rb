@@ -5,28 +5,30 @@ require 'spec_helper'
 describe Processor::Evaluator::Pivot, '#call' do
   subject { object.call(request) }
 
-  let(:object)           { described_class.new(processor_name, handler, failure_chain) }
-  let(:processor_name)   { mock }
-  let(:failure_chain)    { mock(:call => failure_response) }
-  let(:failure_response) { mock }
-  let(:request)          { Request.new(action_name, env, input) }
-  let(:action_name)      { mock }
-  let(:env)              { mock }
-  let(:input)            { mock }
+  let(:klass) { described_class }
+
+  include_context 'Processor::Call'
 
   context 'with a successful handler' do
-    let(:handler)  { Spec::Action::Success }
-    let(:response) { Response::Success.new(request, Spec.response_data) }
+    before do
+      expect(decomposer).to receive(:call).with(request).and_return(decomposed)
+      expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(handler_result).to receive(:success?)
+    end
 
-    it { should eql(response) }
+    it { should eql(handler_result) }
   end
 
   context 'with a failing handler' do
-    let(:handler)  { Spec::Action::Failure }
-    let(:response) { Response::Failure.new(request, Spec.response_data) }
+    let(:handler_success) { false }
+    let(:response)        { Response::Failure.new(request, composed) }
 
     before do
-      failure_chain.should_receive(:call).with(response).and_return(failure_response)
+      expect(decomposer).to receive(:call).with(request).and_return(decomposed)
+      expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(handler_result).to receive(:success?)
+      expect(composer).to receive(:call).with(request, handler_output).and_return(composed)
+      expect(failure_chain).to receive(:call).with(response).and_return(failure_response)
     end
 
     it { should eql(failure_response) }

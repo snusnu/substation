@@ -13,7 +13,8 @@ ControlParameter:
   exclude: []
 DataClump:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Processor::Evaluator # FIXME
   max_copies: 2
   min_clump_size: 2
 DuplicateMethodCall:
@@ -39,6 +40,7 @@ LongParameterList:
   - Substation::Chain::DSL::Builder#define_dsl_method
   - Substation::Chain#self.failure_response
   - Substation::Chain#on_failure
+  - Substation::Environment::DSL#register
   max_params: 2
 LongYieldList:
   enabled: true

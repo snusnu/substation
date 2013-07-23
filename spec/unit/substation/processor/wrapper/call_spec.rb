@@ -3,19 +3,17 @@
 require 'spec_helper'
 
 describe Processor::Wrapper, '#call' do
-  subject { object.call(response) }
+  it_behaves_like 'Processor::Call::Incoming#call' do
+    before do
+      expect(handler).to receive(:new).with(decomposed).and_return(handler_result)
+    end
 
-  let(:object)         { described_class.new(processor_name, Spec::Presenter) }
-  let(:processor_name) { mock }
-  let(:response)       { Response::Success.new(request, output) }
-  let(:request)        { Request.new(action_name, env, input) }
-  let(:action_name)    { mock }
-  let(:env)            { mock }
-  let(:input)          { mock }
-  let(:output)         { mock }
-
-  let(:wrapped) { Response::Success.new(request, data) }
-  let(:data)    { Spec::Presenter.new(output) }
-
-  it { should eql(wrapped) }
+    let(:klass) {
+      Class.new {
+        include Processor::Incoming
+        include Processor::Call::Incoming
+        include Processor::Wrapper
+      }
+    }
+  end
 end

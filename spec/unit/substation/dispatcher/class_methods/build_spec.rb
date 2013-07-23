@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe Dispatcher, '.build' do
 
-  let(:env) { mock }
+  let(:env) { double }
 
   context 'when no block is given' do
     subject { described_class.build(env) }

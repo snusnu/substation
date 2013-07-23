@@ -3,13 +3,9 @@
 require 'spec_helper'
 
 describe Request, '#env' do
+  subject { request.env }
 
-  subject { object.env }
-
-  let(:object) { described_class.new(name, env, input) }
-  let(:name)   { mock }
-  let(:env)    { mock }
-  let(:input)  { mock }
+  include_context 'Request#initialize'
 
   it { should be(env) }
 end
