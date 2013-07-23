@@ -11,8 +11,8 @@ shared_context 'Processor::Executor#initialize' do
   let(:handler_success) { true }
 
   before do
-    allow(handler_result).to receive(:success?).with().and_return(handler_success)
-    allow(handler_result).to receive(:output).with().and_return(handler_output)
+    allow(handler_result).to receive(:success?).and_return(handler_success)
+    allow(handler_result).to receive(:output).and_return(handler_output)
   end
 end
 
