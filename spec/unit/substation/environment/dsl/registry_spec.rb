@@ -8,9 +8,11 @@ describe Environment::DSL, '#registry' do
   context 'when a block is given' do
     let(:object)   { described_class.new(&block) }
     let(:block)    { ->(_) { register :test, Spec::Processor } }
-    let(:expected) {{
-      :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
-    }}
+    let(:expected) {
+      {
+        :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
+      }
+    }
 
     it { should eql(expected) }
   end

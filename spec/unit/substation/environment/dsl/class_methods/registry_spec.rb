@@ -7,9 +7,11 @@ describe Substation::Environment::DSL, '.registry' do
     subject { described_class.registry(&block) }
 
     let(:block)    { ->(_) { register :test, Spec::Processor } }
-    let(:expected) {{
-      :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
-    }}
+    let(:expected) {
+      {
+        :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
+      }
+    }
 
     it { should eql(expected) }
   end
