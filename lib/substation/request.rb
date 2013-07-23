@@ -89,6 +89,13 @@ module Substation
       respond_with(Response::Failure, output)
     end
 
+    # Return request with input
+    #
+    # @param [Object] data
+    #
+    # @return [Request]
+    #
+    # @api private
     def with_input(data)
       self.class.new(name, env, data)
     end

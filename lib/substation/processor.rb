@@ -69,10 +69,35 @@ module Substation
 
     private
 
+    # Return handler
+    #
+    # @return [#call]
+    #
+    # @api private
     attr_reader :handler
+
+    # Return failure chain
+    #
+    # @return [Chain]
+    #
+    # @api private
     attr_reader :failure_chain
+
+    # Return executor
+    #
+    # @return [Executor]
+    #
+    # @api private
     attr_reader :executor
 
+    # Execute processor on state
+    #
+    # @param [Object] state
+    #   the state to execute with
+    #
+    # @return [Object]
+    #
+    # @api private
     def execute(state)
       compose(state, invoke(decompose(state)))
     end

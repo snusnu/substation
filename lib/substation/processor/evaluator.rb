@@ -84,9 +84,21 @@ module Substation
         failure_chain.call(request.error(output(request, result)))
       end
 
+      # Return a new composed output
+      #
+      # @param [Request] request
+      #   the evaluated request
+      #
+      # @param [Response] response
+      #   the evaluation result
+      #
+      # @return [Object]
+      #
+      # @api private
       def output(request, result)
         compose(request, result.output)
       end
+
     end # class Evaluator
   end # module Processor
 end # module Substation
