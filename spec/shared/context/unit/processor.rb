@@ -1,13 +1,35 @@
 # encoding: utf-8
 
-shared_context 'Processor#initialize' do
-  let(:object)           { klass.new(processor_name, processor_config) }
-  let(:processor_name)   { double('name') }
+shared_context 'Processor::Executor#initialize' do
+  let(:executor)        { Processor::Executor.new(decomposer, composer) }
+  let(:decomposer)      { double('decomposer') }
+  let(:composer)        { double('composer') }
+  let(:decomposed)      { double('decomposed') }
+  let(:composed)        { double('composed') }
+  let(:handler_result)  { double('handler_result') }
+  let(:handler_output)  { double('handler_output') }
+  let(:handler_success) { true }
+
+  before do
+    allow(handler_result).to receive(:success?).with().and_return(handler_success)
+    allow(handler_result).to receive(:output).with().and_return(handler_output)
+  end
+end
+
+shared_context 'Processor::Config#initialize' do
+  include_context 'Processor::Executor#initialize'
+
   let(:processor_config) { Processor::Config.new(handler, failure_chain, executor) }
   let(:handler)          { double('handler') }
-  let(:failure_chain)    { double(:call => failure_response) }
+  let(:failure_chain)    { double('failure_chain') }
+end
+
+shared_context 'Processor#initialize' do
+  include_context 'Processor::Config#initialize'
+
+  let(:object)           { klass.new(processor_name, processor_config) }
+  let(:processor_name)   { double('name') }
   let(:failure_response) { double('failure_response') }
-  let(:executor)         { Processor::Executor::NULL }
 end
 
 shared_context 'Processor::Call' do
@@ -19,20 +41,5 @@ shared_context 'Processor::Call' do
   let(:original_data) { double('original_data') }
 
   let(:expected)      { Response::Success.new(request, expected_data) }
-  let(:expected_data) { double('expected_data') }
-end
-
-shared_context 'Processor::Config#initialize' do
-  let(:config)        { Processor::Config.new(handler, failure_chain, executor) }
-  let(:handler)       { double('handler') }
-  let(:failure_chain) { double('failure_chain') }
-  let(:executor)      { double('executor') }
-end
-
-shared_context 'Processor::Executor#initialize' do
-  let(:executor)   { Processor::Executor.new(decomposer, composer) }
-  let(:decomposer) { double('decomposer') }
-  let(:composer)   { double('composer') }
-  let(:decomposed) { double('decomposed') }
-  let(:composed)   { double('composed') }
+  let(:expected_data) { composed }
 end

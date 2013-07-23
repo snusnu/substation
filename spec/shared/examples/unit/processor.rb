@@ -5,6 +5,13 @@ shared_examples_for 'Processor::Call::Outgoing#call' do
 
   include_context 'Processor::Call'
 
+  before do
+    expect(decomposer).to receive(:call).with(response).and_return(decomposed)
+    expect(handler_result).to_not receive(:success?)
+    expect(handler_result).to_not receive(:output)
+    expect(composer).to receive(:call).with(response, handler_result).and_return(composed)
+  end
+
   it { should eql(expected) }
 end
 
@@ -13,27 +20,43 @@ shared_examples_for 'Processor::Call::Incoming#call' do
 
   include_context 'Processor::Call'
 
+  before do
+    expect(decomposer).to receive(:call).with(request).and_return(decomposed)
+    expect(handler_result).to_not receive(:success?)
+    expect(handler_result).to_not receive(:output)
+    expect(composer).to receive(:call).with(request, handler_result).and_return(composed)
+  end
+
   it { should eql(expected) }
 end
 
 shared_examples_for 'Processor::Evaluator#call' do
   subject { object.call(request) }
 
-  include_context 'Request#initialize'
-  include_context 'Processor#initialize'
+  include_context 'Processor::Call'
 
   context 'with a successful handler' do
-    let(:handler)  { Spec::Action::Success }
-    let(:response) { Response::Success.new(request, Spec.response_data) }
+    before do
+      expect(decomposer).to receive(:call).with(request).and_return(decomposed)
+      expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(handler_result).to receive(:success?)
+      expect(handler_result).to receive(:output)
+      expect(composer).to receive(:call).with(request, handler_output).and_return(composed)
+    end
 
-    it { should eql(response) }
+    it { should eql(expected) }
   end
 
   context 'with a failing handler' do
-    let(:handler)  { Spec::Action::Failure }
-    let(:response) { Response::Failure.new(request, Spec.response_data) }
+    let(:handler_success) { false }
+    let(:response)        { Response::Failure.new(request, composed) }
 
     before do
+      expect(decomposer).to receive(:call).with(request).and_return(decomposed)
+      expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(handler_result).to receive(:success?)
+      expect(handler_result).to receive(:output)
+      expect(composer).to receive(:call).with(request, handler_output).and_return(composed)
       expect(failure_chain).to receive(:call).with(response).and_return(failure_response)
     end
 

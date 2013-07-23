@@ -13,7 +13,7 @@ describe Processor::Builder, '#call' do
   let(:processor) { double('processor') }
 
   before do
-    expect(klass).to receive(:new).with(name, config).and_return(processor)
+    expect(klass).to receive(:new).with(name, processor_config).and_return(processor)
   end
 
   it { should eql(processor) }

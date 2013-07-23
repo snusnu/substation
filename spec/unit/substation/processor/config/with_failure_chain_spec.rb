@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 describe Processor::Config, '#with_failure_chain' do
-  subject { config.with_failure_chain(failure_chain) }
+  subject { processor_config.with_failure_chain(failure_chain) }
 
   include_context 'Processor::Config#initialize'
 
-  it { should eql(config) }
+  it { should eql(processor_config) }
 end
