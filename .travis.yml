@@ -13,3 +13,10 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: rbx-19mode
+    - rvm: jruby-19mode
+    - rvm: jruby-head
+  include:
+    - rvm: jruby-19mode
+      env: JRUBY_OPTS="$JRUBY_OPTS --debug"
+    - rvm: jruby-head
+      env: JRUBY_OPTS="$JRUBY_OPTS --debug"
