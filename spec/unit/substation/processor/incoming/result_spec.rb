@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 describe Processor::Incoming, '#result' do
-
   subject { object.result(response) }
 
   include_context 'Request#initialize'

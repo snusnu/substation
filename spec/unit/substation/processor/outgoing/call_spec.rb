@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 describe Processor::Outgoing, '#call' do
-
   subject { object.call(request) }
 
   include_context 'Request#initialize'

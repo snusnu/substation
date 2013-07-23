@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 describe Processor::Call::Outgoing, '#call' do
-
   let(:klass) {
     Class.new {
       include Processor::Outgoing
