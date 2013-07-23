@@ -223,7 +223,7 @@ module Substation
       #
       # @api private
       def detect(name)
-        @processors.detect { |processor| processor.name == name }
+        @processors.find { |processor| processor.name == name }
       end
 
       # Raise {UnknownProcessor}

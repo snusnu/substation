@@ -13,7 +13,8 @@ ControlParameter:
   exclude: []
 DataClump:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Processor::Evaluator # FIXME
   max_copies: 2
   min_clump_size: 2
 DuplicateMethodCall:
