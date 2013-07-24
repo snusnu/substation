@@ -16,20 +16,32 @@ class Demo
     2 => { :name => 'Mr.X', :privileges => [] }
   }
 
+  require 'demo/environment'
+
+  require 'demo/core/models/person'
+  require 'demo/core/errors'
+  require 'demo/core/input'
+  require 'demo/core/actor'
+  require 'demo/core/handler'
+  require 'demo/core/handler/authenticator'
+  require 'demo/core/handler/authorizer'
+  require 'demo/core/handler/acceptor'
+  require 'demo/core/validator'
+  require 'demo/core/validator/person'
+  require 'demo/core/action'
+  require 'demo/core/action/create_person'
+  require 'demo/core/observers'
+
+  module Core
+    ENV = Substation::Environment.build do
+      register :authenticate, Substation::Processor::Evaluator::Request
+      register :authorize,    Substation::Processor::Evaluator::Request
+      register :validate,     Substation::Processor::Evaluator::Request, Core::Validator::EXECUTOR
+      register :accept,       Substation::Processor::Transformer::Incoming, Core::Handler::Acceptor::EXECUTOR
+      register :call,         Substation::Processor::Evaluator::Pivot
+      register :wrap,         Substation::Processor::Wrapper::Outgoing, Core::Handler::Wrapper::Outgoing::EXECUTOR
+    end
+  end
+
+  require 'demo/core/facade'
 end
-
-require 'demo/environment'
-
-require 'demo/core/models/person'
-require 'demo/core/errors'
-require 'demo/core/input'
-require 'demo/core/actor'
-require 'demo/core/handler'
-require 'demo/core/handler/authenticator'
-require 'demo/core/handler/authorizer'
-require 'demo/core/handler/acceptor'
-require 'demo/core/validator'
-require 'demo/core/validator/person'
-require 'demo/core/action'
-require 'demo/core/action/create_person'
-require 'demo/core/observers'

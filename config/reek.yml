@@ -69,6 +69,7 @@ TooManyMethods:
   enabled: true
   exclude:
   - Substation::Chain::DSL
+  - Substation::Environment # 5
   max_methods: 4
 TooManyStatements:
   enabled: true
@@ -76,6 +77,7 @@ TooManyStatements:
   - Substation::Chain#call
   - Substation::Processor::Evaluator#call
   - Substation::Dispatcher::DSL#dispatch
+  - Substation::Environment#self.build # ~5
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true

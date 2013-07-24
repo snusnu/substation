@@ -29,7 +29,7 @@ SingleLineMethods:
   Enabled: false
 
 LineLength:
-  Max: 112 # the offending lines are in specs, sadly this means global disabling for now 
+  Max: 114 # the offending lines are in specs, sadly this means global disabling for now
 
 MethodLength:
   Max: 12 # reek performs these checks anyway

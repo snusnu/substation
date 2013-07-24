@@ -12,3 +12,14 @@ require 'demo/web/presenter'
 require 'demo/web/presenter/person'
 require 'demo/web/views'
 require 'demo/web/renderer'
+
+class Demo
+  module Web
+    ENV = Substation::Environment.build(Core::ENV) do
+      register :deserialize, Substation::Processor::Transformer::Incoming, Web::Handler::Deserializer::EXECUTOR
+      register :sanitize,    Substation::Processor::Evaluator::Request, Web::Sanitizer::EXECUTOR
+      register :wrap,        Substation::Processor::Wrapper::Outgoing, Core::Handler::Wrapper::Outgoing::EXECUTOR
+      register :render,      Substation::Processor::Transformer::Outgoing
+    end
+  end
+end

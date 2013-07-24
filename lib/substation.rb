@@ -34,6 +34,9 @@ require 'concord'
 
 module Substation
 
+  # Represent an undefined argument
+  Undefined = Object.new.freeze
+
   # An empty frozen array useful for (default) parameters
   EMPTY_ARRAY = [].freeze
 

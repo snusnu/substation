@@ -10,16 +10,20 @@ module Substation
 
     # Build a new {Environment} instance
     #
+    # @param [Environment] other
+    #   optional other environment to build on top of
+    #
     # @param [Proc] block
     #   a block to be instance_eval'ed with {DSL}
     #
     # @return [Environment]
     #
     # @api private
-    def self.build(&block)
+    def self.build(other = Undefined, &block)
       registry  = DSL.registry(&block)
       chain_dsl = Chain::DSL::Builder.call(registry)
-      new(registry, chain_dsl)
+      instance  = new(registry, chain_dsl)
+      other.equal?(Undefined) ? instance : other.merge(instance)
     end
 
     # Initialize a new instance
@@ -80,6 +84,21 @@ module Substation
     # @api private
     def dispatcher(env, &block)
       Dispatcher.build(env, &block)
+    end
+
+    # Return a new instance that has +other+ merged into +self+
+    #
+    # @param [Environment] other
+    #   the other environment to merge in
+    #
+    # @return [Environment]
+    #   the new merged instance
+    #
+    # @api private
+    def merge(other)
+      merged_registry  = registry.merge(other.registry)
+      merged_chain_dsl = Chain::DSL::Builder.call(merged_registry)
+      self.class.new(merged_registry, merged_chain_dsl)
     end
 
     protected
