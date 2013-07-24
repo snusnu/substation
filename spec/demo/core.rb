@@ -16,7 +16,13 @@ class Demo
     2 => { :name => 'Mr.X', :privileges => [] }
   }
 
+  logger   = Object.new # some logger instance
+  storage  = Object.new # some database abstraction e.g. ROM::Environment
+  env_name = ::ENV.fetch('APP_ENV', :development)
+
   require 'demo/environment'
+
+  APP_ENV = Environment.build(env_name, storage, logger)
 
   require 'demo/core/models/person'
   require 'demo/core/errors'
