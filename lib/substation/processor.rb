@@ -67,13 +67,14 @@ module Substation
       response
     end
 
+    private
+
     # Return handler
     #
     # @return [#call]
     #
     # @api private
     attr_reader :handler
-    private     :handler
 
     # Return failure chain
     #
@@ -81,7 +82,6 @@ module Substation
     #
     # @api private
     attr_reader :failure_chain
-    private     :failure_chain
 
     # Return executor
     #
@@ -89,7 +89,6 @@ module Substation
     #
     # @api private
     attr_reader :executor
-    private     :executor
 
     # Execute processor on state
     #
