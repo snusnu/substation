@@ -24,8 +24,8 @@ module Substation
 
     # Initialize a new instance
     #
-    # @param [Hash<Symbol, #call>] registry
-    #   the registry of processors
+    # @param [Hash<Symbol, Processor::Builder>] registry
+    #   the registry of processor builders
     #
     # @return [undefined]
     #

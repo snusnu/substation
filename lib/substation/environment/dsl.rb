@@ -3,22 +3,22 @@
 module Substation
   class Environment
 
-    # The DSL class used to register processors
+    # The DSL class used to register processor builders
     class DSL
 
-      # The registry of processors
+      # The registry of processor builders
       #
-      # @return [Hash<Symbol, #call>]
+      # @return [Hash<Symbol, Processor::Builder>]
       #
       # @api private
       attr_reader :registry
 
-      # The registry of processors
+      # The registry of processor builders
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed
       #
-      # @return [Hash<Symbol, #call>]
+      # @return [Hash<Symbol, Processor::Builder>]
       #
       # @api private
       def self.registry(&block)
@@ -38,13 +38,16 @@ module Substation
         instance_eval(&block) if block
       end
 
-      # Register a new +processor+ using the given +name+
+      # Register a new +processor+ using the given +name+ and +executor+
       #
       # @param [#to_sym] name
       #   the name to register the +processor+ for
       #
       # @param [#call] processor
       #   the processor to register for +name+
+      #
+      # @param [Processor::Executor] executor
+      #   the executor for +processor+
       #
       # @return [self]
       #
