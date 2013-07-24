@@ -17,6 +17,8 @@ describe 'a typical substation application' do
   let(:unauthorized_id) { 2 }
   let(:unknown_id)      { 3 }
 
+  let(:processed_request) { Substation::Request.new(name, env, processed_input) }
+
   shared_examples_for 'all invocations' do
     it { should eql(response) }
 
@@ -64,11 +66,10 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'John') }
     let(:account_id) { authorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Accepted.new(actor, data) }
-    let(:actor)             { Demo::Core::Actor.coerce(session_data, acting_person) }
-    let(:acting_person)     { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
-    let(:response)          { Substation::Response::Success.new(processed_request, data) }
+    let(:processed_input) { Demo::Core::Input::Accepted.new(actor, data) }
+    let(:actor)           { Demo::Core::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)   { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:response)        { Substation::Response::Success.new(processed_request, data) }
 
     it_behaves_like 'an action invocation' do
       let(:action_response) { response }
@@ -80,12 +81,11 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'error') }
     let(:account_id) { authorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Accepted.new(actor, data) }
-    let(:actor)             { Demo::Core::Actor.coerce(session_data, acting_person) }
-    let(:acting_person)     { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
-    let(:error)             { Demo::Core::Error::ApplicationError.new(data) }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input) { Demo::Core::Input::Accepted.new(actor, data) }
+    let(:actor)           { Demo::Core::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)   { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:error)           { Demo::Core::Error::ApplicationError.new(data) }
+    let(:response)        { Substation::Response::Failure.new(processed_request, error) }
 
     it_behaves_like 'an action invocation' do
       let(:action_response) { Substation::Response::Failure.new(processed_request, data) }
@@ -97,13 +97,12 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'exception') }
     let(:account_id) { authorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Accepted.new(actor, data) }
-    let(:actor)             { Demo::Core::Actor.coerce(session_data, acting_person) }
-    let(:acting_person)     { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
-    let(:failure_data)      { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
-    let(:error)             { Demo::Core::Error::InternalError.new(failure_data) }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input) { Demo::Core::Input::Accepted.new(actor, data) }
+    let(:actor)           { Demo::Core::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)   { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:failure_data)    { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
+    let(:error)           { Demo::Core::Error::InternalError.new(failure_data) }
+    let(:response)        { Substation::Response::Failure.new(processed_request, error) }
 
     it_behaves_like 'no action invocation'
   end
@@ -112,12 +111,11 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'X') }
     let(:account_id) { authorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Incomplete.new(session_data, data) }
-    let(:error)             { Demo::Core::Error::ValidationError.new(invalid_input) }
-    let(:invalid_input)     { Demo::Core::Input::Incomplete.new(session_data, validation_error) }
-    let(:validation_error)  { Demo::Core::Validator::NEW_PERSON.call(data).output }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input)  { Demo::Core::Input::Incomplete.new(session_data, data) }
+    let(:error)            { Demo::Core::Error::ValidationError.new(invalid_input) }
+    let(:invalid_input)    { Demo::Core::Input::Incomplete.new(session_data, validation_error) }
+    let(:validation_error) { Demo::Core::Validator::NEW_PERSON.call(data).output }
+    let(:response)         { Substation::Response::Failure.new(processed_request, error) }
 
     it_behaves_like 'no action invocation'
   end
@@ -126,13 +124,12 @@ describe 'a typical substation application' do
     let(:data)       { :foo }
     let(:account_id) { authorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Incomplete.new(session_data, data) }
-    let(:actor)             { Demo::Core::Actor.coerce(session_data, acting_person) }
-    let(:acting_person)     { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
-    let(:failure_data)      { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
-    let(:error)             { Demo::Core::Error::InternalError.new(failure_data) }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input) { Demo::Core::Input::Incomplete.new(session_data, data) }
+    let(:actor)           { Demo::Core::Actor.coerce(session_data, acting_person) }
+    let(:acting_person)   { Demo::Core::Models::Person.new(:id => account_id, :name => 'Jane') }
+    let(:failure_data)    { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
+    let(:error)           { Demo::Core::Error::InternalError.new(failure_data) }
+    let(:response)        { Substation::Response::Failure.new(processed_request, error) }
 
     pending 'the response is returned is actually correct, but somehow #eql? fails' do
       it_behaves_like 'no action invocation'
@@ -143,10 +140,9 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'unknown') }
     let(:account_id) { unknown_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Incomplete.new(session_data, data) }
-    let(:error)             { Demo::Core::Error::AuthenticationError.new(processed_input) }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input) { Demo::Core::Input::Incomplete.new(session_data, data) }
+    let(:error)           { Demo::Core::Error::AuthenticationError.new(processed_input) }
+    let(:response)        { Substation::Response::Failure.new(processed_request, error) }
 
     it_behaves_like 'no action invocation'
   end
@@ -155,10 +151,9 @@ describe 'a typical substation application' do
     let(:data)       { Demo::Core::Models::Person.new(:id => nil, :name => 'forbidden') }
     let(:account_id) { unauthorized_id }
 
-    let(:processed_request) { Substation::Request.new(name, env, processed_input) }
-    let(:processed_input)   { Demo::Core::Input::Incomplete.new(session_data, data) }
-    let(:error)             { Demo::Core::Error::AuthorizationError.new(processed_input) }
-    let(:response)          { Substation::Response::Failure.new(processed_request, error) }
+    let(:processed_input) { Demo::Core::Input::Incomplete.new(session_data, data) }
+    let(:error)           { Demo::Core::Error::AuthorizationError.new(processed_input) }
+    let(:response)        { Substation::Response::Failure.new(processed_request, error) }
 
     it_behaves_like 'no action invocation'
   end
