@@ -5,45 +5,17 @@ module Substation
   # Encapsulates the application environment and an input model instance
   class Request
 
-    include Concord.new(:name, :env, :input)
+    include Concord::Public.new(:name, :env, :input)
     include Adamantium::Flat
 
-    # The name of the request
-    #
-    # @return [Symbol]
-    #
-    # @api private
-    attr_reader :name
+    # @!attribute [r] name
+    #   @return [Symbol] the name of the request
 
-    # The application environment
-    #
-    # @example
-    #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       request.env
-    #     end
-    #   end
-    #
-    # @return [Object]
-    #
-    # @api public
-    attr_reader :env
+    # @!attribute [r] env
+    #   @return [Object] the application environment
 
-    # The input passed to an action
-    #
-    # @example
-    #
-    #   class SomeUseCase
-    #     def self.call(request)
-    #       request.input
-    #     end
-    #   end
-    #
-    # @return [Object]
-    #
-    # @api public
-    attr_reader :input
+    # @!attribute [r] input
+    #   @return [Object] the input data
 
     alias_method :data, :input
 
