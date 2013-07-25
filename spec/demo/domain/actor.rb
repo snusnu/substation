@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class Demo
-  module Core
+  module Domain
 
     class Actor
       class Session

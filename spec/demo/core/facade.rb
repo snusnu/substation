@@ -26,7 +26,7 @@ class Demo
       end
 
       CREATE_PERSON = Core::ENV.chain(AUTHORIZE, INTERNAL_ERROR) do
-        validate Validator::NEW_PERSON, VALIDATION_ERROR
+        validate Domain::DTO::NEW_PERSON_VALIDATOR, VALIDATION_ERROR
         accept   Handler::Acceptor
         call     Core::CREATE_PERSON, APPLICATION_ERROR
       end

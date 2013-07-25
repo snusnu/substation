@@ -13,7 +13,7 @@ class Demo
           end
         end
         add(ID_TRAP)
-        anima_load(Core::Models::Person)
+        anima_load(Domain::DTO::Person)
       end
     end
   end

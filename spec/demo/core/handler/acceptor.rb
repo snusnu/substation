@@ -24,7 +24,7 @@ class Demo
         end
 
         def call
-          Actor.coerce(session, person)
+          Domain::Actor.coerce(session, person)
         end
 
         private
@@ -33,7 +33,7 @@ class Demo
         attr_reader :account_id
 
         def person
-          Models::Person.new(:id => account_id, :name => name)
+          Domain::DTO::Person.new(:id => account_id, :name => name)
         end
 
         def name

@@ -95,7 +95,7 @@ describe 'a typical substation application' do
     let(:processed_input)  { incomplete_input }
     let(:error)            { Demo::Core::Error::ValidationError.new(invalid_input) }
     let(:invalid_input)    { Demo::Core::Input::Incomplete.new(session_data, validation_error) }
-    let(:validation_error) { Demo::Core::Validator::NEW_PERSON.call(person).output }
+    let(:validation_error) { Demo::Domain::DTO::NEW_PERSON_VALIDATOR.call(person).output }
     let(:response)         { error_response }
 
     it_behaves_like 'no action invocation'
