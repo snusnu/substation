@@ -71,7 +71,7 @@ module Substation
         # @api private
         def define_dsl_method(name, builder, dsl)
           dsl.class_eval do
-            define_method(name) { |handler, failure_chain = Chain::EMPTY|
+            define_method(name) { |handler, failure_chain = EMPTY|
               use(builder.call(handler, failure_chain))
             }
           end
