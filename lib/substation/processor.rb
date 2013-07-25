@@ -41,6 +41,30 @@ module Substation
     # @api private
     attr_reader :config
 
+    # Return handler
+    #
+    # @return [#call]
+    #
+    # @api private
+    attr_reader :handler
+    private     :handler
+
+    # Return failure chain
+    #
+    # @return [Chain]
+    #
+    # @api private
+    attr_reader :failure_chain
+    private     :failure_chain
+
+    # Return executor
+    #
+    # @return [Executor]
+    #
+    # @api private
+    attr_reader :executor
+    private     :executor
+
     # Test wether chain processing should continue
     #
     # @param [Response] response
@@ -68,27 +92,6 @@ module Substation
     end
 
     private
-
-    # Return handler
-    #
-    # @return [#call]
-    #
-    # @api private
-    attr_reader :handler
-
-    # Return failure chain
-    #
-    # @return [Chain]
-    #
-    # @api private
-    attr_reader :failure_chain
-
-    # Return executor
-    #
-    # @return [Executor]
-    #
-    # @api private
-    attr_reader :executor
 
     # Execute processor on state
     #
