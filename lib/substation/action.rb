@@ -18,9 +18,7 @@ module Substation
     #
     # @api private
     def call(request)
-      response = handler.call(request)
-      notify_observers(response)
-      response
+      notify_observers(handler.call(request))
     end
 
     private
@@ -35,6 +33,7 @@ module Substation
     # @api private
     def notify_observers(response)
       observers.each { |observer| observer.call(response) }
+      response
     end
 
   end # class Action
