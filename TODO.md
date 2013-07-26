@@ -46,3 +46,5 @@
       end
     end
     ```
+
+* Think about removing `Action` and providing an `Observable` module instead
