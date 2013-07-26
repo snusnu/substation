@@ -23,3 +23,5 @@ class Demo
     end
   end
 end
+
+require 'demo/web/facade'

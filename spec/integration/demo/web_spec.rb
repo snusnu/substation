@@ -1,6 +1,8 @@
 # encoding: utf-8
 
-require 'demo'
+require 'spec_helper'
+
+require 'demo/web'
 
 describe 'a typical substation application' do
   subject { Demo::Web::HTML::APP.call(name, input) }

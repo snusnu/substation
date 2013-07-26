@@ -1,7 +1,8 @@
 # encoding: utf-8
 
-require 'demo'
 require 'spec_helper'
+
+require 'demo/core'
 
 describe 'a typical substation application' do
   subject { Demo::Core::APP.call(name, input) }
