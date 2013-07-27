@@ -52,10 +52,15 @@ class Demo
         wrap Views::Person
       end
 
+      # This is temporary and will be replaced by self registering
+      # actions, which will remove the need for a centralized dispatch
+      # table definition
+      dispatch_table = {
+        :create_person => CREATE_PERSON
+      }
+
       # The application
-      APP = Web::ENV.dispatcher(APP_ENV) do
-        dispatch :create_person, CREATE_PERSON
-      end
+      APP = Web::ENV.dispatcher(dispatch_table, APP_ENV)
 
     end # module HTML
   end # module Web

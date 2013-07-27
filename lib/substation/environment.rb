@@ -70,20 +70,16 @@ module Substation
 
     # Build a new {Dispatcher} instance
     #
-    # @see Dispatcher.build
+    # @see Dispatcher.new
     #
     # @param [Object] env
     #   the application environment
     #
-    # @param [Proc] block
-    #   a block to be instance_eval'd inside a {Dispatcher::DSL}
-    #   instance
-    #
     # @return [Dispatcher]
     #
     # @api private
-    def dispatcher(env, &block)
-      Dispatcher.build(env, &block)
+    def dispatcher(dispatch_table, env)
+      Dispatcher.new(dispatch_table, env)
     end
 
     # Return a new instance that has +other+ merged into +self+

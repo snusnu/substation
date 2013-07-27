@@ -3,23 +3,19 @@
 require 'spec_helper'
 
 describe Environment, '#dispatcher' do
+  subject { object.dispatcher(dispatch_table, app_env) }
 
   let(:object)      { described_class.new(registry, chain_dsl) }
-  let(:registry)    { double }
-  let(:chain_dsl)   { double }
-  let(:env)         { double }
+  let(:registry)    { double('registry') }
+  let(:chain_dsl)   { double('chain_dsl') }
+  let(:app_env)     { double('app_env') }
 
-  context 'when no block is given' do
-    subject { object.dispatcher(env) }
+  let(:dispatch_table) { double('dispatch_table') }
+  let(:dispatcher)     { double('dispatcher') }
 
-    it { should eql(Dispatcher.new({}, env)) }
+  before do
+    expect(Dispatcher).to receive(:new).with(dispatch_table, app_env).and_return(dispatcher)
   end
 
-  context 'when a block is given' do
-    subject { object.dispatcher(env, &block) }
-
-    let(:block) { ->(_) { dispatch :test, Chain::EMPTY } }
-
-    it { should eql(Dispatcher.new({ :test => Chain::EMPTY }, env)) }
-  end
+  it { should eql(dispatcher) }
 end

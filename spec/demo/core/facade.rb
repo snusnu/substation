@@ -33,10 +33,15 @@ class Demo
 
     end
 
+    # This is temporary and will be replaced by self registering
+    # actions, which will remove the need for a centralized dispatch
+    # table definition
+    dispatch_table = Substation::Dispatcher::Registry.new({
+      :create_person => App::CREATE_PERSON
+    })
+
     # The application
-    APP = Core::ENV.dispatcher(Demo::APP_ENV) do
-      dispatch :create_person, App::CREATE_PERSON
-    end
+    APP = Core::ENV.dispatcher(dispatch_table, Demo::APP_ENV)
 
   end
 end

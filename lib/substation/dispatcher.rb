@@ -9,21 +9,6 @@ module Substation
   # application use case.
   class Dispatcher
 
-    # Build a new instance
-    #
-    # @param [Object] env
-    #   the application environment
-    #
-    # @param [Proc] block
-    #   a block to be instance_eval'ed inside {DSL}
-    #
-    # @return [Dispatcher]
-    #
-    # @api private
-    def self.build(env, &block)
-      new(DSL.new(&block).dispatch_table, env)
-    end
-
     include Concord.new(:actions, :env)
     include Adamantium::Flat
 
@@ -114,10 +99,10 @@ module Substation
     # @param [Symbol] name
     #   a name for which an action is registered
     #
-    # @return [Action]
-    #   the action configuration registered for +name+
+    # @return [#call]
+    #   the callable registered for +name+
     #
-    # @raise [KeyError]
+    # @raise [UnknownActionError]
     #   if no action is registered with +name+
     #
     # @api private
