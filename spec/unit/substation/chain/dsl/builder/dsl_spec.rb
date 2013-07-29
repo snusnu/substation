@@ -3,20 +3,20 @@
 require 'spec_helper'
 
 describe Chain::DSL::Builder, '#dsl' do
-  subject { dsl.new(processors, &block) }
+  subject { dsl.new(definition, &block) }
 
   let(:dsl)        { builder.dsl }
   let(:builder)    { described_class.new(registry) }
   let(:registry)   { { name => processor_builder } }
   let(:name)       { :test }
-  let(:processors) { [] }
+  let(:definition) { Chain::Definition.new }
 
   let(:processor)         { processor_builder.call(Spec::FAKE_HANDLER, Chain::EMPTY) }
   let(:processor_builder) { Processor::Builder.new(name, Spec::Processor, Processor::Executor::NULL) }
 
   shared_examples_for 'Chain::DSL::Builder#dsl' do
     it 'should register instantiated processors' do
-      expect(subject.processors).to include(processor)
+      expect(subject.definition).to include(processor)
     end
 
     it 'should create a subclass of Chain::DSL' do

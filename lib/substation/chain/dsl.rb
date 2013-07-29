@@ -94,12 +94,17 @@ module Substation
       #
       # @api private
       def self.build(other, failure_chain, &block)
-        Chain.new(new(other, &block).processors, failure_chain)
+        Chain.new(new(Definition.new(other), &block).definition, failure_chain)
       end
 
-      UNKNOWN_PROCESSOR_MSG = 'No processor named %s is registered'.freeze
+      include Equalizer.new(:definition)
 
-      include Equalizer.new(:processors)
+      # The definition to be used within a {Chain}
+      #
+      # @return [Array<#call>]
+      #
+      # @api private
+      attr_reader :definition
 
       # Initialize a new instance
       #
@@ -112,9 +117,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(processors, &block)
-        @processors = []
-        chain(processors)
+      def initialize(definition, &block)
+        @definition = definition
         instance_eval(&block) if block
       end
 
@@ -127,20 +131,20 @@ module Substation
       #
       # @api private
       def use(processor)
-        @processors << processor
+        definition << processor
         self
       end
 
       # Nest the given chain within another one
       #
-      # @param [#each<#call>] other
-      #   another chain to be nested within a chain
+      # @param [#each<#call>] processors
+      #   other processors to be nested within a {Definition}
       #
       # @return [self]
       #
       # @api private
-      def chain(other)
-        other.each { |processor| use(processor) }
+      def chain(processors)
+        processors.each { |processor| use(processor) }
         self
       end
 
@@ -149,95 +153,15 @@ module Substation
       # @param [Symbol] name
       #   the processor's name
       #
-      # @param [#call] chain
+      # @param [Chain] failure_chain
       #   the failure chain to use for the processor identified by +name+
       #
       # @return [self]
       #
       # @api private
-      def failure_chain(name, chain)
-        replace_processor(processor(name), chain)
+      def failure_chain(name, failure_chain)
+        definition.replace_failure_chain(name, failure_chain)
         self
-      end
-
-      # The processors to be used within a {Chain}
-      #
-      # @return [Array<#call>]
-      #
-      # @api private
-      def processors
-        @processors.dup.freeze
-      end
-
-      private
-
-      # Return the processor identified by +name+
-      #
-      # @param [Symbol] name
-      #   the processor's name
-      #
-      # @return [#call]
-      #   the processor identified by +name+
-      #
-      # @return [nil]
-      #   if no processor identified by +name+ is registered
-      #
-      # @api private
-      def processor(name)
-        detect(name) || raise_unknown_processor(name)
-      end
-
-      # Replace +processor+'s failure chain with +chain+
-      #
-      # @param [#call] processor
-      # @param [#call] chain
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def replace_processor(processor, chain)
-        @processors[index(processor)] = processor.with_failure_chain(chain)
-      end
-
-      # Return the processor's index inside #processors
-      #
-      # @param [#call] processor
-      #
-      # @return [Integer]
-      #
-      # @api private
-      def index(processor)
-        @processors.index(processor)
-      end
-
-      # Return the first processor with the given +name+
-      #
-      # @param [Symbol] name
-      #   the name of the processor to detect
-      #
-      # @return [#call]
-      #   if a processor with the given +name+ is registered
-      #
-      # @return [nil]
-      #   otherwise
-      #
-      # @api private
-      def detect(name)
-        @processors.detect { |processor| processor.name == name }
-      end
-
-      # Raise {UnknownProcessor}
-      #
-      # @param [Symbol] name
-      #   the unknown processor's name
-      #
-      # @raise [UnknownProcessor]
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def raise_unknown_processor(name)
-        raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % name.inspect
       end
 
     end # class DSL

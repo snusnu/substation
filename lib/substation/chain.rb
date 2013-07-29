@@ -71,7 +71,7 @@ module Substation
     include Adamantium::Flat
 
     # Empty chain
-    EMPTY = new(EMPTY_ARRAY, EMPTY_ARRAY)
+    EMPTY = new(Definition::EMPTY, EMPTY_ARRAY)
 
     # Return a failure response
     #
@@ -147,10 +147,10 @@ module Substation
     # @param [Proc] block
     #   a block passed to {#handlers} each method
     #
-    # @yield [handler]
+    # @yield [processor]
     #
-    # @yieldparam [#call] handler
-    #   each handler in the chain
+    # @yieldparam [#call] processor
+    #   each processor in the chain
     #
     # @return [self]
     #

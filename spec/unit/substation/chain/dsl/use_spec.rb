@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Chain::DSL, '#use' do
   subject { object.use(processor) }
 
-  let(:object)    { described_class.new(chain) }
-  let(:chain)     { EMPTY_ARRAY }
-  let(:processor) { Spec::FAKE_PROCESSOR }
+  let(:object)     { described_class.new(definition) }
+  let(:definition) { Chain::Definition.new }
+  let(:processor)  { Spec::FAKE_PROCESSOR }
 
-  its(:processors) { should include(processor) }
+  its(:definition) { should include(processor) }
 end
