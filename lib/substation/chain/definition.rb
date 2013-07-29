@@ -101,7 +101,7 @@ module Substation
       #
       # @api private
       def [](name)
-        detect(name) || raise(
+        detect(name) or raise(
           UnknownProcessor,
           UNKNOWN_PROCESSOR_MSG % name.inspect
         )
