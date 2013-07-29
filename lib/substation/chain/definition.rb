@@ -64,7 +64,7 @@ module Substation
       #
       # @api private
       def replace_failure_chain(name, failure_chain)
-        replace_processor(self[name], failure_chain)
+        replace_processor(fetch(name), failure_chain)
         self
       end
 
@@ -100,8 +100,8 @@ module Substation
       # @raise [UnknownProcessor]
       #
       # @api private
-      def [](name)
-        detect(name) or raise(
+      def fetch(name)
+        self[name] or raise(
           UnknownProcessor,
           UNKNOWN_PROCESSOR_MSG % name.inspect
         )
@@ -146,7 +146,7 @@ module Substation
       #   otherwise
       #
       # @api private
-      def detect(name)
+      def [](name)
         processors.detect { |processor| processor.name == name }
       end
 
