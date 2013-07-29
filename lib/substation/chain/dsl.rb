@@ -144,7 +144,7 @@ module Substation
       #
       # @api private
       def chain(processors)
-        processors.each { |processor| use(processor) }
+        processors.each(&method(:use))
         self
       end
 

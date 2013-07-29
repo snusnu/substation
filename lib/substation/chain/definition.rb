@@ -31,11 +31,8 @@ module Substation
       # @api private
       def initialize(processors = [])
         @processors = []
-        processors.each { |processor| self << processor }
+        processors.each(&method(:<<))
       end
-
-      # An empty instance
-      EMPTY = new(EMPTY_ARRAY).freeze
 
       # Append +processor+ to {#processors}
       #
@@ -49,6 +46,11 @@ module Substation
         processors << processor
         self
       end
+
+      # The following const MUST have #initialize and #<< defined already
+
+      # An empty instance
+      EMPTY = new(EMPTY_ARRAY).freeze
 
       # Replace the failure chain of the processor identified by +name+
       #
