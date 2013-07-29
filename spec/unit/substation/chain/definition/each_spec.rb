@@ -9,7 +9,7 @@ describe Chain::Definition, '#each' do
   let(:processors) { [ processor ] }
   let(:processor)  { double('processor', :name => name) }
   let(:name)       { double('name') }
-  let(:block)      { ->(_) {} }
+  let(:block)      { ->(_) { } }
 
   it_should_behave_like 'an #each method'
 
