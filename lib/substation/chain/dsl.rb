@@ -44,6 +44,8 @@ module Substation
           @dsl        = DSL.new(registry, compile_dsl_module)
         end
 
+        private
+
         # Compile a new module for inclusion into a {DSL} instance
         #
         # @param [Hash<Symbol, Processor::Builder>] registry
