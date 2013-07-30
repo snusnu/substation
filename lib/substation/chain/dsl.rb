@@ -183,7 +183,7 @@ module Substation
       end
 
       def new(other, &block)
-        self.class.new(registry, @dsl_module, other.merge(definition)).instance_eval(&block)
+        self.class.new(registry, @dsl_module, other.prepend(definition)).instance_eval(&block)
       end
 
     end # class DSL
