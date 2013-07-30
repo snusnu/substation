@@ -140,19 +140,6 @@ module Substation
         Chain.new(__call__(Definition.new(other), &block), failure_chain)
       end
 
-      # Use the given +processor+ within a chain
-      #
-      # @param [#call] processor
-      #   a processor to use within a chain
-      #
-      # @return [self]
-      #
-      # @api private
-      def use(processor)
-        definition << processor
-        self
-      end
-
       # Nest the given chain within another one
       #
       # @param [#each<#call>] processors
@@ -183,6 +170,19 @@ module Substation
       end
 
       private
+
+      # Use the given +processor+ within a chain
+      #
+      # @param [#call] processor
+      #   a processor to use within a chain
+      #
+      # @return [self]
+      #
+      # @api private
+      def use(processor)
+        definition << processor
+        self
+      end
 
       # Return a new definition
       #
