@@ -48,7 +48,7 @@ LongYieldList:
 NestedIterators:
   enabled: true
   exclude:
-  - Substation::Chain::DSL::Builder#define_dsl_method
+  - Substation::Chain::DSL::Config::Builder#define_dsl_method
   max_allowed_nesting: 1
   ignore_iterators: []
 NilCheck:
