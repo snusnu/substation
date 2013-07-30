@@ -20,8 +20,7 @@ module Substation
     #
     # @api private
     def self.build(other = Undefined, &block)
-      chain_dsl = Chain::DSL::Builder.call(DSL.registry(&block))
-      instance  = new(chain_dsl)
+      instance = new(Chain::DSL::Builder.call(DSL.registry(&block)))
       other.equal?(Undefined) ? instance : other.merge(instance)
     end
 
