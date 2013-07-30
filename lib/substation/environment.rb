@@ -20,11 +20,18 @@ module Substation
     #
     # @api private
     def self.build(other = Undefined, &block)
-      registry  = DSL.registry(&block)
-      chain_dsl = Chain::DSL::Builder.call(registry)
-      instance  = new(registry, chain_dsl)
+      chain_dsl = Chain::DSL::Builder.call(DSL.registry(&block))
+      instance  = new(chain_dsl)
       other.equal?(Undefined) ? instance : other.merge(instance)
     end
+
+    # The registry used by this {Environment}
+    #
+    # @return [Hash<Symbol, #call>]
+    #
+    # @api private
+    attr_reader :registry
+    protected   :registry
 
     # Initialize a new instance
     #
@@ -34,8 +41,9 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(registry, chain_dsl)
-      @registry, @chain_dsl = registry, chain_dsl
+    def initialize(chain_dsl)
+      @chain_dsl = chain_dsl
+      @registry  = chain_dsl.registry
     end
 
     # Build a new {Chain} instance
@@ -92,19 +100,8 @@ module Substation
     #
     # @api private
     def merge(other)
-      merged_registry  = registry.merge(other.registry)
-      merged_chain_dsl = Chain::DSL::Builder.call(merged_registry)
-      self.class.new(merged_registry, merged_chain_dsl)
+      self.class.new(Chain::DSL::Builder.call(registry.merge(other.registry)))
     end
-
-    protected
-
-    # The registry used by this {Environment}
-    #
-    # @return [Hash<Symbol, #call>]
-    #
-    # @api private
-    attr_reader :registry
 
   end # class Environment
 end # module Substation

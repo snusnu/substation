@@ -8,19 +8,57 @@ module Substation
 
       # The class that builds a DSL class suitable for an {Environment}
       class Builder
-        include Adamantium::Flat
+        class << self
 
-        # Build a new {DSL} subclass targeted for an {Environment}
-        #
-        # @param [Hash<Symbol, #call>] registry
-        #   the registry of processors used in an {Environment}
-        #
-        # @return [Class<DSL>]
-        #
-        # @api private
-        def self.call(registry)
-          new(registry).dsl
+          # Build a new {DSL} subclass targeted for an {Environment}
+          #
+          # @param [Hash<Symbol, #call>] registry
+          #   the registry of processors used in an {Environment}
+          #
+          # @return [Class<DSL>]
+          #
+          # @api private
+          def call(registry)
+            new(registry).dsl
+          end
+
+          # Compile a new DSL class
+          #
+          # @return [Class<DSL>]
+          #
+          # @api private
+          def dsl_module(registry)
+            registry.each_with_object(Module.new) { |(name, builder), dsl|
+              define_dsl_method(name, builder, dsl)
+            }
+          end
+
+          private
+
+          # Define a new instance method on the +dsl+ class
+          #
+          # @param [Symbol] name
+          #   the name of the method
+          #
+          # @param [Processor::Builder] builder
+          #   the processor builder to use within the chain
+          #
+          # @param [Class<DSL>] dsl
+          #   the {DSL} subclass to define the method on
+          #
+          # @return [undefined]
+          #
+          # @api private
+          def define_dsl_method(name, builder, dsl)
+            dsl.class_eval do
+              define_method(name) { |handler, failure_chain = EMPTY|
+                use(builder.call(handler, failure_chain))
+              }
+            end
+          end
         end
+
+        include Adamantium::Flat
 
         # The built DSL subclass
         #
@@ -38,46 +76,45 @@ module Substation
         #
         # @api private
         def initialize(registry)
-          @registry = registry
-          @dsl      = compile_dsl
-        end
-
-        private
-
-        # Compile a new DSL class
-        #
-        # @return [Class<DSL>]
-        #
-        # @api private
-        def compile_dsl
-          @registry.each_with_object(Class.new(DSL)) { |(name, builder), dsl|
-            define_dsl_method(name, builder, dsl)
-          }
-        end
-
-        # Define a new instance method on the +dsl+ class
-        #
-        # @param [Symbol] name
-        #   the name of the method
-        #
-        # @param [Processor::Builder] builder
-        #   the processor builder to use within the chain
-        #
-        # @param [Class<DSL>] dsl
-        #   the {DSL} subclass to define the method on
-        #
-        # @return [undefined]
-        #
-        # @api private
-        def define_dsl_method(name, builder, dsl)
-          dsl.class_eval do
-            define_method(name) { |handler, failure_chain = EMPTY|
-              use(builder.call(handler, failure_chain))
-            }
-          end
+          @dsl = DSL.new(registry, self.class.dsl_module(registry))
         end
 
       end # class Builder
+
+      include Equalizer.new(:registry, :definition)
+
+      # The definition to be used within a {Chain}
+      #
+      # @return [Array<#call>]
+      #
+      # @api private
+      attr_reader :definition
+
+      # The registry used to build processors
+      #
+      # @return [Hash<Symbol, Processor::Builder>]
+      #
+      # @api private
+      attr_reader :registry
+
+      # Initialize a new instance
+      #
+      # @param [#each<#call>] processors
+      #   the processors to build on top of
+      #
+      # @param [Proc] block
+      #   a block to be instance_eval'ed
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def initialize(registry, dsl_module, definition = Definition::EMPTY)
+        @registry   = registry
+        @dsl_module = dsl_module
+        @definition = definition
+
+        extend(@dsl_module)
+      end
 
       # Build a new {Chain} based on +other+, a +failure_chain+ and a block
       #
@@ -93,33 +130,8 @@ module Substation
       # @return [Chain]
       #
       # @api private
-      def self.build(other, failure_chain, &block)
-        Chain.new(new(Definition.new(other), &block).definition, failure_chain)
-      end
-
-      include Equalizer.new(:definition)
-
-      # The definition to be used within a {Chain}
-      #
-      # @return [Array<#call>]
-      #
-      # @api private
-      attr_reader :definition
-
-      # Initialize a new instance
-      #
-      # @param [#each<#call>] processors
-      #   the processors to build on top of
-      #
-      # @param [Proc] block
-      #   a block to be instance_eval'ed
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def initialize(definition, &block)
-        @definition = definition
-        instance_eval(&block) if block
+      def build(other, failure_chain, &block)
+        Chain.new(__call__(Definition.new(other), &block), failure_chain)
       end
 
       # Use the given +processor+ within a chain
@@ -162,6 +174,16 @@ module Substation
       def failure_chain(name, failure_chain)
         definition.replace_failure_chain(name, failure_chain)
         self
+      end
+
+      private
+
+      def __call__(other, &block)
+        new(other, &block).definition
+      end
+
+      def new(other, &block)
+        self.class.new(registry, @dsl_module, other.merge(definition)).instance_eval(&block)
       end
 
     end # class DSL

@@ -87,6 +87,10 @@ module Substation
         self
       end
 
+      def merge(other)
+        self.class.new(other.processors + processors)
+      end
+
       private
 
       # Return the processor identified by +name+
