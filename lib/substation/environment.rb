@@ -35,8 +35,8 @@ module Substation
 
     # Initialize a new instance
     #
-    # @param [Hash<Symbol, Processor::Builder>] registry
-    #   the registry of processor builders
+    # @param [Chain::DSL] chain_dsl
+    #   the chain dsl tailored for the environment
     #
     # @return [undefined]
     #

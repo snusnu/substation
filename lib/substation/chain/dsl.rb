@@ -9,21 +9,25 @@ module Substation
       # The class that builds a DSL class suitable for an {Environment}
       class Builder
 
-        # Build a new {DSL} subclass targeted for an {Environment}
+        # Builds a new {DSL} instance targeted for an {Environment},
         #
-        # @param [Hash<Symbol, #call>] registry
-        #   the registry of processors used in an {Environment}
+        # @param [Hash<Symbol, Processor::Builder>] registry
+        #   the registry of processor builders used in an {Environment}
         #
-        # @return [Class<DSL>]
+        # @return [DSL]
         #
         # @api private
         def self.call(registry)
           new(registry).dsl
         end
 
-        # Compile a new DSL class
+        # Compile a new module for inclusion into a {DSL} instance
         #
-        # @return [Class<DSL>]
+        # @param [Hash<Symbol, Processor::Builder>] registry
+        #   the registry of processor builders to define methods for
+        #
+        # @return [Module]
+        #   a module with methods named after keys in +registry+
         #
         # @api private
         def self.dsl_module(registry)
@@ -32,7 +36,7 @@ module Substation
           }
         end
 
-        # Define a new instance method on the +dsl+ class
+        # Define a new instance method on the +dsl+ module
         #
         # @param [Symbol] name
         #   the name of the method
@@ -40,8 +44,8 @@ module Substation
         # @param [Processor::Builder] builder
         #   the processor builder to use within the chain
         #
-        # @param [Class<DSL>] dsl
-        #   the {DSL} subclass to define the method on
+        # @param [Module] dsl
+        #   the module to define the method on
         #
         # @return [undefined]
         #
@@ -58,17 +62,17 @@ module Substation
 
         include Adamantium::Flat
 
-        # The built DSL subclass
+        # The built {DSL} instance
         #
-        # @return [Class<DSL>]
+        # @return [DSL]
         #
         # @api private
         attr_reader :dsl
 
         # Initialize a new instance
         #
-        # @param [Hash<Symbol, #call>] registry
-        #   the registry of processors used in an {Environment}
+        # @param [Hash<Symbol, Processor::Builder>] registry
+        #   the registry of processor builders to define methods for
         #
         # @return [undefined]
         #
@@ -83,7 +87,7 @@ module Substation
 
       # The definition to be used within a {Chain}
       #
-      # @return [Array<#call>]
+      # @return [Definition]
       #
       # @api private
       attr_reader :definition
@@ -97,11 +101,14 @@ module Substation
 
       # Initialize a new instance
       #
-      # @param [#each<#call>] processors
-      #   the processors to build on top of
+      # @param [Hash<Symbol, Processor::Builder>] registry
+      #   the registry of processor builders to define methods for
       #
-      # @param [Proc] block
-      #   a block to be instance_eval'ed
+      # @param [Module] dsl_module
+      #   a module with methods named after keys in +registry+
+      #
+      # @param [Definition] definition
+      #   the definition to use within a {Chain}
       #
       # @return [undefined]
       #
@@ -116,14 +123,14 @@ module Substation
 
       # Build a new {Chain} based on +other+, a +failure_chain+ and a block
       #
-      # @param [#each<#call>] other
-      #   the processors to build on top of
+      # @param [Enumerable<#call>] other
+      #   the processors to prepend
       #
       # @param [Chain] failure_chain
       #   the failure chain to invoke in case of an uncaught exception
       #
       # @param [Proc] block
-      #   a block to be instance_eval'ed
+      #   a block to be instance_eval'ed inside the new {DSL} instance
       #
       # @return [Chain]
       #
@@ -176,10 +183,33 @@ module Substation
 
       private
 
+      # Return a new definition
+      #
+      # @param [Definition] other
+      #   the definition to prepend
+      #
+      # @param [Proc] block
+      #   a block to be instance_eval'd inside a new {DSL} instance
+      #
+      # @return [Definition]
+      #   the definition to be used with a {Chain}
+      #
+      # @api private
       def __call__(other, &block)
         new(other, &block).definition
       end
 
+      # Instantiate a new instance
+      #
+      # @param [Definition] other
+      #   the definition to prepend
+      #
+      # @param [Proc] block
+      #   a block to be instance_eval'd inside a new {DSL} instance
+      #
+      # @return [DSL]
+      #
+      # @api private
       def new(other, &block)
         self.class.new(registry, @dsl_module, other.prepend(definition)).instance_eval(&block)
       end
