@@ -56,7 +56,7 @@ module Substation
         #
         # @api private
         def compile_dsl_module
-          @registry.each { |(name, builder)| define_dsl_method(name, builder) }
+          @registry.each { |name, builder| define_dsl_method(name, builder) }
           @dsl_module
         end
 
