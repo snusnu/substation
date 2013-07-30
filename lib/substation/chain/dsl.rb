@@ -39,8 +39,9 @@ module Substation
         #
         # @api private
         def initialize(registry)
-          @registry = registry
-          @dsl      = DSL.new(registry, dsl_module)
+          @registry   = registry
+          @dsl_module = Module.new
+          @dsl        = DSL.new(registry, compile_dsl_module)
         end
 
         # Compile a new module for inclusion into a {DSL} instance
@@ -52,10 +53,9 @@ module Substation
         #   a module with methods named after keys in +registry+
         #
         # @api private
-        def dsl_module
-          @registry.each_with_object(Module.new) { |(name, builder), dsl|
-            define_dsl_method(name, builder, dsl)
-          }
+        def compile_dsl_module
+          @registry.each { |(name, builder)| define_dsl_method(name, builder) }
+          @dsl_module
         end
 
         # Define a new instance method on the +dsl+ module
@@ -72,8 +72,8 @@ module Substation
         # @return [undefined]
         #
         # @api private
-        def define_dsl_method(name, builder, dsl)
-          dsl.module_eval do
+        def define_dsl_method(name, builder)
+          @dsl_module.module_eval do
             define_method(name) { |handler, failure_chain = EMPTY|
               use(builder.call(handler, failure_chain))
             }
