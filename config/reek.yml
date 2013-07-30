@@ -68,6 +68,7 @@ TooManyInstanceVariables:
 TooManyMethods:
   enabled: true
   exclude:
+  - Substation::Chain::DSL # 7
   - Substation::Chain::Definition # 8
   - Substation::Environment # 5
   - Substation::Dispatcher::Registry # 5
