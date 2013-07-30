@@ -21,45 +21,6 @@ module Substation
           new(registry).dsl
         end
 
-        # Compile a new module for inclusion into a {DSL} instance
-        #
-        # @param [Hash<Symbol, Processor::Builder>] registry
-        #   the registry of processor builders to define methods for
-        #
-        # @return [Module]
-        #   a module with methods named after keys in +registry+
-        #
-        # @api private
-        def self.dsl_module(registry)
-          registry.each_with_object(Module.new) { |(name, builder), dsl|
-            define_dsl_method(name, builder, dsl)
-          }
-        end
-
-        # Define a new instance method on the +dsl+ module
-        #
-        # @param [Symbol] name
-        #   the name of the method
-        #
-        # @param [Processor::Builder] builder
-        #   the processor builder to use within the chain
-        #
-        # @param [Module] dsl
-        #   the module to define the method on
-        #
-        # @return [undefined]
-        #
-        # @api private
-        def self.define_dsl_method(name, builder, dsl)
-          dsl.module_eval do
-            define_method(name) { |handler, failure_chain = EMPTY|
-              use(builder.call(handler, failure_chain))
-            }
-          end
-        end
-
-        private_class_method :define_dsl_method
-
         include Adamantium::Flat
 
         # The built {DSL} instance
@@ -78,7 +39,45 @@ module Substation
         #
         # @api private
         def initialize(registry)
-          @dsl = DSL.new(registry, self.class.dsl_module(registry))
+          @registry = registry
+          @dsl      = DSL.new(registry, dsl_module)
+        end
+
+        # Compile a new module for inclusion into a {DSL} instance
+        #
+        # @param [Hash<Symbol, Processor::Builder>] registry
+        #   the registry of processor builders to define methods for
+        #
+        # @return [Module]
+        #   a module with methods named after keys in +registry+
+        #
+        # @api private
+        def dsl_module
+          @registry.each_with_object(Module.new) { |(name, builder), dsl|
+            define_dsl_method(name, builder, dsl)
+          }
+        end
+
+        # Define a new instance method on the +dsl+ module
+        #
+        # @param [Symbol] name
+        #   the name of the method
+        #
+        # @param [Processor::Builder] builder
+        #   the processor builder to use within the chain
+        #
+        # @param [Module] dsl
+        #   the module to define the method on
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def define_dsl_method(name, builder, dsl)
+          dsl.module_eval do
+            define_method(name) { |handler, failure_chain = EMPTY|
+              use(builder.call(handler, failure_chain))
+            }
+          end
         end
 
       end # class Builder
