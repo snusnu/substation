@@ -46,6 +46,9 @@ module Substation
 
       # Initialize a new instance
       #
+      # Extends the new instance with methods defined in +config.dsl_module+.
+      # Only happens during boot, once for every instantiated {Environment}.
+      #
       # @param [Config] config
       #   a config for this instance
       #
