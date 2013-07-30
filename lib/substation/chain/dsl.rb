@@ -8,55 +8,53 @@ module Substation
 
       # The class that builds a DSL class suitable for an {Environment}
       class Builder
-        class << self
 
-          # Build a new {DSL} subclass targeted for an {Environment}
-          #
-          # @param [Hash<Symbol, #call>] registry
-          #   the registry of processors used in an {Environment}
-          #
-          # @return [Class<DSL>]
-          #
-          # @api private
-          def call(registry)
-            new(registry).dsl
-          end
+        # Build a new {DSL} subclass targeted for an {Environment}
+        #
+        # @param [Hash<Symbol, #call>] registry
+        #   the registry of processors used in an {Environment}
+        #
+        # @return [Class<DSL>]
+        #
+        # @api private
+        def self.call(registry)
+          new(registry).dsl
+        end
 
-          # Compile a new DSL class
-          #
-          # @return [Class<DSL>]
-          #
-          # @api private
-          def dsl_module(registry)
-            registry.each_with_object(Module.new) { |(name, builder), dsl|
-              define_dsl_method(name, builder, dsl)
+        # Compile a new DSL class
+        #
+        # @return [Class<DSL>]
+        #
+        # @api private
+        def self.dsl_module(registry)
+          registry.each_with_object(Module.new) { |(name, builder), dsl|
+            define_dsl_method(name, builder, dsl)
+          }
+        end
+
+        # Define a new instance method on the +dsl+ class
+        #
+        # @param [Symbol] name
+        #   the name of the method
+        #
+        # @param [Processor::Builder] builder
+        #   the processor builder to use within the chain
+        #
+        # @param [Class<DSL>] dsl
+        #   the {DSL} subclass to define the method on
+        #
+        # @return [undefined]
+        #
+        # @api private
+        def self.define_dsl_method(name, builder, dsl)
+          dsl.module_eval do
+            define_method(name) { |handler, failure_chain = EMPTY|
+              use(builder.call(handler, failure_chain))
             }
           end
-
-          private
-
-          # Define a new instance method on the +dsl+ class
-          #
-          # @param [Symbol] name
-          #   the name of the method
-          #
-          # @param [Processor::Builder] builder
-          #   the processor builder to use within the chain
-          #
-          # @param [Class<DSL>] dsl
-          #   the {DSL} subclass to define the method on
-          #
-          # @return [undefined]
-          #
-          # @api private
-          def define_dsl_method(name, builder, dsl)
-            dsl.class_eval do
-              define_method(name) { |handler, failure_chain = EMPTY|
-                use(builder.call(handler, failure_chain))
-              }
-            end
-          end
         end
+
+        private_class_method :define_dsl_method
 
         include Adamantium::Flat
 
