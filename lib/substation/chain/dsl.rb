@@ -195,7 +195,7 @@ module Substation
       #
       # @api private
       def __call__(other, &block)
-        new(other, &block).definition
+        new(other).instance_eval(&block).definition
       end
 
       # Instantiate a new instance
@@ -209,8 +209,8 @@ module Substation
       # @return [DSL]
       #
       # @api private
-      def new(other, &block)
-        self.class.new(registry, @dsl_module, other.prepend(definition)).instance_eval(&block)
+      def new(other)
+        self.class.new(registry, @dsl_module, other.prepend(definition))
       end
 
     end # class DSL
