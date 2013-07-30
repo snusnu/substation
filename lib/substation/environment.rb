@@ -26,7 +26,7 @@ module Substation
 
     # The registry used by this {Environment}
     #
-    # @return [Hash<Symbol, #call>]
+    # @return [Hash<Symbol, Processor::Builder>]
     #
     # @api private
     attr_reader :registry
