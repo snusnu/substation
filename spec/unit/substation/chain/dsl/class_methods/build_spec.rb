@@ -1,27 +1,28 @@
 # encoding: utf-8
 
-require 'spec_helper'
-
 describe Chain::DSL, '.build' do
 
-  let(:processors) { [processor] }
-  let(:processor)  { double('processor') }
-  let(:failure_chain) { EMPTY_ARRAY }
+  let(:registry)   { double('registry') }
+  let(:dsl)        { double('dsl') }
+  let(:config)     { double('config') }
+  let(:definition) { double('definition') }
 
-  context 'and a block is given' do
-    subject { described_class.build(processors, failure_chain, &block) }
-
-    let(:block)      { ->(_) { use(Spec::FAKE_PROCESSOR) } }
-    let(:definition) { Chain::Definition.new([processor, Spec::FAKE_PROCESSOR]) }
-
-    it { should eql(Chain.new(definition, failure_chain)) }
+  before do
+    expect(Chain::DSL::Config).to receive(:build).with(registry).and_return(config)
+    expect(described_class).to receive(:new).with(config, definition).and_return(dsl)
   end
 
-  context 'and no block is given' do
-    subject { described_class.build(processors, failure_chain) }
+  context 'when a definition is given' do
+    subject { described_class.build(registry, definition) }
 
-    let(:definition) { Chain::Definition.new([processor]) }
+    it { should be(dsl) }
+  end
 
-    it { should eql(Chain.new(definition, failure_chain)) }
+  context 'when no definition is given' do
+    subject { described_class.build(registry) }
+
+    let(:definition) { Chain::Definition::EMPTY }
+
+    it { should be(dsl) }
   end
 end

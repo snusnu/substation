@@ -120,12 +120,11 @@ module Substation
       # @param [#call] processor
       #   a processor to use within a chain
       #
-      # @return [self]
+      # @return [undefined]
       #
       # @api private
       def use(processor)
         definition << processor
-        self
       end
 
       # Return a new definition
@@ -141,7 +140,9 @@ module Substation
       #
       # @api private
       def __call__(other, &block)
-        new(other).instance_eval(&block).definition
+        instance = new(other)
+        instance.instance_eval(&block) if block
+        instance.definition
       end
 
       # Instantiate a new instance

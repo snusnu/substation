@@ -30,6 +30,7 @@ FeatureEnvy:
   - Substation::Processor::Evaluator#call # method object
   - Substation::Processor::Evaluator#on_success # method object
   - Substation::Processor#success? # in a module to be included in a method object
+  - Substation::Chain::DSL#__call__ # relies heavily on #new(other)
 IrresponsibleModule:
   enabled: true
   exclude: []

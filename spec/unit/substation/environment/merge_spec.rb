@@ -5,8 +5,8 @@ require 'spec_helper'
 describe Environment, '#merge' do
   subject { object.merge(other) }
 
-  let(:object)    { Environment.new(registry, chain_dsl) }
-  let(:chain_dsl) { Chain::DSL::Builder.call(registry) }
+  let(:object)    { Environment.new(chain_dsl) }
+  let(:chain_dsl) { Chain::DSL.build(registry) }
   let(:registry)  { described_class::DSL.new(&block).registry }
   let(:block)     {
     ->(_) {
@@ -15,8 +15,8 @@ describe Environment, '#merge' do
     }
   }
 
-  let(:other)           { Environment.new(other_registry, other_chain_dsl) }
-  let(:other_chain_dsl) { Chain::DSL::Builder.call(other_registry) }
+  let(:other)           { Environment.new(other_chain_dsl) }
+  let(:other_chain_dsl) { Chain::DSL.build(other_registry) }
   let(:other_registry)  { described_class::DSL.new(&other_block).registry }
   let(:other_block)     {
     ->(_) {
@@ -25,8 +25,8 @@ describe Environment, '#merge' do
     }
   }
 
-  let(:expected)           { Environment.new(expected_registry, expected_chain_dsl) }
-  let(:expected_chain_dsl) { Chain::DSL::Builder.call(expected_registry) }
+  let(:expected)           { Environment.new(expected_chain_dsl) }
+  let(:expected_chain_dsl) { Chain::DSL.build(expected_registry) }
   let(:expected_registry)  { described_class::DSL.new(&expected_block).registry }
   let(:expected_block)     {
     ->(_) {
