@@ -87,6 +87,18 @@ module Substation
         self
       end
 
+      # Returns a new instance with +other+'s processors prepended
+      #
+      # @param [Definition] other
+      #   the definition to prepend
+      #
+      # @return [Definition]
+      #
+      # @api private
+      def prepend(other)
+        self.class.new(other.processors + processors)
+      end
+
       private
 
       # Return the processor identified by +name+

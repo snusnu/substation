@@ -4,9 +4,9 @@ require 'spec_helper'
 
 describe Substation::Environment, '#chain' do
 
-  let(:object) { described_class.new(registry, dsl) }
+  let(:object) { described_class.new(dsl) }
 
-  let(:dsl)      { Chain::DSL::Builder.call(registry) }
+  let(:dsl)      { Chain::DSL.build(registry) }
   let(:registry) { described_class::DSL.registry(&r_block) }
   let(:r_block)  { ->(_) { register(:test, Spec::Processor) } }
 

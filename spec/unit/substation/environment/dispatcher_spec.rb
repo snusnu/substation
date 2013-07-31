@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Environment, '#dispatcher' do
   subject { object.dispatcher(dispatch_table, app_env) }
 
-  let(:object)      { described_class.new(registry, chain_dsl) }
+  let(:object)      { described_class.new(chain_dsl) }
+  let(:chain_dsl)   { double('chain_dsl', :registry => registry) }
   let(:registry)    { double('registry') }
-  let(:chain_dsl)   { double('chain_dsl') }
   let(:app_env)     { double('app_env') }
 
   let(:dispatch_table) { double('dispatch_table') }

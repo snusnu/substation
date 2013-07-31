@@ -20,22 +20,29 @@ module Substation
     #
     # @api private
     def self.build(other = Undefined, &block)
-      registry  = DSL.registry(&block)
-      chain_dsl = Chain::DSL::Builder.call(registry)
-      instance  = new(registry, chain_dsl)
+      instance = new(Chain::DSL.build(DSL.registry(&block)))
       other.equal?(Undefined) ? instance : other.merge(instance)
     end
 
+    # The registry used by this {Environment}
+    #
+    # @return [Hash<Symbol, Processor::Builder>]
+    #
+    # @api private
+    attr_reader :registry
+    protected   :registry
+
     # Initialize a new instance
     #
-    # @param [Hash<Symbol, Processor::Builder>] registry
-    #   the registry of processor builders
+    # @param [Chain::DSL] chain_dsl
+    #   the chain dsl tailored for the environment
     #
     # @return [undefined]
     #
     # @api private
-    def initialize(registry, chain_dsl)
-      @registry, @chain_dsl = registry, chain_dsl
+    def initialize(chain_dsl)
+      @chain_dsl = chain_dsl
+      @registry  = chain_dsl.registry
     end
 
     # Build a new {Chain} instance
@@ -92,19 +99,21 @@ module Substation
     #
     # @api private
     def merge(other)
-      merged_registry  = registry.merge(other.registry)
-      merged_chain_dsl = Chain::DSL::Builder.call(merged_registry)
-      self.class.new(merged_registry, merged_chain_dsl)
+      self.class.new(Chain::DSL.build(merged_registry(other)))
     end
 
-    protected
+    private
 
-    # The registry used by this {Environment}
+    # Return a new registry by merging in +other.registry+
     #
-    # @return [Hash<Symbol, #call>]
+    # @param [Environment] other
+    #   the other environment providing the registry to merge
+    #
+    # @return [Hash<Symbol, Processor::Builder>]
     #
     # @api private
-    attr_reader :registry
-
+    def merged_registry(other)
+      registry.merge(other.registry)
+    end
   end # class Environment
 end # module Substation

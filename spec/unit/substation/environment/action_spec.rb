@@ -4,10 +4,10 @@ require 'spec_helper'
 
 describe Environment, '#action' do
 
-  let(:object)      { described_class.new(registry, chain_dsl) }
-  let(:registry)    { double }
-  let(:chain_dsl)   { double }
-  let(:handler)     { double }
+  let(:object)      { described_class.new(chain_dsl) }
+  let(:chain_dsl)   { double('chain_dsl', :registry => registry) }
+  let(:registry)    { double('registry') }
+  let(:handler)     { double('handler') }
 
   context 'when no observers are given' do
     subject { object.action(handler) }

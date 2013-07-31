@@ -5,7 +5,10 @@ require 'spec_helper'
 describe Chain::DSL, '#failure_chain' do
   subject { object.failure_chain(name, failure_chain) }
 
-  let(:object)        { described_class.new(definition) }
+  let(:object)        { described_class.new(config, definition) }
+  let(:config)        { Chain::DSL::Config.new(registry, dsl_module) }
+  let(:registry)      { double('registry') }
+  let(:dsl_module)    { Module.new }
   let(:definition)    { double('definition') }
   let(:name)          { double('name') }
   let(:failure_chain) { double('failure_chain') }

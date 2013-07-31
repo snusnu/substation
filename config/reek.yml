@@ -30,6 +30,7 @@ FeatureEnvy:
   - Substation::Processor::Evaluator#call # method object
   - Substation::Processor::Evaluator#on_success # method object
   - Substation::Processor#success? # in a module to be included in a method object
+  - Substation::Chain::DSL#__call__ # relies heavily on #new(other)
 IrresponsibleModule:
   enabled: true
   exclude: []
@@ -37,7 +38,6 @@ LongParameterList:
   enabled: true
   exclude:
   - Substation::Dispatcher#call
-  - Substation::Chain::DSL::Builder#define_dsl_method
   - Substation::Chain#self.failure_response
   - Substation::Chain#on_failure
   - Substation::Environment::DSL#register
@@ -49,7 +49,7 @@ LongYieldList:
 NestedIterators:
   enabled: true
   exclude:
-  - Substation::Chain::DSL::Builder#define_dsl_method
+  - Substation::Chain::DSL::ModuleBuilder#define_dsl_method
   max_allowed_nesting: 1
   ignore_iterators: []
 NilCheck:
@@ -68,6 +68,7 @@ TooManyInstanceVariables:
 TooManyMethods:
   enabled: true
   exclude:
+  - Substation::Chain::DSL # 7
   - Substation::Chain::Definition # 8
   - Substation::Environment # 5
   - Substation::Dispatcher::Registry # 5

@@ -1,9 +1,5 @@
 # encoding: utf-8
 
-require 'devtools/spec_helper'
-
-require 'concord' # makes spec setup easier
-
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
   require 'coveralls'
@@ -22,6 +18,10 @@ if ENV['COVERAGE'] == 'true'
 end
 
 require 'substation'
+
+# MUST happen after ice_nine
+# got required by substation
+require 'devtools/spec_helper'
 
 module Spec
 
