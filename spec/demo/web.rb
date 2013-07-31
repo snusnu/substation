@@ -15,7 +15,7 @@ require 'demo/web/renderer'
 
 class Demo
   module Web
-    ENV = Substation::Environment.build(Core::ENV) do
+    ENV = Substation::Environment.merge(Core::ENV) do
       register :deserialize, Substation::Processor::Transformer::Incoming, Web::Handler::Deserializer::EXECUTOR
       register :sanitize,    Substation::Processor::Evaluator::Request, Web::Sanitizer::EXECUTOR
       register :wrap,        Substation::Processor::Wrapper::Outgoing, Core::Handler::Wrapper::Outgoing::EXECUTOR

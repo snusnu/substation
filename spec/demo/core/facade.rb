@@ -25,7 +25,7 @@ class Demo
         authorize Handler::Authorizer, AUTHORIZATION_ERROR
       end
 
-      CREATE_PERSON = Core::ENV.chain(AUTHORIZE, INTERNAL_ERROR) do
+      Core::ENV.register(:create_person, AUTHORIZE, INTERNAL_ERROR) do
         validate Domain::DTO::NEW_PERSON_VALIDATOR, VALIDATION_ERROR
         accept   Handler::Acceptor
         call     Core::CREATE_PERSON, APPLICATION_ERROR
@@ -33,15 +33,8 @@ class Demo
 
     end
 
-    # This is temporary and will be replaced by self registering
-    # actions, which will remove the need for a centralized dispatch
-    # table definition
-    dispatch_table = Substation::Dispatcher::Registry.new({
-      :create_person => App::CREATE_PERSON
-    })
-
     # The application
-    APP = Core::ENV.dispatcher(dispatch_table, Demo::APP_ENV)
+    APP = Core::ENV.dispatcher
 
   end
 end

@@ -38,7 +38,7 @@ class Demo
   require 'demo/core/observers'
 
   module Core
-    ENV = Substation::Environment.build do
+    ENV = Substation::Environment.build(APP_ENV) do
       register :authenticate, Substation::Processor::Evaluator::Request
       register :authorize,    Substation::Processor::Evaluator::Request
       register :validate,     Substation::Processor::Evaluator::Request, Core::Validator::EXECUTOR

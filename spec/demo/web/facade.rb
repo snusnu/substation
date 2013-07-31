@@ -12,7 +12,7 @@ class Demo
     CREATE_PERSON = Web::ENV.chain do
       deserialize Handler::Deserializer
       sanitize    Sanitizer::NEW_PERSON, SANITIZATION_ERROR
-      chain       Core::App::CREATE_PERSON
+      chain       Core::ENV[:create_person]
     end
 
     module HTML
@@ -42,7 +42,7 @@ class Demo
         render Renderer::InternalError
       end
 
-      CREATE_PERSON = Web::ENV.chain(Web::CREATE_PERSON, INTERNAL_ERROR) do
+      Web::ENV.register(:create_person, Web::CREATE_PERSON, INTERNAL_ERROR) do
         failure_chain :sanitize,     SANITIZATION_ERROR
         failure_chain :authenticate, AUTHENTICATION_ERROR
         failure_chain :authorize,    AUTHORIZATION_ERROR
@@ -52,15 +52,8 @@ class Demo
         wrap Views::Person
       end
 
-      # This is temporary and will be replaced by self registering
-      # actions, which will remove the need for a centralized dispatch
-      # table definition
-      dispatch_table = {
-        :create_person => CREATE_PERSON
-      }
-
       # The application
-      APP = Web::ENV.dispatcher(dispatch_table, APP_ENV)
+      APP = Web::ENV.dispatcher
 
     end # module HTML
   end # module Web

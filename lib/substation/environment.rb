@@ -19,10 +19,21 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def self.build(other = Undefined, &block)
-      instance = new(Chain::DSL.build(DSL.registry(&block)))
+    def self.build(app_env, actions = Dispatcher::Registry.new, other = Undefined, &block)
+      instance = new(app_env, actions, chain_dsl(&block))
       other.equal?(Undefined) ? instance : other.merge(instance)
     end
+
+    def self.merge(other, &block)
+      instance = new(other.app_env, other.actions, chain_dsl(&block))
+      other.merge(instance)
+    end
+
+    def self.chain_dsl(&block)
+      Chain::DSL.build(DSL.registry(&block))
+    end
+
+    private_class_method :chain_dsl
 
     # The registry used by this {Environment}
     #
@@ -32,6 +43,10 @@ module Substation
     attr_reader :registry
     protected   :registry
 
+    attr_reader :app_env
+
+    attr_reader :actions
+
     # Initialize a new instance
     #
     # @param [Chain::DSL] chain_dsl
@@ -40,7 +55,9 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(chain_dsl)
+    def initialize(app_env, actions, chain_dsl)
+      @app_env   = app_env
+      @actions   = actions
       @chain_dsl = chain_dsl
       @registry  = chain_dsl.registry
     end
@@ -58,6 +75,14 @@ module Substation
     # @api private
     def chain(other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
       @chain_dsl.build(other, failure_chain, &block)
+    end
+
+    def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
+      @actions[name] = @chain_dsl.build(other, failure_chain, &block)
+    end
+
+    def [](name)
+      @actions.fetch(name)
     end
 
     # Build a new {Action} instance
@@ -85,8 +110,8 @@ module Substation
     # @return [Dispatcher]
     #
     # @api private
-    def dispatcher(dispatch_table, env)
-      Dispatcher.new(dispatch_table, env)
+    def dispatcher
+      Dispatcher.new(actions, app_env)
     end
 
     # Return a new instance that has +other+ merged into +self+
@@ -99,7 +124,7 @@ module Substation
     #
     # @api private
     def merge(other)
-      self.class.new(Chain::DSL.build(merged_registry(other)))
+      self.class.new(app_env, Dispatcher::Registry.new, Chain::DSL.build(merged_registry(other)))
     end
 
     private
