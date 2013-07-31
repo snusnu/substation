@@ -99,8 +99,21 @@ module Substation
     #
     # @api private
     def merge(other)
-      self.class.new(Chain::DSL.build(registry.merge(other.registry)))
+      self.class.new(Chain::DSL.build(merged_registry(other)))
     end
 
+    private
+
+    # Return a new registry by merging in +other.registry+
+    #
+    # @param [Environment] other
+    #   the other environment providing the registry to merge
+    #
+    # @return [Hash<Symbol, Processor::Builder>]
+    #
+    # @api private
+    def merged_registry(other)
+      registry.merge(other.registry)
+    end
   end # class Environment
 end # module Substation
