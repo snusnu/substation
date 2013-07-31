@@ -6,6 +6,19 @@ module Substation
 
       # A configuration object used with a {DSL} instance
       class Config
+
+        # Build a new config based on {registry} suitable for a {DSL} instance
+        #
+        # @param [Hash<Symbol, Processor::Builder>] registry
+        #   the registry of processor builders used in an {Environment}
+        #
+        # @return [Config]
+        #
+        # @api private
+        def self.build(registry)
+          new(registry, ModuleBuilder.call(registry))
+        end
+
         include Equalizer.new(:registry)
 
         # The registry of processor builders

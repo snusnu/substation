@@ -18,7 +18,7 @@ module Substation
       #
       # @api private
       def self.build(registry, definition = Definition::EMPTY)
-        new(Config::Builder.call(registry), definition)
+        new(Config.build(registry), definition)
       end
 
       include Equalizer.new(:registry, :definition)

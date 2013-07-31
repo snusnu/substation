@@ -3,31 +3,30 @@
 module Substation
   class Chain
     class DSL
-      class Config
 
-        # Builds a {Config} suitable for a {DSL} instance
-        class Builder
+        # Builds a {Module} suitable for a {DSL} instance
+        class ModuleBuilder
 
-          # Builds a new {Config} instance targeted for a {DSL} instance
+          # Builds a new {Module} targeted for a {DSL} instance
           #
           # @param [Hash<Symbol, Processor::Builder>] registry
           #   the registry of processor builders used in an {Environment}
           #
-          # @return [DSL]
+          # @return [Module]
           #
           # @api private
           def self.call(registry)
-            new(registry).config
+            new(registry).dsl_module
           end
 
           include Adamantium::Flat
 
-          # Return a {Config} instance  suitable for a {DSL} instance
+          # A module suitable for inclusion in a {DSL} instance
           #
-          # @return [Config]
+          # @return [Module]
           #
           # @api private
-          attr_reader :config
+          attr_reader :dsl_module
 
           # Initialize a new instance
           #
@@ -40,7 +39,7 @@ module Substation
           def initialize(registry)
             @registry   = registry
             @dsl_module = Module.new
-            @config     = Config.new(registry, compile_dsl_module)
+            initialize_dsl_module
           end
 
           private
@@ -50,13 +49,11 @@ module Substation
           # @param [Hash<Symbol, Processor::Builder>] registry
           #   the registry of processor builders to define methods for
           #
-          # @return [Module]
-          #   a module with methods named after keys in +registry+
+          # @return [undefined]
           #
           # @api private
-          def compile_dsl_module
+          def initialize_dsl_module
             @registry.each { |name, builder| define_dsl_method(name, builder) }
-            @dsl_module
           end
 
           # Define a new instance method on the +dsl+ module
@@ -81,8 +78,7 @@ module Substation
             end
           end
 
-        end # class Builder
-      end # class Config
+        end # class ModuleBuilder
     end # class DSL
   end # class Chain
 end # module Substation
