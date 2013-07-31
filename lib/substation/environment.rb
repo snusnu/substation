@@ -24,7 +24,7 @@ module Substation
       other.equal?(Undefined) ? instance : other.merge(instance)
     end
 
-    def self.merge(other, &block)
+    def self.inherit(other, &block)
       instance = new(other.app_env, other.actions, chain_dsl(&block))
       other.merge(instance)
     end
