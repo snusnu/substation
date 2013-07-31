@@ -53,7 +53,7 @@ module Substation
           #
           # @api private
           def initialize_dsl_module
-            @registry.each { |name, builder| define_dsl_method(name, builder) }
+            @registry.each { |pair| define_dsl_method(*pair) }
           end
 
           # Define a new instance method on the +dsl+ module
