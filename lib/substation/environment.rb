@@ -37,8 +37,8 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def self.inherit(other, actions = Dispatcher::Registry.new, &block)
-      other.merge(build(other.app_env, actions, &block))
+    def self.inherit(env, actions = Dispatcher::Registry.new, &block)
+      env.merge(build(env.app_env, actions, &block))
     end
 
     # Build a new {Chain::DSL} instance
