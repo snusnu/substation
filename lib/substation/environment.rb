@@ -19,14 +19,12 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def self.build(app_env, actions = Dispatcher::Registry.new, other = Undefined, &block)
-      instance = new(app_env, actions, chain_dsl(&block))
-      other.equal?(Undefined) ? instance : other.merge(instance)
+    def self.build(app_env, actions = Dispatcher::Registry.new, &block)
+      new(app_env, actions, chain_dsl(&block))
     end
 
-    def self.inherit(other, &block)
-      instance = new(other.app_env, other.actions, chain_dsl(&block))
-      other.merge(instance)
+    def self.inherit(other, actions = Dispatcher::Registry.new, &block)
+      other.merge(build(other.app_env, actions, &block))
     end
 
     def self.chain_dsl(&block)
@@ -78,7 +76,7 @@ module Substation
     end
 
     def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
-      @actions[name] = @chain_dsl.build(other, failure_chain, &block)
+      @actions[name] = chain(other, failure_chain, &block)
     end
 
     def [](name)
@@ -124,21 +122,21 @@ module Substation
     #
     # @api private
     def merge(other)
-      self.class.new(app_env, Dispatcher::Registry.new, Chain::DSL.build(merged_registry(other)))
+      self.class.new(app_env, other.actions, merged_chain_dsl(other))
     end
 
     private
 
-    # Return a new registry by merging in +other.registry+
+    # Return a new {Chain::DSL} by merging in +other.registry+
     #
     # @param [Environment] other
     #   the other environment providing the registry to merge
     #
-    # @return [Hash<Symbol, Processor::Builder>]
+    # @return [Chain::DSL]
     #
     # @api private
-    def merged_registry(other)
-      registry.merge(other.registry)
+    def merged_chain_dsl(other)
+      Chain::DSL.build(registry.merge(other.registry))
     end
   end # class Environment
 end # module Substation
