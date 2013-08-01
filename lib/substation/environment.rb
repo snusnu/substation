@@ -124,6 +124,7 @@ module Substation
     # @api private
     def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
       actions[name] = chain(other, failure_chain, &block)
+      self
     end
 
     # Return the chain identified by +name+ or raise an error
