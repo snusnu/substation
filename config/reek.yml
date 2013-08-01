@@ -41,6 +41,7 @@ LongParameterList:
   - Substation::Chain#self.failure_response
   - Substation::Chain#on_failure
   - Substation::Environment::DSL#register
+  - Substation::Environment#register # 3
   max_params: 2
 LongYieldList:
   enabled: true
@@ -64,6 +65,7 @@ TooManyInstanceVariables:
   exclude:
   - Substation::Response
   - Substation::Processor::Evaluator
+  - Substation::Environment # 4
   max_instance_variables: 3
 TooManyMethods:
   enabled: true
