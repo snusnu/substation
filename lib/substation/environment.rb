@@ -23,15 +23,51 @@ module Substation
       new(app_env, actions, chain_dsl(&block))
     end
 
+    # Build a new environment on top of an +other+
+    #
+    # @param [Environment] other
+    #   the environment to inherit from
+    #
+    # @param [Dispatcher::Registry] actions
+    #   the mutable action registry
+    #
+    # @param [Proc] block
+    #   a block to instance_eval inside a {DSL} instance
+    #
+    # @return [Environment]
+    #
+    # @api private
     def self.inherit(other, actions = Dispatcher::Registry.new, &block)
       other.merge(build(other.app_env, actions, &block))
     end
 
+    # Build a new {Chain::DSL} instance
+    #
+    # @param [Proc] block
+    #   a block to be instance_eval'ed in {DSL}
+    #
+    # @return {Chain::DSL}
+    #
+    # @api private
     def self.chain_dsl(&block)
       Chain::DSL.build(DSL.registry(&block))
     end
 
     private_class_method :chain_dsl
+
+    # The application environment
+    #
+    # @return [Object]
+    #
+    # @api private
+    attr_reader :app_env
+
+    # The mutable action registry
+    #
+    # @return [Dispatcher::Registry]
+    #
+    # @api private
+    attr_reader :actions
 
     # The registry used by this {Environment}
     #
@@ -40,10 +76,6 @@ module Substation
     # @api private
     attr_reader :registry
     protected   :registry
-
-    attr_reader :app_env
-
-    attr_reader :actions
 
     # Initialize a new instance
     #
@@ -75,10 +107,36 @@ module Substation
       @chain_dsl.build(other, failure_chain, &block)
     end
 
+    # Register a new chain under the given +name+
+    #
+    # @param [#to_sym] name
+    #   the new chain's name
+    #
+    # @param [Chain] other
+    #   the chain to build on top of
+    #
+    # @param [Chain] failure_chain
+    #   the chain to invoke in case of uncaught exceptions in handlers
+    #
+    # @return [Chain]
+    #   the registered chain
+    #
+    # @api private
     def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
       @actions[name] = chain(other, failure_chain, &block)
     end
 
+    # Return the chain identified by +name+ or raise an error
+    #
+    # @param [name]
+    #   the name of the chain to retrieve
+    #
+    # @return [Chain]
+    #
+    # @raise [UnknownActionError]
+    #   if no chain is registered under +name+
+    #
+    # @api private
     def [](name)
       @actions.fetch(name)
     end
