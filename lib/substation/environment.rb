@@ -123,7 +123,7 @@ module Substation
     #
     # @api private
     def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
-      @actions[name] = chain(other, failure_chain, &block)
+      actions[name] = chain(other, failure_chain, &block)
     end
 
     # Return the chain identified by +name+ or raise an error
@@ -138,7 +138,7 @@ module Substation
     #
     # @api private
     def [](name)
-      @actions.fetch(name)
+      actions.fetch(name)
     end
 
     # Build a new {Action} instance
