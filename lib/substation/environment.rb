@@ -10,8 +10,11 @@ module Substation
 
     # Build a new {Environment} instance
     #
-    # @param [Environment] other
-    #   optional other environment to build on top of
+    # @param [Object] app_env
+    #   the application environment
+    #
+    # @param [Dispatcher::Registry] actions
+    #   a mutable action registry
     #
     # @param [Proc] block
     #   a block to be instance_eval'ed with {DSL}
@@ -25,7 +28,7 @@ module Substation
 
     # Build a new environment on top of an +other+
     #
-    # @param [Environment] other
+    # @param [Environment] env
     #   the environment to inherit from
     #
     # @param [Dispatcher::Registry] actions
@@ -184,7 +187,7 @@ module Substation
       self.class.new(app_env, other.actions, merged_chain_dsl(other))
     end
 
-    private
+    #private
 
     # Return a new {Chain::DSL} by merging in +other.registry+
     #
