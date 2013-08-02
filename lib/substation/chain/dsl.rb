@@ -6,141 +6,94 @@ module Substation
     # The DSL class used to define chains in an {Environment}
     class DSL
 
-      # The class that builds a DSL class suitable for an {Environment}
-      class Builder
-        include Adamantium::Flat
+      # Build a new instance suitable for +registry+
+      #
+      # @param [Hash<Symbol, Processor>] registry
+      #   the registry of processor builders to use in a {Chain}
+      #
+      # @param [Definition] definition
+      #   the collection of processors to use in a {Chain}
+      #
+      # @return [DSL]
+      #
+      # @api private
+      def self.build(registry, definition = Definition::EMPTY)
+        new(Config.build(registry), definition)
+      end
 
-        # Build a new {DSL} subclass targeted for an {Environment}
-        #
-        # @param [Hash<Symbol, #call>] registry
-        #   the registry of processors used in an {Environment}
-        #
-        # @return [Class<DSL>]
-        #
-        # @api private
-        def self.call(registry)
-          new(registry).dsl
-        end
+      include Equalizer.new(:registry, :definition)
 
-        # The built DSL subclass
-        #
-        # @return [Class<DSL>]
-        #
-        # @api private
-        attr_reader :dsl
+      # The config for this instance
+      #
+      # @return [Config]
+      #
+      # @api private
+      attr_reader :config
 
-        # Initialize a new instance
-        #
-        # @param [Hash<Symbol, #call>] registry
-        #   the registry of processors used in an {Environment}
-        #
-        # @return [undefined]
-        #
-        # @api private
-        def initialize(registry)
-          @registry = registry
-          @dsl      = compile_dsl
-        end
+      # The definition to be used within a {Chain}
+      #
+      # @return [Definition]
+      #
+      # @api private
+      attr_reader :definition
 
-        private
+      # The registry used to build processors
+      #
+      # @return [Hash<Symbol, Processor::Builder>]
+      #
+      # @api private
+      attr_reader :registry
 
-        # Compile a new DSL class
-        #
-        # @return [Class<DSL>]
-        #
-        # @api private
-        def compile_dsl
-          @registry.each_with_object(Class.new(DSL)) { |(name, builder), dsl|
-            define_dsl_method(name, builder, dsl)
-          }
-        end
+      # Initialize a new instance
+      #
+      # Extends the new instance with methods defined in +config.dsl_module+.
+      # Only happens during boot, once for every instantiated {Environment}.
+      #
+      # @param [Config] config
+      #   a config for this instance
+      #
+      # @param [Definition] definition
+      #   the definition to use within a {Chain}
+      #
+      # @return [undefined]
+      #
+      # @api private
+      def initialize(config, definition)
+        @config     = config
+        @definition = definition
+        @registry   = @config.registry
 
-        # Define a new instance method on the +dsl+ class
-        #
-        # @param [Symbol] name
-        #   the name of the method
-        #
-        # @param [Processor::Builder] builder
-        #   the processor builder to use within the chain
-        #
-        # @param [Class<DSL>] dsl
-        #   the {DSL} subclass to define the method on
-        #
-        # @return [undefined]
-        #
-        # @api private
-        def define_dsl_method(name, builder, dsl)
-          dsl.class_eval do
-            define_method(name) { |handler, failure_chain = EMPTY|
-              use(builder.call(handler, failure_chain))
-            }
-          end
-        end
-
-      end # class Builder
+        extend(@config.dsl_module)
+      end
 
       # Build a new {Chain} based on +other+, a +failure_chain+ and a block
       #
-      # @param [#each<#call>] other
-      #   the processors to build on top of
+      # @param [Enumerable<#call>] other
+      #   the processors to prepend
       #
       # @param [Chain] failure_chain
       #   the failure chain to invoke in case of an uncaught exception
       #
       # @param [Proc] block
-      #   a block to be instance_eval'ed
+      #   a block to be instance_eval'ed inside the new {DSL} instance
       #
       # @return [Chain]
       #
       # @api private
-      def self.build(other, failure_chain, &block)
-        Chain.new(new(other, &block).processors, failure_chain)
-      end
-
-      UNKNOWN_PROCESSOR_MSG = 'No processor named %s is registered'.freeze
-
-      include Equalizer.new(:processors)
-
-      # Initialize a new instance
-      #
-      # @param [#each<#call>] processors
-      #   the processors to build on top of
-      #
-      # @param [Proc] block
-      #   a block to be instance_eval'ed
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def initialize(processors, &block)
-        @processors = []
-        chain(processors)
-        instance_eval(&block) if block
-      end
-
-      # Use the given +processor+ within a chain
-      #
-      # @param [#call] processor
-      #   a processor to use within a chain
-      #
-      # @return [self]
-      #
-      # @api private
-      def use(processor)
-        @processors << processor
-        self
+      def build(other, failure_chain, &block)
+        Chain.new(__call__(Definition.new(other), &block), failure_chain)
       end
 
       # Nest the given chain within another one
       #
-      # @param [#each<#call>] other
-      #   another chain to be nested within a chain
+      # @param [Enumerable<#call>] processors
+      #   other processors to be nested within a {Definition}
       #
       # @return [self]
       #
       # @api private
-      def chain(other)
-        other.each { |processor| use(processor) }
+      def chain(processors)
+        processors.each(&method(:use))
         self
       end
 
@@ -149,95 +102,62 @@ module Substation
       # @param [Symbol] name
       #   the processor's name
       #
-      # @param [#call] chain
+      # @param [Chain] failure_chain
       #   the failure chain to use for the processor identified by +name+
       #
       # @return [self]
       #
       # @api private
-      def failure_chain(name, chain)
-        replace_processor(processor(name), chain)
+      def failure_chain(name, failure_chain)
+        definition.replace_failure_chain(name, failure_chain)
         self
-      end
-
-      # The processors to be used within a {Chain}
-      #
-      # @return [Array<#call>]
-      #
-      # @api private
-      def processors
-        @processors.dup.freeze
       end
 
       private
 
-      # Return the processor identified by +name+
-      #
-      # @param [Symbol] name
-      #   the processor's name
-      #
-      # @return [#call]
-      #   the processor identified by +name+
-      #
-      # @return [nil]
-      #   if no processor identified by +name+ is registered
-      #
-      # @api private
-      def processor(name)
-        detect(name) || raise_unknown_processor(name)
-      end
-
-      # Replace +processor+'s failure chain with +chain+
+      # Use the given +processor+ within a chain
       #
       # @param [#call] processor
-      # @param [#call] chain
+      #   a processor to use within a chain
       #
       # @return [undefined]
       #
       # @api private
-      def replace_processor(processor, chain)
-        @processors[index(processor)] = processor.with_failure_chain(chain)
+      def use(processor)
+        definition << processor
       end
 
-      # Return the processor's index inside #processors
+      # Return a new definition
       #
-      # @param [#call] processor
+      # @param [Definition] other
+      #   the definition to prepend
       #
-      # @return [Integer]
+      # @param [Proc] block
+      #   a block to be instance_eval'd inside a new {DSL} instance
+      #
+      # @return [Definition]
+      #   the definition to be used with a {Chain}
       #
       # @api private
-      def index(processor)
-        @processors.index(processor)
+      def __call__(other, &block)
+        instance = new(other)
+        instance.instance_eval(&block) if block
+        instance.definition
       end
 
-      # Return the first processor with the given +name+
+      # Instantiate a new instance
       #
-      # @param [Symbol] name
-      #   the name of the processor to detect
+      # @param [Definition] other
+      #   the definition to prepend
       #
-      # @return [#call]
-      #   if a processor with the given +name+ is registered
+      # @param [Proc] block
+      #   a block to be instance_eval'd inside a new {DSL} instance
       #
-      # @return [nil]
-      #   otherwise
-      #
-      # @api private
-      def detect(name)
-        @processors.detect { |processor| processor.name == name }
-      end
-
-      # Raise {UnknownProcessor}
-      #
-      # @param [Symbol] name
-      #   the unknown processor's name
-      #
-      # @raise [UnknownProcessor]
-      #
-      # @return [undefined]
+      # @return [DSL]
       #
       # @api private
-      def raise_unknown_processor(name)
-        raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % name.inspect
+      def new(other)
+        self.class.new(config, other.prepend(definition))
       end
 
     end # class DSL

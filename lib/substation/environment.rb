@@ -10,8 +10,11 @@ module Substation
 
     # Build a new {Environment} instance
     #
-    # @param [Environment] other
-    #   optional other environment to build on top of
+    # @param [Object] app_env
+    #   the application environment
+    #
+    # @param [Dispatcher::Registry] actions
+    #   a mutable action registry
     #
     # @param [Proc] block
     #   a block to be instance_eval'ed with {DSL}
@@ -19,23 +22,74 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def self.build(other = Undefined, &block)
-      registry  = DSL.registry(&block)
-      chain_dsl = Chain::DSL::Builder.call(registry)
-      instance  = new(registry, chain_dsl)
-      other.equal?(Undefined) ? instance : other.merge(instance)
+    def self.build(app_env, actions = Dispatcher::Registry.new, &block)
+      new(app_env, actions, chain_dsl(&block))
     end
+
+    # Build a new {Chain::DSL} instance
+    #
+    # @param [Proc] block
+    #   a block to be instance_eval'ed in {DSL}
+    #
+    # @return {Chain::DSL}
+    #
+    # @api private
+    def self.chain_dsl(&block)
+      Chain::DSL.build(DSL.registry(&block))
+    end
+
+    private_class_method :chain_dsl
+
+    # The application environment
+    #
+    # @return [Object]
+    #
+    # @api private
+    attr_reader :app_env
+
+    # The mutable action registry
+    #
+    # @return [Dispatcher::Registry]
+    #
+    # @api private
+    attr_reader :actions
+
+    # The registry used by this {Environment}
+    #
+    # @return [Hash<Symbol, Processor::Builder>]
+    #
+    # @api private
+    attr_reader :registry
+    protected   :registry
 
     # Initialize a new instance
     #
-    # @param [Hash<Symbol, Processor::Builder>] registry
-    #   the registry of processor builders
+    # @param [Chain::DSL] chain_dsl
+    #   the chain dsl tailored for the environment
     #
     # @return [undefined]
     #
     # @api private
-    def initialize(registry, chain_dsl)
-      @registry, @chain_dsl = registry, chain_dsl
+    def initialize(app_env, actions, chain_dsl)
+      @app_env   = app_env
+      @actions   = actions
+      @chain_dsl = chain_dsl
+      @registry  = chain_dsl.registry
+    end
+
+    # Inherit a new instance from self, merging the {Chain::DSL}
+    #
+    # @param [Dispatcher::Registry] actions
+    #   the mutable action registry
+    #
+    # @param [Proc] block
+    #   a block to instance_eval inside a {DSL} instance
+    #
+    # @return [Environment]
+    #
+    # @api private
+    def inherit(actions = Dispatcher::Registry.new, &block)
+      self.class.new(app_env, actions, merged_chain_dsl(&block))
     end
 
     # Build a new {Chain} instance
@@ -51,6 +105,41 @@ module Substation
     # @api private
     def chain(other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
       @chain_dsl.build(other, failure_chain, &block)
+    end
+
+    # Register a new chain under the given +name+
+    #
+    # @param [#to_sym] name
+    #   the new chain's name
+    #
+    # @param [Chain] other
+    #   the chain to build on top of
+    #
+    # @param [Chain] failure_chain
+    #   the chain to invoke in case of uncaught exceptions in handlers
+    #
+    # @return [Chain]
+    #   the registered chain
+    #
+    # @api private
+    def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
+      actions[name] = chain(other, failure_chain, &block)
+      self
+    end
+
+    # Return the chain identified by +name+ or raise an error
+    #
+    # @param [name]
+    #   the name of the chain to retrieve
+    #
+    # @return [Chain]
+    #
+    # @raise [UnknownActionError]
+    #   if no chain is registered under +name+
+    #
+    # @api private
+    def [](name)
+      actions.fetch(name)
     end
 
     # Build a new {Action} instance
@@ -70,45 +159,30 @@ module Substation
 
     # Build a new {Dispatcher} instance
     #
-    # @see Dispatcher.build
+    # @see Dispatcher.new
     #
     # @param [Object] env
     #   the application environment
     #
-    # @param [Proc] block
-    #   a block to be instance_eval'd inside a {Dispatcher::DSL}
-    #   instance
-    #
     # @return [Dispatcher]
     #
     # @api private
-    def dispatcher(env, &block)
-      Dispatcher.build(env, &block)
+    def dispatcher
+      Dispatcher.new(actions, app_env)
     end
 
-    # Return a new instance that has +other+ merged into +self+
+    private
+
+    # Return a new {Chain::DSL} by merging in +other.registry+
     #
     # @param [Environment] other
-    #   the other environment to merge in
+    #   the other environment providing the registry to merge
     #
-    # @return [Environment]
-    #   the new merged instance
+    # @return [Chain::DSL]
     #
     # @api private
-    def merge(other)
-      merged_registry  = registry.merge(other.registry)
-      merged_chain_dsl = Chain::DSL::Builder.call(merged_registry)
-      self.class.new(merged_registry, merged_chain_dsl)
+    def merged_chain_dsl(&block)
+      Chain::DSL.build(registry.merge(DSL.registry(&block)))
     end
-
-    protected
-
-    # The registry used by this {Environment}
-    #
-    # @return [Hash<Symbol, #call>]
-    #
-    # @api private
-    attr_reader :registry
-
   end # class Environment
 end # module Substation

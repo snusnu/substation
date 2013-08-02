@@ -43,3 +43,14 @@ shared_context 'Processor::Call' do
   let(:expected)      { Response::Success.new(request, expected_data) }
   let(:expected_data) { composed }
 end
+
+shared_context 'Processor::Builder#initialize' do
+  include_context 'Processor::Executor#initialize'
+
+  let(:processor_builder) {
+    Processor::Builder.new(processor_name, processor_klass, executor)
+  }
+
+  let(:processor_name)  { :test }
+  let(:processor_klass) { Spec::Processor }
+end

@@ -9,7 +9,7 @@ describe Dispatcher, '#call' do
   include_context 'Request#initialize'
 
   let(:object)  { described_class.new(config, env) }
-  let(:config)  { { :test => Spec::Action::Success } }
+  let(:config)  { described_class::Registry.new(:test => Spec::Action::Success) }
 
   let(:expected_response) do
     Spec::Action::Success.call(request)

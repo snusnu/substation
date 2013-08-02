@@ -17,6 +17,11 @@ module Substation
     # @!attribute [r] input
     #   @return [Object] the input data
 
+    # An alias for {#input}
+    #
+    # @return [Object]
+    #
+    # @api private
     alias_method :data, :input
 
     # Create a new successful response

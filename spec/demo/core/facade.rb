@@ -25,7 +25,7 @@ class Demo
         authorize Handler::Authorizer, AUTHORIZATION_ERROR
       end
 
-      CREATE_PERSON = Core::ENV.chain(AUTHORIZE, INTERNAL_ERROR) do
+      Core::ENV.register(:create_person, AUTHORIZE, INTERNAL_ERROR) do
         validate Domain::DTO::NEW_PERSON_VALIDATOR, VALIDATION_ERROR
         accept   Handler::Acceptor
         call     Core::CREATE_PERSON, APPLICATION_ERROR
@@ -34,9 +34,7 @@ class Demo
     end
 
     # The application
-    APP = Core::ENV.dispatcher(Demo::APP_ENV) do
-      dispatch :create_person, App::CREATE_PERSON
-    end
+    APP = Core::ENV.dispatcher
 
   end
 end

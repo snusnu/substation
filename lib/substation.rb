@@ -40,6 +40,9 @@ module Substation
   # An empty frozen array useful for (default) parameters
   EMPTY_ARRAY = [].freeze
 
+  # An empty frozen hash useful for (default) parameters
+  EMPTY_HASH = {}.freeze
+
   # Error raised when trying to access an unknown processor
   UnknownProcessor = Class.new(StandardError)
 
@@ -68,10 +71,13 @@ require 'substation/processor/evaluator/handler'
 require 'substation/processor/transformer'
 require 'substation/processor/wrapper'
 require 'substation/action'
+require 'substation/chain/definition'
 require 'substation/chain'
 require 'substation/chain/dsl'
+require 'substation/chain/dsl/config'
+require 'substation/chain/dsl/module_builder'
 require 'substation/chain/failure_data'
 require 'substation/environment'
 require 'substation/environment/dsl'
 require 'substation/dispatcher'
-require 'substation/dispatcher/dsl'
+require 'substation/dispatcher/registry'

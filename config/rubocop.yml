@@ -39,3 +39,6 @@ CaseIndentation:
 
 Lambda:
   Enabled: false # i personally like the look of multiline ->(arg) {} lambdas
+
+IfUnlessModifier:
+  Enabled: false # i have no strong opinion but i won't let it force me to go over the col limit
