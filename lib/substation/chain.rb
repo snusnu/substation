@@ -67,7 +67,7 @@ module Substation
   class Chain
 
     include Enumerable
-    include Concord.new(:processors, :failure_chain)
+    include Concord.new(:processors, :exception_chain)
     include Adamantium::Flat
 
     # Empty chain
@@ -180,7 +180,7 @@ module Substation
     # @api private
     def on_exception(request, data, exception)
       response = self.class.exception_response(request, data, exception)
-      failure_chain.call(response)
+      exception_chain.call(response)
     end
 
   end # class Chain
