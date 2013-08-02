@@ -40,6 +40,9 @@ module Substation
   # An empty frozen array useful for (default) parameters
   EMPTY_ARRAY = [].freeze
 
+  # An empty frozen hash useful for (default) parameters
+  EMPTY_HASH = {}.freeze
+
   # Error raised when trying to access an unknown processor
   UnknownProcessor = Class.new(StandardError)
 

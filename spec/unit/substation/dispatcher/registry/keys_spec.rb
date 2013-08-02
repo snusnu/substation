@@ -6,8 +6,9 @@ describe Dispatcher::Registry, '#keys' do
   subject { object.keys }
 
   let(:object)         { described_class.new(dispatch_table) }
-  let(:dispatch_table) { double('dispatch_table', :keys => keys) }
-  let(:keys)           { double('keys') }
+  let(:dispatch_table) { { key => value } }
+  let(:key)            { double('key') }
+  let(:value)          { double('value') }
 
-  it { should eql(keys) }
+  it { should eql([key]) }
 end

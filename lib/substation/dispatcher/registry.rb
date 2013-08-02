@@ -28,8 +28,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(dispatch_table = {})
-        @dispatch_table = dispatch_table
+      def initialize(dispatch_table = EMPTY_HASH)
+        @dispatch_table = dispatch_table.dup
       end
 
       # Register the given +callable+ under +name+
