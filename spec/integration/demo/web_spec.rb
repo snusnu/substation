@@ -16,8 +16,9 @@ describe 'a typical substation application' do
     }
   }
 
-  let(:data)                    { { 'name' => person_name } }
-  let(:rendered_error_response) { Substation::Response::Failure.new(processed_request, rendered) }
+  let(:data)                        { { 'name' => person_name } }
+  let(:rendered_error_response)     { Substation::Response::Failure.new(processed_request, rendered) }
+  let(:rendered_exception_response) { Substation::Response::Exception.new(processed_request, rendered) }
 
   shared_examples_for 'all invocations' do
     it { should eql(response) }
@@ -94,12 +95,12 @@ describe 'a typical substation application' do
     let(:person_name)     { 'exception' }
     let(:account_id)      { authorized_id }
     let(:processed_input) { accepted_input }
-    let(:failure_data)    { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
+    let(:failure_data)    { Substation::Response::Exception::Output.new(processed_input, RuntimeError.new) }
     let(:error)           { Demo::Core::Error::InternalError.new(failure_data) }
     let(:view)            { Demo::Web::Views::InternalError.new(error) }
     let(:error_data)      { view }
     let(:rendered)        { Demo::Web::Renderer::InternalError.call(error_response) }
-    let(:response)        { rendered_error_response }
+    let(:response)        { rendered_exception_response }
 
     it_behaves_like 'no action invocation'
   end

@@ -73,7 +73,7 @@ module Substation
     # Empty chain
     EMPTY = new(Definition::EMPTY, EMPTY_ARRAY)
 
-    # Return a failure response
+    # Return an exception response
     #
     # @param [Request] request
     #   the initial request passed into the chain
@@ -84,11 +84,12 @@ module Substation
     # @param [Class<StandardError>] exception
     #   the exception instance that was raised
     #
-    # @return [Response::Failure]
+    # @return [Response::Exception]
     #
     # @api private
-    def self.failure_response(request, data, exception)
-      Response::Failure.new(request.with_input(data), FailureData.new(data, exception))
+    def self.exception_response(request, data, exception)
+      output = Response::Exception::Output.new(data, exception)
+      Response::Exception.new(request.with_input(data), output)
     end
 
     # Call the chain
@@ -137,7 +138,7 @@ module Substation
           return response unless processor.success?(response)
           processor.result(response)
         rescue => exception
-          return on_failure(request, result.data, exception)
+          return on_exception(request, result.data, exception)
         end
       }
     end
@@ -177,8 +178,9 @@ module Substation
     # @return [Response::Failure]
     #
     # @api private
-    def on_failure(request, data, exception)
-      failure_chain.call(self.class.failure_response(request, data, exception))
+    def on_exception(request, data, exception)
+      response = self.class.exception_response(request, data, exception)
+      failure_chain.call(response)
     end
 
   end # class Chain

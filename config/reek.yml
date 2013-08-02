@@ -38,8 +38,8 @@ LongParameterList:
   enabled: true
   exclude:
   - Substation::Dispatcher#call
-  - Substation::Chain#self.failure_response
-  - Substation::Chain#on_failure
+  - Substation::Chain#self.exception_response # 3
+  - Substation::Chain#on_exception # 3
   - Substation::Environment::DSL#register
   - Substation::Environment#register # 3
   max_params: 2

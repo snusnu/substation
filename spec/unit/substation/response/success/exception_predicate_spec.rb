@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe Response::Failure, '#success?' do
-  subject { object.success? }
+describe Response::Success, '#exception?' do
+  subject { object.exception? }
 
   include_context 'Request#initialize'
 

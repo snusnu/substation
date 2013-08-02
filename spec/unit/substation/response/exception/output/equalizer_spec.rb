@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Chain::FailureData, 'equalizer behavior' do
+describe Response::Exception::Output, 'equalizer behavior' do
   subject { object == other }
 
   let(:object)    { described_class.new(data, exception) }

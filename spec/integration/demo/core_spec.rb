@@ -83,9 +83,9 @@ describe 'a typical substation application' do
     let(:person_name)     { 'exception' }
     let(:account_id)      { authorized_id }
     let(:processed_input) { accepted_input }
-    let(:failure_data)    { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
+    let(:failure_data)    { Substation::Response::Exception::Output.new(processed_input, RuntimeError.new) }
     let(:error)           { Demo::Core::Error::InternalError.new(failure_data) }
-    let(:response)        { error_response }
+    let(:response)        { exception_response }
 
     it_behaves_like 'no action invocation'
   end
@@ -106,9 +106,9 @@ describe 'a typical substation application' do
     let(:person)          { :foo }
     let(:account_id)      { authorized_id }
     let(:processed_input) { incomplete_input }
-    let(:failure_data)    { Substation::Chain::FailureData.new(processed_input, RuntimeError.new) }
+    let(:failure_data)    { Substation::Response::Exception::Output.new(processed_input, RuntimeError.new) }
     let(:error)           { Demo::Core::Error::InternalError.new(failure_data) }
-    let(:response)        { error_response }
+    let(:response)        { exception_response }
 
     pending 'the response is returned is actually correct, but somehow #eql? fails' do
       it_behaves_like 'no action invocation'

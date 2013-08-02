@@ -21,6 +21,8 @@ shared_context 'demo application' do
 
   let(:person)            { Demo::Domain::DTO::Person.new(:id => nil, :name => person_name) }
 
-  let(:error_response)    { Substation::Response::Failure.new(processed_request, error_data) }
-  let(:error_data)        { error }
+  let(:error_response)     { Substation::Response::Failure.new(processed_request, error_data) }
+  let(:exception_response) { Substation::Response::Exception.new(processed_request, error_data) }
+  let(:error_data)         { error }
+
 end

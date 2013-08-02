@@ -131,6 +131,15 @@ module Substation
     # @api public
     abstract_method :success?
 
+    # Test wether processing raised an exception
+    #
+    # @return [true]
+    #
+    # @api private
+    def exception?
+      false
+    end
+
     # Return a {Request} instance built upon this response
     #
     # @return [Request]

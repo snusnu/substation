@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Chain::FailureData, '#hash' do
+describe Response::Exception::Output, '#hash' do
   subject { object.hash }
 
   let(:object)    { described_class.new(data, exception) }
