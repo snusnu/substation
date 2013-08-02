@@ -4,27 +4,34 @@ require 'spec_helper'
 
 describe Environment, '.build' do
 
-  let(:expected)  { Environment.new(chain_dsl) }
-  let(:chain_dsl) { Chain::DSL.build(registry) }
-  let(:registry)  { described_class::DSL.new(&block).registry }
+  let(:expected)  { Environment.new(app_env, actions, chain_dsl) }
+  let(:app_env)   { double('app_env') }
+  let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
   let(:block)     { ->(_) { register(:test, Substation) } }
 
-  context 'when no other environment is given' do
-    subject { described_class.build(&block) }
-
+  share_examples_for 'Environment.build' do
     it { should eql(expected) }
+
+    its(:app_env) { should be(app_env) }
   end
 
-  context 'when other environment is given' do
-    subject { described_class.build(other, &block) }
+  context 'when no actions are given' do
+    subject { described_class.build(app_env, &block) }
 
-    let(:other)  { double('other') }
-    let(:merged) { double('merged') }
+    let(:actions) { Dispatcher::Registry.new }
 
-    before do
-      expect(other).to receive(:merge).with(expected).and_return(merged)
-    end
+    it_behaves_like 'Environment.build'
 
-    it { should eql(merged) }
+    its(:actions) { should eql(actions) }
+  end
+
+  context 'when actions are given' do
+    subject { described_class.build(app_env, actions, &block) }
+
+    let(:actions) { double('actions') }
+
+    it_behaves_like 'Environment.build'
+
+    its(:actions) { should be(actions) }
   end
 end

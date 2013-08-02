@@ -5,12 +5,14 @@ require 'spec_helper'
 describe Substation::Environment, 'equalizer behavior' do
   subject { object == other }
 
-  let(:object) { described_class.new(chain_dsl) }
-  let(:other)  { described_class.new(other_chain_dsl) }
+  let(:object) { described_class.new(app_env, actions, chain_dsl) }
+  let(:app_env) { double('app_env') }
+  let(:actions) { double('actions') }
 
   let(:chain_dsl) { double('chain_dsl', :registry => registry) }
   let(:registry)  { double('registry') }
 
+  let(:other)  { described_class.new(app_env, actions, other_chain_dsl) }
   let(:other_chain_dsl) {
     double('other_chain_dsl', :registry => other_registry)
   }
