@@ -130,6 +130,9 @@ module Substation
     # @return [Response::Failure]
     #   the response returned from the failing processor's failure chain
     #
+    # @return [Response::Exception]
+    #   the response returned from invoking the {#exception_chain}
+    #
     # @api public
     def call(request)
       processors.reduce(request) { |result, processor|
@@ -175,7 +178,7 @@ module Substation
     # @param [Class<StandardError>] exception
     #   the exception instance that was raised
     #
-    # @return [Response::Failure]
+    # @return [Response::Exception]
     #
     # @api private
     def on_exception(request, data, exception)
