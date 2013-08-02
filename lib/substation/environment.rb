@@ -26,24 +26,6 @@ module Substation
       new(app_env, actions, chain_dsl(&block))
     end
 
-    # Build a new environment on top of an +other+
-    #
-    # @param [Environment] env
-    #   the environment to inherit from
-    #
-    # @param [Dispatcher::Registry] actions
-    #   the mutable action registry
-    #
-    # @param [Proc] block
-    #   a block to instance_eval inside a {DSL} instance
-    #
-    # @return [Environment]
-    #
-    # @api private
-    def self.inherit(env, actions = Dispatcher::Registry.new, &block)
-      env.merge(build(env.app_env, actions, &block))
-    end
-
     # Build a new {Chain::DSL} instance
     #
     # @param [Proc] block
@@ -93,6 +75,21 @@ module Substation
       @actions   = actions
       @chain_dsl = chain_dsl
       @registry  = chain_dsl.registry
+    end
+
+    # Inherit a new instance from self, merging the {Chain::DSL}
+    #
+    # @param [Dispatcher::Registry] actions
+    #   the mutable action registry
+    #
+    # @param [Proc] block
+    #   a block to instance_eval inside a {DSL} instance
+    #
+    # @return [Environment]
+    #
+    # @api private
+    def inherit(actions = Dispatcher::Registry.new, &block)
+      self.class.new(app_env, actions, merged_chain_dsl(&block))
     end
 
     # Build a new {Chain} instance
@@ -174,20 +171,7 @@ module Substation
       Dispatcher.new(actions, app_env)
     end
 
-    # Return a new instance that has +other+ merged into +self+
-    #
-    # @param [Environment] other
-    #   the other environment to merge in
-    #
-    # @return [Environment]
-    #   the new merged instance
-    #
-    # @api private
-    def merge(other)
-      self.class.new(app_env, other.actions, merged_chain_dsl(other))
-    end
-
-    #private
+    private
 
     # Return a new {Chain::DSL} by merging in +other.registry+
     #
@@ -197,8 +181,8 @@ module Substation
     # @return [Chain::DSL]
     #
     # @api private
-    def merged_chain_dsl(other)
-      Chain::DSL.build(registry.merge(other.registry))
+    def merged_chain_dsl(&block)
+      Chain::DSL.build(registry.merge(DSL.registry(&block)))
     end
   end # class Environment
 end # module Substation
