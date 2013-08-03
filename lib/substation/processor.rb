@@ -40,6 +40,7 @@ module Substation
     #
     # @api private
     attr_reader :config
+    protected   :config
 
     # Return handler
     #
