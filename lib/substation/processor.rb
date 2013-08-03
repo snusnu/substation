@@ -222,42 +222,5 @@ module Substation
 
     end # module Outgoing
 
-    # Namespace for modules providing {#call} implementations
-    module Call
-
-      # Provides {Processor#call} for incoming processors
-      module Incoming
-
-        # Call the processor
-        #
-        # @param [Request] request
-        #   the request to process
-        #
-        # @return [Response::Success]
-        #
-        # @api private
-        def call(request)
-          request.success(execute(request))
-        end
-      end
-
-      # Provides {Processor#call} for outgoing processors
-      module Outgoing
-
-        # Call the processor
-        #
-        # @param [Response] response
-        #   the response to process
-        #
-        # @return [Response]
-        #   a new instance of the same class as +response+
-        #
-        # @api private
-        def call(response)
-          respond_with(response, execute(response))
-        end
-      end
-    end
-
   end # module Processor
 end # module Substation

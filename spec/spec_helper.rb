@@ -50,8 +50,12 @@ module Spec
 
   class Processor
     include Substation::Processor::Incoming
-    include Substation::Processor::Call::Incoming
+
     attr_reader :name
+
+    def call(request)
+      request.success(execute(request))
+    end
   end
 
   class Presenter

@@ -13,7 +13,10 @@ describe Processor, '#call' do
       let(:klass) {
         Class.new {
           include Processor::Incoming
-          include Processor::Call::Incoming
+
+          def call(request)
+            request.success(execute(request))
+          end
         }
       }
     end

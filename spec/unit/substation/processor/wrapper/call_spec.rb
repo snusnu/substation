@@ -11,8 +11,11 @@ describe Processor::Wrapper, '#call' do
     let(:klass) {
       Class.new {
         include Processor::Incoming
-        include Processor::Call::Incoming
         include Processor::Wrapper
+
+        def call(request)
+          request.success(execute(request))
+        end
       }
     }
   end
