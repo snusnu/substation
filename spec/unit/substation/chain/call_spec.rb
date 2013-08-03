@@ -166,7 +166,7 @@ describe Chain, '#call' do
         }.new(processor_2_name, processor_config)
       }
 
-      let(:response)        { Response::Exception.new(request.with_input(:success_1), data) }
+      let(:response)        { Response::Exception.new(request.to_request(:success_1), data) }
       let(:data)            { Response::Exception::Output.new(:success_1, RuntimeError.new('exception_2')) }
       let(:current_request) { Request.new(name, env, :success_1) }
 
@@ -214,7 +214,7 @@ describe Chain, '#call' do
         }.new(processor_3_name, processor_config)
       }
 
-      let(:response)         { Response::Exception.new(request.with_input(:success_2), data) }
+      let(:response)         { Response::Exception.new(request.to_request(:success_2), data) }
       let(:data)             { Response::Exception::Output.new(:success_2, RuntimeError.new('exception_3')) }
       let(:current_request)  { Request.new(name, env, :success_1) }
       let(:current_response) { Response::Success.new(current_request, :success_2) }

@@ -66,15 +66,20 @@ module Substation
       respond_with(Response::Failure, output)
     end
 
-    # Return request with input
+    # Return self or a new instance with +input+
     #
-    # @param [Object] data
+    # @param [Object] input
+    #   the input for the new instance
+    #
+    # @return [self]
+    #   if +input+ is {Undefined}
     #
     # @return [Request]
+    #   a new instance with +input+
     #
     # @api private
-    def with_input(data)
-      self.class.new(name, env, data)
+    def to_request(new_input = Undefined)
+      new_input == Undefined ? self : self.class.new(name, env, new_input)
     end
 
     private

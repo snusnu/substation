@@ -75,8 +75,8 @@ module Substation
 
     # Return an exception response
     #
-    # @param [Request] request
-    #   the initial request passed into the chain
+    # @param [Request, Response] state
+    #   the initial state passed into the chain
     #
     # @param [Object] data
     #   the processed data available when the exception was raised
@@ -87,9 +87,9 @@ module Substation
     # @return [Response::Exception]
     #
     # @api private
-    def self.exception_response(request, data, exception)
+    def self.exception_response(state, data, exception)
       output = Response::Exception::Output.new(data, exception)
-      Response::Exception.new(request.with_input(data), output)
+      Response::Exception.new(state.to_request(data), output)
     end
 
     # Call the chain
@@ -181,8 +181,8 @@ module Substation
     # @return [Response::Exception]
     #
     # @api private
-    def on_exception(request, data, exception)
-      response = self.class.exception_response(request, data, exception)
+    def on_exception(state, data, exception)
+      response = self.class.exception_response(state, data, exception)
       exception_chain.call(response)
     end
 

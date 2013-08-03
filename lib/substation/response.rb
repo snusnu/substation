@@ -145,8 +145,8 @@ module Substation
     # @return [Request]
     #
     # @api private
-    def to_request
-      Request.new(request.name, env, output)
+    def to_request(new_input = output)
+      Request.new(request.name, env, new_input)
     end
 
   end # class Response
