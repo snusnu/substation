@@ -10,6 +10,7 @@ describe Chain::DSL::ModuleBuilder, '#dsl_module' do
   let(:processor_builder) { double('processor_builder') }
   let(:handler)           { double('handler') }
   let(:failure_chain)     { double('failure_chain') }
+  let(:observers)         { EMPTY_ARRAY }
 
   let(:definition)  { Chain::Definition.new(processors) }
   let(:processors)  { [processor_1] }
@@ -19,7 +20,7 @@ describe Chain::DSL::ModuleBuilder, '#dsl_module' do
   before do
     expect(processor_builder)
       .to receive(:call)
-      .with(handler, failure_chain)
+      .with(handler, failure_chain, observers)
       .and_return(processor_2)
   end
 
@@ -35,13 +36,19 @@ describe Chain::DSL::ModuleBuilder, '#dsl_module' do
     end
   end
 
-  context 'when a failure_chain is given' do
+  context 'when a failure_chain and observers are given' do
+    let(:dsl_method_args) { [handler, failure_chain, observers] }
+
+    it_behaves_like 'Chain::DSL::ModuleBuilder#dsl_module'
+  end
+
+  context 'when a failure_chain and no observers given' do
     let(:dsl_method_args) { [handler, failure_chain] }
 
     it_behaves_like 'Chain::DSL::ModuleBuilder#dsl_module'
   end
 
-  context 'when no failure_chain is given' do
+  context 'when no failure_chain and no observers are given' do
     let(:dsl_method_args) { [handler] }
     let(:failure_chain)   { Chain::EMPTY }
 

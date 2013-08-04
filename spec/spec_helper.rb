@@ -113,12 +113,12 @@ module Spec
   FAKE_HANDLER = Object.new
 
   FAKE_CONFIG = Substation::Processor::Config.new(
-    FAKE_HANDLER,
+    Substation::Processor::Executor::NULL,
     Substation::Chain::EMPTY,
-    Substation::Processor::Executor::NULL
+    Substation::EMPTY_ARRAY
   )
 
-  FAKE_PROCESSOR = Processor.new(:test, FAKE_CONFIG)
+  FAKE_PROCESSOR = Processor.new(:test, FAKE_HANDLER, FAKE_CONFIG)
 
 end
 

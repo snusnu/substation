@@ -5,8 +5,13 @@ module Substation
   # Namespace for chain processors
   module Processor
 
-    include Equalizer.new(:name, :config)
-    include Adamantium::Flat
+    include Equalizer.new(:name, :handler, :config)
+
+    # FIXME: include this once the bug with deep freezing
+    # is resolved (currently this deep freezes and thus
+    # tries to incorrectly freeze observers too.
+    #
+    # include Adamantium::Flat
 
     # Initialize a new instance
     #
@@ -19,12 +24,13 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(name, config)
+    def initialize(name, handler, config)
       @name          = name
+      @handler       = handler
       @config        = config
-      @handler       = @config.handler
-      @failure_chain = @config.failure_chain
       @executor      = @config.executor
+      @observers     = @config.observers
+      @failure_chain = @config.failure_chain
     end
 
     # This processor's name
@@ -48,7 +54,7 @@ module Substation
     #
     # @api private
     attr_reader :handler
-    private     :handler
+    protected   :handler
 
     # Return failure chain
     #
@@ -65,6 +71,14 @@ module Substation
     # @api private
     attr_reader :executor
     private     :executor
+
+    # Return the observers
+    #
+    # @return [Enumerable<#call>]
+    #
+    # @api private
+    attr_reader :observers
+    private     :observers
 
     # Test wether chain processing should continue
     #
@@ -115,7 +129,7 @@ module Substation
     #
     # @api private
     def invoke(state)
-      handler.call(state)
+      notify_observers(handler.call(state))
     end
 
     # Decompose +input+ before processing
@@ -147,6 +161,19 @@ module Substation
       executor.compose(input, output)
     end
 
+    # Notify all observers
+    #
+    # @param [Response] response
+    #   the response returned from {handler#call}
+    #
+    # @return [undefined]
+    #
+    # @api private
+    def notify_observers(response)
+      observers.each { |observer| observer.call(response) }
+      response
+    end
+
     # Supports {Processor} instances with a defined failure {Chain}
     module Fallible
 
@@ -159,7 +186,7 @@ module Substation
       #
       # @api private
       def with_failure_chain(chain)
-        self.class.new(name, config.with_failure_chain(chain))
+        self.class.new(name, handler, config.with_failure_chain(chain))
       end
     end
 

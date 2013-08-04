@@ -29,7 +29,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, processor_config)
+      }.new(processor_1_name, handler, processor_config)
     }
 
     let(:processor_2) {
@@ -38,7 +38,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_2)
         end
-      }.new(processor_2_name, processor_config)
+      }.new(processor_2_name, handler, processor_config)
     }
 
     let(:processor_3) {
@@ -47,7 +47,7 @@ describe Chain, '#call' do
         def call(response)
           respond_with(response, :success_3)
         end
-      }.new(processor_3_name, processor_config)
+      }.new(processor_3_name, handler, processor_config)
     }
 
     let(:response)        { Response::Success.new(current_request, :success_3) }
@@ -64,7 +64,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_2_name, processor_config)
+      }.new(processor_2_name, handler, processor_config)
     }
 
     let(:processor_3) {
@@ -73,7 +73,7 @@ describe Chain, '#call' do
         def call(response)
           respond_with(response, :success_3)
         end
-      }.new(processor_3_name, processor_config)
+      }.new(processor_3_name, handler, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -85,7 +85,7 @@ describe Chain, '#call' do
           def call(request)
             request.error(:error_1)
           end
-        }.new(processor_1_name, processor_config)
+        }.new(processor_1_name, handler, processor_config)
       }
 
       let(:response) { Response::Failure.new(request, :error_1) }
@@ -100,7 +100,7 @@ describe Chain, '#call' do
           def call(request)
             raise RuntimeError, 'exception_1'
           end
-        }.new(processor_1_name, processor_config)
+        }.new(processor_1_name, handler, processor_config)
       }
 
       let(:response) { Response::Exception.new(request, data) }
@@ -126,7 +126,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, processor_config)
+      }.new(processor_1_name, handler, processor_config)
     }
 
     let(:processor_3) {
@@ -135,7 +135,7 @@ describe Chain, '#call' do
         def call(response)
           response
         end
-      }.new(processor_3_name, processor_config)
+      }.new(processor_3_name, handler, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -147,7 +147,7 @@ describe Chain, '#call' do
           def call(request)
             request.error(:error_2)
           end
-        }.new(processor_2_name, processor_config)
+        }.new(processor_2_name, handler, processor_config)
       }
 
       let(:response)        { Response::Failure.new(current_request, :error_2) }
@@ -163,7 +163,7 @@ describe Chain, '#call' do
           def call(request)
             raise RuntimeError, 'exception_2'
           end
-        }.new(processor_2_name, processor_config)
+        }.new(processor_2_name, handler, processor_config)
       }
 
       let(:response)        { Response::Exception.new(request.to_request(:success_1), data) }
@@ -190,7 +190,7 @@ describe Chain, '#call' do
         def call(request)
           request.success(:success_1)
         end
-      }.new(processor_1_name, processor_config)
+      }.new(processor_1_name, handler, processor_config)
     }
 
     let(:processor_2) {
@@ -199,7 +199,7 @@ describe Chain, '#call' do
         def call(response)
           response.success(:success_2)
         end
-      }.new(processor_2_name, processor_config)
+      }.new(processor_2_name, handler, processor_config)
     }
 
     let(:response_class) { Response::Failure }
@@ -211,7 +211,7 @@ describe Chain, '#call' do
           def call(response)
             raise RuntimeError, 'exception_3'
           end
-        }.new(processor_3_name, processor_config)
+        }.new(processor_3_name, handler, processor_config)
       }
 
       let(:response)         { Response::Exception.new(request.to_request(:success_2), data) }

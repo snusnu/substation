@@ -16,8 +16,8 @@ module Substation
       # @return [Processor]
       #
       # @api private
-      def call(handler, failure_chain)
-        klass.new(name, Config.new(handler, failure_chain, executor))
+      def call(handler, failure_chain, observers)
+        klass.new(name, handler, Config.new(executor, failure_chain, observers))
       end
 
     end # class Builder

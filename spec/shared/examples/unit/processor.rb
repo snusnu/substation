@@ -36,9 +36,14 @@ shared_examples_for 'Processor::Evaluator#call' do
   include_context 'Processor::Call'
 
   context 'with a successful handler' do
+    let(:handler_success) { true }
+    let(:response)        { Response::Success.new(request, composed) }
+
     before do
       expect(decomposer).to receive(:call).with(request).and_return(decomposed)
       expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(observers).to receive(:each).with(no_args).and_yield(observer)
+      expect(observer).to receive(:call).with(handler_result)
       expect(handler_result).to receive(:success?)
       expect(handler_result).to receive(:output)
       expect(composer).to receive(:call).with(request, handler_output).and_return(composed)
@@ -54,6 +59,8 @@ shared_examples_for 'Processor::Evaluator#call' do
     before do
       expect(decomposer).to receive(:call).with(request).and_return(decomposed)
       expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+      expect(observers).to receive(:each).with(no_args).and_yield(observer)
+      expect(observer).to receive(:call).with(handler_result)
       expect(handler_result).to receive(:success?)
       expect(handler_result).to receive(:output)
       expect(composer).to receive(:call).with(request, handler_output).and_return(composed)

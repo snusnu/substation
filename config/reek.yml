@@ -42,6 +42,7 @@ LongParameterList:
   - Substation::Chain#on_exception # 3
   - Substation::Environment::DSL#register
   - Substation::Environment#register # 3
+  - Substation::Processor::Builder#call # 3
   max_params: 2
 LongYieldList:
   enabled: true

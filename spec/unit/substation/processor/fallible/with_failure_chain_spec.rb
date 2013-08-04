@@ -14,7 +14,7 @@ describe Processor::Fallible, '#with_failure_chain' do
     }
   }
 
-  let(:expected)        { klass.new(processor_name, expected_config) }
+  let(:expected)        { klass.new(processor_name, handler, expected_config) }
   let(:expected_config) { processor_config.with_failure_chain(chain) }
   let(:chain)           { double }
 

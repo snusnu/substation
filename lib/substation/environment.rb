@@ -142,21 +142,6 @@ module Substation
       actions.fetch(name)
     end
 
-    # Build a new {Action} instance
-    #
-    # @param [#call] handler
-    #   the handler implementing the action
-    #
-    # @param [Enumerable<#call>] observers
-    #   any number of observers
-    #
-    # @return [Action]
-    #
-    # @api private
-    def action(handler, observers = EMPTY_ARRAY)
-      Action.new(handler, observers)
-    end
-
     # Build a new {Dispatcher} instance
     #
     # @see Dispatcher.new

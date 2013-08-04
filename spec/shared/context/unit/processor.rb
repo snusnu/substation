@@ -19,16 +19,18 @@ end
 shared_context 'Processor::Config#initialize' do
   include_context 'Processor::Executor#initialize'
 
-  let(:processor_config) { Processor::Config.new(handler, failure_chain, executor) }
-  let(:handler)          { double('handler') }
+  let(:processor_config) { Processor::Config.new(executor, failure_chain, observers) }
   let(:failure_chain)    { double('failure_chain') }
+  let(:observers)        { double('observers') }
+  let(:observer)         { double('observer') }
 end
 
 shared_context 'Processor#initialize' do
   include_context 'Processor::Config#initialize'
 
-  let(:object)           { klass.new(processor_name, processor_config) }
+  let(:object)           { klass.new(processor_name, handler, processor_config) }
   let(:processor_name)   { double('name') }
+  let(:handler)          { double('handler') }
   let(:failure_response) { double('failure_response') }
 end
 

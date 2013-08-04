@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe Processor, '#initialize' do
 
-  subject { klass.new(processor_name, processor_config) }
+  subject { klass.new(processor_name, handler, processor_config) }
 
   include_context 'Processor#initialize'
 

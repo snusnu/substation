@@ -1,13 +1,7 @@
 # encoding: utf-8
 
 class Demo
-
   module Core
-
-    CREATE_PERSON = Core::ENV.action Action::CreatePerson, [
-      Observers::LOG_EVENT,
-      Observers::SEND_EMAIL
-    ]
 
     module App
 
@@ -28,7 +22,11 @@ class Demo
       Core::ENV.register(:create_person, AUTHORIZE, INTERNAL_ERROR) do
         validate Domain::DTO::NEW_PERSON_VALIDATOR, VALIDATION_ERROR
         accept   Handler::Acceptor
-        call     Core::CREATE_PERSON, APPLICATION_ERROR
+
+        call Action::CreatePerson, APPLICATION_ERROR, [
+          Observers::LOG_EVENT,
+          Observers::SEND_EMAIL
+        ]
       end
 
     end

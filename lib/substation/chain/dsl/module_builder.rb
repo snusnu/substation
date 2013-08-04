@@ -72,8 +72,8 @@ module Substation
           # @api private
           def define_dsl_method(name, builder)
             @dsl_module.module_eval do
-              define_method(name) { |handler, failure_chain = EMPTY|
-                use(builder.call(handler, failure_chain))
+              define_method(name) { |handler, failure_chain = EMPTY, observers = EMPTY_ARRAY|
+                use(builder.call(handler, failure_chain, observers))
               }
             end
           end

@@ -5,7 +5,7 @@ module Substation
 
     # Wraps {Processor} configuration
     class Config
-      include Concord::Public.new(:handler, :failure_chain, :executor)
+      include Concord::Public.new(:executor, :failure_chain, :observers)
 
       # Add failure chain
       #
@@ -15,7 +15,7 @@ module Substation
       #
       # @api private
       def with_failure_chain(chain)
-        self.class.new(handler, chain, executor)
+        self.class.new(executor, chain, observers)
       end
 
     end # class Config

@@ -7,6 +7,8 @@ describe Processor::Transformer::Incoming, '#call' do
 
   before do
     expect(handler).to receive(:call).with(decomposed).and_return(handler_result)
+    expect(observers).to receive(:each).with(no_args).and_yield(observer)
+    expect(observer).to receive(:call).with(handler_result)
   end
 
   it_behaves_like 'Processor::Call::Incoming#call'
