@@ -2,9 +2,20 @@
 
 class Demo
   module Core
+
     module Observers
-      LOG_EVENT  = ->(response) { }
-      SEND_EMAIL = ->(response) { }
+
+      class Observer
+        def call(response)
+        end
+
+        def freeze
+          raise
+        end
+      end
+
+      LOG_EVENT  = Observer.new
+      SEND_EMAIL = Observer.new
     end
   end
 end
