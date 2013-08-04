@@ -18,10 +18,13 @@ class Demo
           authenticated? ? success(input) : error(input)
         end
 
-        private
-
         attr_reader :request
+        private     :request
+
         attr_reader :input
+        private     :input
+
+        private
 
         def authenticated?
           Demo::ACCOUNTS.include?(@account_id)

@@ -21,11 +21,16 @@ class Demo
 
       abstract_method :call
 
-      private
-
       attr_reader :request
+      private     :request
+
       attr_reader :env
+      private     :env
+
       attr_reader :input
+      private     :input
+
+      private
 
       def success(data)
         request.success(data)

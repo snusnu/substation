@@ -27,10 +27,13 @@ class Demo
           Domain::Actor.coerce(session, person)
         end
 
-        private
-
         attr_reader :session
+        private     :session
+
         attr_reader :account_id
+        private     :account_id
+
+        private
 
         def person
           Domain::DTO::Person.new(:id => account_id, :name => name)

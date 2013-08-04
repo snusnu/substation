@@ -19,10 +19,13 @@ class Demo
           authorized? ? success(input) : error(input)
         end
 
-        private
-
         attr_reader :request
+        private     :request
+
         attr_reader :input
+        private     :input
+
+        private
 
         def authorized?
           Demo::ACCOUNTS.fetch(@account_id)[:privileges].include?(@privilege)
