@@ -5,8 +5,10 @@ require 'spec_helper'
 describe Environment::DSL, '#registry' do
   subject { object.registry }
 
+  let(:guard) { described_class::GUARD }
+
   context 'when a block is given' do
-    let(:object)   { described_class.new(&block) }
+    let(:object)   { described_class.new(guard, &block) }
     let(:block)    { ->(_) { register :test, Spec::Processor } }
     let(:expected) {
       {
@@ -18,7 +20,7 @@ describe Environment::DSL, '#registry' do
   end
 
   context 'when no block is given' do
-    let(:object) { described_class.new }
+    let(:object) { described_class.new(guard) }
 
     it { should eql({}) }
   end

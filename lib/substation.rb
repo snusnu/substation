@@ -49,8 +49,11 @@ module Substation
   # Raised when trying to dispatch to an unregistered action
   UnknownActionError = Class.new(StandardError)
 
-  # Raised when a callable is already registered under the a given name
+  # Raised when an object is already registered under the a given name
   AlreadyRegisteredError = Class.new(StandardError)
+
+  # Raised when a reserved method is being given
+  ReservedNameError = Class.new(StandardError)
 
 end
 
@@ -76,6 +79,7 @@ require 'substation/chain/dsl'
 require 'substation/chain/dsl/config'
 require 'substation/chain/dsl/module_builder'
 require 'substation/environment'
+require 'substation/environment/dsl/guard'
 require 'substation/environment/dsl'
 require 'substation/dispatcher'
 require 'substation/dispatcher/registry'

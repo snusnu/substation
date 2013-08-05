@@ -160,6 +160,9 @@ module Substation
         self.class.new(config, other.prepend(definition))
       end
 
+      # All methods defined in this class body
+      BASE_METHODS = methods.freeze
+
     end # class DSL
   end # class Chain
 end # module Substation

@@ -19,7 +19,8 @@ DataClump:
   min_clump_size: 2
 DuplicateMethodCall:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Environment::DSL#register # reek will not emit this anymore soon
   max_calls: 1
   allow_calls: []
 FeatureEnvy:
@@ -83,6 +84,7 @@ TooManyStatements:
   - Substation::Processor::Evaluator#call
   - Substation::Dispatcher::DSL#dispatch
   - Substation::Environment#self.build # ~5
+  - Substation::Environment::DSL#register # 4
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true
