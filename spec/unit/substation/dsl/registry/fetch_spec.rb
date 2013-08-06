@@ -2,17 +2,19 @@
 
 require 'spec_helper'
 
-describe Dispatcher::Registry, '#fetch' do
+describe DSL::Registry, '#fetch' do
 
-  let(:object) { described_class.new(dispatch_table) }
-  let(:name)   { double('name') }
+  let(:object)       { described_class.new(guard, entries) }
+  let(:guard)        { double('guard') }
+  let(:name)         { double('name') }
+  let(:coerced_name) { double('coerced_name') }
 
   before do
-    expect(name).to receive(:to_sym).and_return(name)
+    expect(name).to receive(:to_sym).and_return(coerced_name)
   end
 
   context 'when name is not yet registered' do
-    let(:dispatch_table) { {} }
+    let(:entries) { {} }
 
     context 'and a block is given' do
       subject { object.fetch(name, &block) }
@@ -35,9 +37,9 @@ describe Dispatcher::Registry, '#fetch' do
   context 'when name is already registered' do
     subject { object.fetch(name) }
 
-    let(:dispatch_table) { { name => callable } }
-    let(:callable)       { double('callable') }
+    let(:entries)  { { coerced_name => expected } }
+    let(:expected) { double('expected') }
 
-    it { should be(callable) }
+    it { should be(expected) }
   end
 end

@@ -12,6 +12,17 @@ module Substation
     include Concord.new(:actions, :env)
     include Adamantium::Flat
 
+    GUARD = DSL::Guard.new(EMPTY_ARRAY)
+
+    # Return a new registry instance suitable for {Dispatcher}
+    #
+    # @return [DSL::Registry]
+    #
+    # @api private
+    def self.new_registry
+      DSL::Registry.new(GUARD)
+    end
+
     # Invoke the action identified by +name+
     #
     # @example

@@ -22,7 +22,7 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def self.build(app_env, actions = Dispatcher::Registry.new, &block)
+    def self.build(app_env, actions = Dispatcher.new_registry, &block)
       new(app_env, actions, chain_dsl(&block))
     end
 
@@ -88,7 +88,7 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def inherit(actions = Dispatcher::Registry.new, &block)
+    def inherit(actions = Dispatcher.new_registry, &block)
       self.class.new(app_env, actions, merged_chain_dsl(&block))
     end
 

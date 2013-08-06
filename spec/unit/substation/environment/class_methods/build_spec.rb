@@ -18,7 +18,7 @@ describe Environment, '.build' do
   context 'when no actions are given' do
     subject { described_class.build(app_env, &block) }
 
-    let(:actions) { Dispatcher::Registry.new }
+    let(:actions) { Dispatcher.new_registry }
 
     it_behaves_like 'Environment.build'
 

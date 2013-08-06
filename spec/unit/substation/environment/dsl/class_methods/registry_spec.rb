@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Substation::Environment::DSL, '.registry' do
   context 'when a block is given' do
     let(:expected) {
-      {
+      DSL::Registry.new(guard, {
         :test => Processor::Builder.new(:test, Spec::Processor, Processor::Executor::NULL)
-      }
+      })
     }
 
     let(:block) { ->(_) { register :test, Spec::Processor } }
@@ -17,6 +17,8 @@ describe Substation::Environment::DSL, '.registry' do
 
     context 'and no guard is given' do
       subject { described_class.registry(&block) }
+
+      let(:guard) { described_class::GUARD }
 
       it { should eql(expected) }
     end
@@ -40,10 +42,12 @@ describe Substation::Environment::DSL, '.registry' do
   context 'when no block is given' do
     subject { described_class.registry }
 
-    let(:expected) { Hash.new }
+    let(:expected) { DSL::Registry.new(guard) }
 
     context 'and no guard is given' do
       subject { described_class.registry }
+
+      let(:guard) { described_class::GUARD }
 
       it { should eql(expected) }
     end

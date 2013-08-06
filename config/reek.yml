@@ -20,7 +20,7 @@ DataClump:
 DuplicateMethodCall:
   enabled: true
   exclude:
-  - Substation::Environment::DSL#register # reek will not emit this anymore soon
+  - !ruby/regexp /^Substation::DSL::Registry#\[\]=$/ # reek won't emit this anymore soon
   max_calls: 1
   allow_calls: []
 FeatureEnvy:
@@ -75,7 +75,7 @@ TooManyMethods:
   - Substation::Chain::DSL # 7
   - Substation::Chain::Definition # 8
   - Substation::Environment # 5
-  - Substation::Dispatcher::Registry # 5
+  - Substation::DSL::Registry # 10
   max_methods: 4
 TooManyStatements:
   enabled: true

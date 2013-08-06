@@ -8,7 +8,7 @@ describe Environment, '#[]' do
   let(:name)      { double('name', :to_sym => :test) }
   let(:object)    { Environment.new(app_env, actions, chain_dsl) }
   let(:app_env)   { double('app_env') }
-  let(:actions)   { Dispatcher::Registry.new }
+  let(:actions)   { Dispatcher.new_registry }
   let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
   let(:block)     { ->(_) { register(:test, Spec::Processor) } }
 

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Environment::DSL::Guard, '#call' do
+describe DSL::Guard, '#call' do
   subject { object.call(name, registry) }
 
   let(:name)     { double('name') }

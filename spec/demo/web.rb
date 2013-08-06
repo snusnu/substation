@@ -18,7 +18,6 @@ class Demo
     ENV = Core::ENV.inherit do
       register :deserialize, Substation::Processor::Transformer::Incoming, Web::Handler::Deserializer::EXECUTOR
       register :sanitize,    Substation::Processor::Evaluator::Request, Web::Sanitizer::EXECUTOR
-      register :wrap,        Substation::Processor::Wrapper::Outgoing, Core::Handler::Wrapper::Outgoing::EXECUTOR
       register :render,      Substation::Processor::Transformer::Outgoing
     end
   end

@@ -7,7 +7,7 @@ module Substation
     class DSL
 
       # Rejects already registered and reserved names
-      GUARD = Guard.new(Chain::DSL::BASE_METHODS)
+      GUARD = Substation::DSL::Guard.new(Chain::DSL::BASE_METHODS)
 
       # The registry of processor builders
       #
@@ -33,7 +33,7 @@ module Substation
       #
       # @api private
       def self.registry(guard = GUARD, &block)
-        new(guard, &block).registry
+        new(Substation::DSL::Registry.new(guard), &block).registry
       end
 
       # Initialize a new instance
@@ -44,8 +44,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(guard, &block)
-        @guard, @registry = guard, {}
+      def initialize(registry, &block)
+        @registry = registry
         instance_eval(&block) if block
       end
 
@@ -65,7 +65,6 @@ module Substation
       # @api private
       def register(name, processor, executor = Processor::Executor::NULL)
         coerced_name = name.to_sym
-        guard.call(coerced_name, registry)
 
         registry[coerced_name] =
           Processor::Builder.new(coerced_name, processor, executor)

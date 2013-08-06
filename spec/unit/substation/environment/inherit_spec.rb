@@ -10,8 +10,8 @@ describe Environment, '#inherit' do
   let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&env_block)) }
   let(:env_block) {
     ->(_) {
-      register(:test_1, Spec::Transformer)
-      register(:test_2, Spec::Transformer)
+      register(:test_1, Spec::Processor)
+      register(:test_2, Spec::Processor)
     }
   }
 
@@ -20,14 +20,13 @@ describe Environment, '#inherit' do
   let(:expected_block) {
     ->(_) {
       register(:test_1, Spec::Processor)
-      register(:test_2, Spec::Transformer)
+      register(:test_2, Spec::Processor)
       register(:test_3, Spec::Processor)
     }
   }
 
   let(:block) {
     ->(_) {
-      register(:test_1, Spec::Processor)
       register(:test_3, Spec::Processor)
     }
   }
@@ -35,7 +34,7 @@ describe Environment, '#inherit' do
   context 'when no actions are given' do
     subject { object.inherit(&block) }
 
-    let(:new_actions) { Dispatcher::Registry.new }
+    let(:new_actions) { Dispatcher.new_registry }
 
     it { should eql(expected) }
 
