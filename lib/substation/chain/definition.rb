@@ -13,6 +13,9 @@ module Substation
       # The message for {UnknownProcessor} exceptions
       UNKNOWN_PROCESSOR_MSG = 'No processor named %s is registered'.freeze
 
+      # The message for {DuplicateProcessorError} exceptions
+      DUPLICATE_PROCESSOR_MSG = 'The following processors already exist within this chain: %s'
+
       # The processors used in this instance
       #
       # @return [Enumerable<#call>]
@@ -43,6 +46,7 @@ module Substation
       #
       # @api private
       def <<(processor)
+        raise_duplicate_processor_error(processor) if include?(processor)
         processors << processor
         self
       end
@@ -96,7 +100,9 @@ module Substation
       #
       # @api private
       def prepend(other)
-        self.class.new(other.processors + processors)
+        duplicates = processors & other.processors
+        raise_duplicate_processor_error(duplicates) if duplicates.any?
+        self.class.new(other.processors | processors)
       end
 
       private
@@ -160,6 +166,21 @@ module Substation
       # @api private
       def [](name)
         processors.detect { |processor| processor.name == name }
+      end
+
+      # Raise {DuplicateProcessorError} with a message tailored for +dupes+
+      #
+      # @param [Processor, Array<Processor>] dupes
+      #   one or many duplicate processors
+      #
+      # @raise [DuplicateProcessorError]
+      #
+      # @api private
+      def raise_duplicate_processor_error(dupes)
+        raise(
+          DuplicateProcessorError,
+          DUPLICATE_PROCESSOR_MSG % Array(dupes).inspect
+        )
       end
 
     end # class Definition

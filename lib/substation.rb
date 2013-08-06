@@ -55,6 +55,8 @@ module Substation
   # Raised when a reserved method is being given
   ReservedNameError = Class.new(StandardError)
 
+  # Raised when a duplicate {Processor} should be registered within a {Chain}
+  DuplicateProcessorError = Class.new(StandardError)
 end
 
 require 'substation/request'

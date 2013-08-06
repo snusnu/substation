@@ -10,11 +10,19 @@ describe Chain::DSL, '#build' do
   let(:expected_definition) { Chain::Definition.new(expected_processors) }
   let(:expected)            { Chain.new(expected_definition, failure_chain) }
 
-  context 'when a block is given' do
-    subject { chain_dsl.build(processors, failure_chain, &block) }
+  let(:new_processors)      { [new_processor] }
+  let(:new_processor)       { double('new_processor') }
 
-    let(:expected_processors) { [processor, processor, Spec::FAKE_PROCESSOR] }
+  shared_examples_for 'duplicate processors' do
+    let(:new_processor) { processor }
+    let(:msg)           { Chain::Definition::DUPLICATE_PROCESSOR_MSG % [processor].inspect }
 
+    it 'should raise DuplicateProcessorError' do
+      expect { subject }.to raise_error(DuplicateProcessorError, msg)
+    end
+  end
+
+  shared_examples_for 'disjoint processors' do
     it { should eql(expected) }
 
     it 'injects the proper registry' do
@@ -22,15 +30,31 @@ describe Chain::DSL, '#build' do
     end
   end
 
+  context 'when a block is given' do
+    subject { chain_dsl.build(new_processors, failure_chain, &block) }
+
+    context 'and all processors are disjoint' do
+      let(:expected_processors) { [processor, new_processor, Spec::FAKE_PROCESSOR] }
+
+      it_behaves_like 'disjoint processors'
+    end
+
+    context 'and there are duplicate processors' do
+      it_behaves_like 'duplicate processors'
+    end
+  end
+
   context 'when no block is given' do
-    subject { chain_dsl.build(processors, failure_chain) }
+    subject { chain_dsl.build(new_processors, failure_chain) }
 
-    let(:expected_processors) { [processor, processor] }
+    context 'and all processors are disjoint' do
+      let(:expected_processors) { [processor, new_processor] }
 
-    it { should eql(expected) }
+      it_behaves_like 'disjoint processors'
+    end
 
-    it 'injects the proper registry' do
-      expect(chain_dsl.registry).to be(registry)
+    context 'and there are duplicate processors' do
+      it_behaves_like 'duplicate processors'
     end
   end
 end

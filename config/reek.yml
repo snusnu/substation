@@ -21,6 +21,7 @@ DuplicateMethodCall:
   enabled: true
   exclude:
   - !ruby/regexp /^Substation::DSL::Registry#\[\]=$/ # reek won't emit this anymore soon
+  - Substation::Chain::Definition#prepend # reek won't emit this anymore soon
   max_calls: 1
   allow_calls: []
 FeatureEnvy:

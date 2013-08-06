@@ -9,8 +9,20 @@ describe Chain::Definition, '#prepend' do
   let(:processor_1) { double('processor_1', :name => name_1) }
   let(:name_1)      { double('name_1') }
   let(:other)       { described_class.new([processor_2]) }
-  let(:processor_2) { double('processor_2', :name => name_2) }
   let(:name_2)      { double('name_2') }
 
-  it { should eql(described_class.new([processor_2, processor_1])) }
+  context 'and the processors are disjoint' do
+    let(:processor_2) { double('processor_2', :name => name_2) }
+
+    it { should eql(described_class.new([processor_2, processor_1])) }
+  end
+
+  context 'and the processors contain duplicates' do
+    let(:processor_2) { processor_1 }
+    let(:msg)         { Chain::Definition::DUPLICATE_PROCESSOR_MSG % [processor_2].inspect }
+
+    it 'raises DuplicateProcessorError' do
+      expect { subject }.to raise_error(DuplicateProcessorError, msg)
+    end
+  end
 end
