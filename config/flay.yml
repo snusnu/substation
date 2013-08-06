@@ -1,3 +1,3 @@
 ---
 threshold: 12 # TODO bring it back to 11 by collapsing the dsl registries
-total_score: 210 # try to bring it back to the previous 201
+total_score: 205

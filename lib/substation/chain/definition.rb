@@ -46,7 +46,7 @@ module Substation
       #
       # @api private
       def <<(processor)
-        raise_duplicate_processor_error(processor) if include?(processor)
+        raise_duplicate_processor_error([processor]) if include?(processor)
         processors << processor
         self
       end
@@ -177,10 +177,7 @@ module Substation
       #
       # @api private
       def raise_duplicate_processor_error(dupes)
-        raise(
-          DuplicateProcessorError,
-          DUPLICATE_PROCESSOR_MSG % Array(dupes).inspect
-        )
+        raise DuplicateProcessorError, DUPLICATE_PROCESSOR_MSG % dupes.inspect
       end
 
     end # class Definition
