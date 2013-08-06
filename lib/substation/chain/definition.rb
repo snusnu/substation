@@ -32,7 +32,7 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(processors = [])
+      def initialize(processors = EMPTY_ARRAY)
         @processors = []
         processors.each(&method(:<<))
       end
