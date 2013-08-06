@@ -14,8 +14,8 @@ describe Chain::DSL::ModuleBuilder, '#dsl_module' do
 
   let(:definition)  { Chain::Definition.new(processors) }
   let(:processors)  { [processor_1] }
-  let(:processor_1) { double('processor_1') }
-  let(:processor_2) { double('processor_2') }
+  let(:processor_1) { double('processor_1', :name => :processor_1) }
+  let(:processor_2) { double('processor_2', :name => :processor_2) }
 
   before do
     expect(processor_builder)

@@ -11,7 +11,7 @@ describe Chain::DSL, '#build' do
   let(:expected)            { Chain.new(expected_definition, failure_chain) }
 
   let(:new_processors)      { [new_processor] }
-  let(:new_processor)       { double('new_processor') }
+  let(:new_processor)       { double('new_processor', :name => :new_processor) }
 
   shared_examples_for 'duplicate processors' do
     let(:new_processor) { processor }

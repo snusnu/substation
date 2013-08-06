@@ -22,6 +22,7 @@ DuplicateMethodCall:
   exclude:
   - !ruby/regexp /^Substation::DSL::Registry#\[\]=$/ # reek won't emit this anymore soon
   - Substation::Chain::Definition#prepend # reek won't emit this anymore soon
+  - Substation::Chain::Definition#replace_failure_chain # replaces object at given idx inside an array
   max_calls: 1
   allow_calls: []
 FeatureEnvy:
@@ -86,6 +87,7 @@ TooManyStatements:
   - Substation::Dispatcher::DSL#dispatch
   - Substation::Environment#self.build # ~5
   - Substation::Environment::DSL#register # 4
+  - Substation::Chain::Definition#<< # 4
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true

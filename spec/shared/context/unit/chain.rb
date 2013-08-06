@@ -8,5 +8,5 @@ shared_context 'Chain::DSL#initialize' do
 
   let(:definition)     { Chain::Definition.new(processors) }
   let(:processors)     { [processor] }
-  let(:processor)      { double('processor') }
+  let(:processor)      { double('processor', :name => :processor) }
 end
