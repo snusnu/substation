@@ -18,7 +18,7 @@ class Demo
           elsif name == 'exception'
             raise RuntimeError
           else
-            success(@person)
+            success(db.create_person(@person))
           end
         end
       end

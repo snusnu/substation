@@ -37,7 +37,7 @@ class Demo
       end
 
       include AbstractType
-      include Concord.new(:name, :storage, :logger)
+      include Concord::Public.new(:name, :storage, :logger)
 
       def development?
         false

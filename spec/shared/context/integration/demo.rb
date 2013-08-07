@@ -7,9 +7,9 @@ shared_context 'demo application' do
 
   let(:session_data)      { { 'account_id' => account_id } }
 
-  let(:authorized_id)     { 1 }
-  let(:unauthorized_id)   { 2 }
-  let(:unknown_id)        { 3 }
+  let(:authorized_id)     {  1 }
+  let(:unauthorized_id)   {  2 }
+  let(:unknown_id)        { -1 }
 
   let(:processed_request) { Substation::Request.new(name, env, processed_input) }
   let(:actor)             { Demo::Domain::Actor.coerce(session_data, acting_person) }

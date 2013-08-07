@@ -17,6 +17,7 @@ class Demo
         @request = request
         @env     = @request.env
         @input   = @request.input
+        @db      = @env.storage
       end
 
       abstract_method :call
@@ -29,6 +30,9 @@ class Demo
 
       attr_reader :input
       private     :input
+
+      attr_reader :db
+      private     :db
 
       private
 

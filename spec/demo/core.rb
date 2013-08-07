@@ -11,18 +11,30 @@ class Demo
 
   Undefined = Object.new.freeze
 
-  ACCOUNTS = {
-    1 => { :name => 'Jane', :privileges => [ :create_person ] },
-    2 => { :name => 'Mr.X', :privileges => [] }
-  }
-
-  logger   = Object.new # some logger instance
-  storage  = Object.new # some database abstraction e.g. ROM::Environment
-  env_name = ::ENV.fetch('APP_ENV', :development)
-
+  require 'demo/domain/storage'
   require 'demo/domain/environment'
   require 'demo/domain/actor'
   require 'demo/domain/dto/person'
+
+  DATABASE =
+  {
+    :privileges => [
+      { :name => 'create_person' }
+    ],
+
+    :accounts => [
+      { :id => 1, :name => 'Jane' },
+      { :id => 2, :name => 'Mr.X' }
+    ],
+
+    :account_privileges => [
+      { :account_id => 1, :privilege_name => 'create_person' }
+    ],
+  }
+
+  logger   = Object.new # some logger instance
+  storage  = Domain::Storage.new(DATABASE)
+  env_name = ::ENV.fetch('APP_ENV', :development)
 
   APP_ENV = Domain::Environment.build(env_name, storage, logger)
 

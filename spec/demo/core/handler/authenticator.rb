@@ -11,6 +11,7 @@ class Demo
         def initialize(request)
           @request    = request
           @input      = @request.input
+          @db         = @request.env.storage
           @account_id = @request.input.session.fetch('account_id')
         end
 
@@ -27,7 +28,7 @@ class Demo
         private
 
         def authenticated?
-          Demo::ACCOUNTS.include?(@account_id)
+          !!@db.load_person(@account_id)
         end
       end
     end

@@ -11,8 +11,9 @@ class Demo
         def initialize(request)
           @request    = request
           @input      = @request.input
+          @db         = @request.env.storage
           @account_id = @request.input.session.fetch('account_id')
-          @privilege  = @request.name
+          @privilege  = @request.name.to_s
         end
 
         def call
@@ -28,7 +29,7 @@ class Demo
         private
 
         def authorized?
-          Demo::ACCOUNTS.fetch(@account_id)[:privileges].include?(@privilege)
+          !!@db.load_account_privilege(@account_id, @privilege)
         end
       end
 

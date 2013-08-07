@@ -8,9 +8,7 @@ class Demo
         extend  Handler
         include Equalizer.new(:session)
 
-        DECOMPOSER = ->(request) {
-          request.input.session
-        }
+        DECOMPOSER = ->(request) { request }
 
         COMPOSER = ->(request, output) {
           Input::Accepted.new(output, request.input.data)
@@ -18,8 +16,9 @@ class Demo
 
         EXECUTOR = Substation::Processor::Executor.new(DECOMPOSER, COMPOSER)
 
-        def initialize(session)
-          @session    = session
+        def initialize(request)
+          @db         = request.env.storage
+          @session    = request.input.session
           @account_id = @session.fetch('account_id')
         end
 
@@ -40,7 +39,7 @@ class Demo
         end
 
         def name
-          Demo::ACCOUNTS.fetch(account_id)[:name]
+          @db.load_person(account_id).name
         end
       end
     end
