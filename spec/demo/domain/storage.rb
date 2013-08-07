@@ -34,7 +34,7 @@ class Demo
       private
 
       def new_person_tuple(id, person)
-        { :id => id, :name => person.name, :privileges => [] }
+        { :id => id, :name => person.name }
       end
 
       def new_person_instance(tuple)
