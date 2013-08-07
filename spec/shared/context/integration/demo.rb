@@ -26,3 +26,12 @@ shared_context 'demo application' do
   let(:error_data)         { error }
 
 end
+
+shared_context 'with registered chains' do
+  let(:input)      { mock }
+  let(:account_id) { authorized_id }
+
+  it 'lists all the registered names' do
+    expect(object.action_names).to eql(Set[ :create_person ])
+  end
+end

@@ -5,9 +5,12 @@ require 'spec_helper'
 require 'demo/web'
 
 describe 'a typical substation application' do
-  subject { Demo::Web::HTML::APP.call(name, input) }
+  subject { object.call(name, input) }
+
+  let(:object) { Demo::Web::HTML::APP }
 
   include_context 'demo application'
+  include_context 'with registered chains'
 
   let(:input) {
     {
@@ -19,15 +22,6 @@ describe 'a typical substation application' do
   let(:data)                        { { 'name' => person_name } }
   let(:rendered_error_response)     { Substation::Response::Failure.new(processed_request, rendered) }
   let(:rendered_exception_response) { Substation::Response::Exception.new(processed_request, rendered) }
-
-  context 'with registered chains' do
-    let(:input)      { mock }
-    let(:account_id) { authorized_id }
-
-    it 'lists all the registered names' do
-      expect(Demo::Web::HTML::APP.action_names).to eql(Set[ :create_person ])
-    end
-  end
 
   context 'with valid input' do
     let(:person_name)     { 'John' }

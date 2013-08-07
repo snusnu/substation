@@ -5,20 +5,14 @@ require 'spec_helper'
 require 'demo/core'
 
 describe 'a typical substation application' do
-  subject { Demo::Core::APP.call(name, input) }
+  subject { object.call(name, input) }
+
+  let(:object) { Demo::Core::APP }
 
   include_context 'demo application'
+  include_context 'with registered chains'
 
   let(:input) { Demo::Core::Input::Incomplete.new(session_data, person) }
-
-  context 'with registered chains' do
-    let(:input)      { mock }
-    let(:account_id) { authorized_id }
-
-    it 'lists all the registered names' do
-      expect(Demo::Core::APP.action_names).to eql(Set[ :create_person ])
-    end
-  end
 
   context 'with valid input' do
     let(:person_name)     { 'John' }
