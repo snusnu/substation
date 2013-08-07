@@ -20,18 +20,6 @@ describe 'a typical substation application' do
   let(:rendered_error_response)     { Substation::Response::Failure.new(processed_request, rendered) }
   let(:rendered_exception_response) { Substation::Response::Exception.new(processed_request, rendered) }
 
-  shared_examples_for 'all invocations' do
-    it { should eql(response) }
-
-    it 'indicates success via #success?' do
-      expect(subject.success?).to be(success_status)
-    end
-
-    it 'provides the processed input in Response#input' do
-      expect(subject.input).to eql(processed_input)
-    end
-  end
-
   context 'with registered chains' do
     let(:input)      { mock }
     let(:account_id) { authorized_id }
