@@ -4,9 +4,9 @@ gemspec
 
 group :test do
   gem 'multi_json', '~> 1.7.3'
-  gem 'ducktrap',   '~> 0.0.1'
-  gem 'vanguard',   '~> 0.0.3'
-  gem 'anima',      '~> 0.0.6'
+  gem 'ducktrap',   '~> 0.0.1', :git => 'https://github.com/mbj/ducktrap'
+  gem 'vanguard',   '~> 0.0.3', :git => 'https://github.com/mbj/vanguard'
+  gem 'anima',      '~> 0.0.7'
 end
 
 group :development do
