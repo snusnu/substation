@@ -3,10 +3,10 @@ source 'http://rubygems.org'
 gemspec
 
 group :test do
-  gem 'multi_json', '~> 1.7.3'
-  gem 'ducktrap',   '~> 0.0.1', :git => 'https://github.com/mbj/ducktrap'
-  gem 'vanguard',   '~> 0.0.3', :git => 'https://github.com/mbj/vanguard'
-  gem 'anima',      '~> 0.0.7'
+  gem 'multi_json', '~> 1.8.0'
+  gem 'ducktrap',   '~> 0.0.2', :git => 'https://github.com/mbj/ducktrap'
+  gem 'vanguard',   '~> 0.0.4', :git => 'https://github.com/mbj/vanguard'
+  gem 'anima',      '~> 0.1.1'
 end
 
 group :development do
