@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 shared_examples_for 'all invocations' do
   it { should eql(response) }
 
