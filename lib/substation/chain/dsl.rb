@@ -97,6 +97,11 @@ module Substation
         self
       end
 
+      def nest(name, chain, executor)
+        config = Processor::Config.new(executor, EMPTY_ARRAY, EMPTY_ARRAY)
+        use(Processor::Nest::Incoming.new(name, chain, config))
+      end
+
       # Use +chain+ as the failure chain for the processor identified by +name+
       #
       # @param [Symbol] name
