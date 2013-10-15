@@ -97,14 +97,17 @@ module Substation
     # @param [Chain] other
     #   the optional chain to build on top of
     #
+    # @param [Chain] exception_chain
+    #   the chain to invoke in case of an uncaught exceptions in handlers
+    #
     # @param [Proc] block
     #   a block to be instance_eval'ed in {Chain::DSL}
     #
     # @return [Chain]
     #
     # @api private
-    def chain(other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
-      @chain_dsl.build(other, failure_chain, &block)
+    def chain(other = Chain::EMPTY, exception_chain = Chain::EMPTY, &block)
+      @chain_dsl.build(other, exception_chain, &block)
     end
 
     # Register a new chain under the given +name+
@@ -115,15 +118,15 @@ module Substation
     # @param [Chain] other
     #   the chain to build on top of
     #
-    # @param [Chain] failure_chain
+    # @param [Chain] exception_chain
     #   the chain to invoke in case of uncaught exceptions in handlers
     #
     # @return [Chain]
     #   the registered chain
     #
     # @api private
-    def register(name, other = Chain::EMPTY, failure_chain = Chain::EMPTY, &block)
-      actions[name] = chain(other, failure_chain, &block)
+    def register(name, other = Chain::EMPTY, exception_chain = Chain::EMPTY, &block)
+      actions[name] = chain(other, exception_chain, &block)
       self
     end
 

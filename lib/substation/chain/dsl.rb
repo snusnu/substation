@@ -71,8 +71,8 @@ module Substation
       # @param [Enumerable<#call>] other
       #   the processors to prepend
       #
-      # @param [Chain] failure_chain
-      #   the failure chain to invoke in case of an uncaught exception
+      # @param [Chain] exception_chain
+      #   the chain to invoke in case of an uncaught exception
       #
       # @param [Proc] block
       #   a block to be instance_eval'ed inside the new {DSL} instance
@@ -80,8 +80,8 @@ module Substation
       # @return [Chain]
       #
       # @api private
-      def build(other, failure_chain, &block)
-        Chain.new(__call__(Definition.new(other), &block), failure_chain)
+      def build(other, exception_chain, &block)
+        Chain.new(__call__(Definition.new(other), &block), exception_chain)
       end
 
       # Nest the given chain within another one
