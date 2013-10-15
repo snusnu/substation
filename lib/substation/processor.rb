@@ -166,7 +166,7 @@ module Substation
     # @param [Response] response
     #   the response returned from {handler#call}
     #
-    # @return [undefined]
+    # @return [Response]
     #
     # @api private
     def notify_observers(response)
