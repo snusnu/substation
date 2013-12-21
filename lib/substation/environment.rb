@@ -94,6 +94,9 @@ module Substation
 
     # Build a new {Chain} instance
     #
+    # @param [#to_sym] name
+    #   the new chain's name
+    #
     # @param [Chain] other
     #   the optional chain to build on top of
     #
@@ -106,8 +109,8 @@ module Substation
     # @return [Chain]
     #
     # @api private
-    def chain(other = Chain::EMPTY, exception_chain = Chain::EMPTY, &block)
-      @chain_dsl.build(other, exception_chain, &block)
+    def chain(name = nil, other = Chain::EMPTY, exception_chain = Chain::EMPTY, &block)
+      @chain_dsl.build(name, other, exception_chain, &block)
     end
 
     # Register a new chain under the given +name+
@@ -126,7 +129,7 @@ module Substation
     #
     # @api private
     def register(name, other = Chain::EMPTY, exception_chain = Chain::EMPTY, &block)
-      actions[name] = chain(other, exception_chain, &block)
+      actions[name] = chain(name, other, exception_chain, &block)
       self
     end
 

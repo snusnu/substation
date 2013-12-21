@@ -7,7 +7,7 @@ module Substation
     # within an instance of {Chain}
     class Definition
 
-      include Equalizer.new(:processors)
+      include Equalizer.new(:name, :processors)
       include Enumerable
 
       # The message for {UnknownProcessor} exceptions
@@ -18,6 +18,13 @@ module Substation
 
       # Initial array index to start incrementing from
       INITIAL_SEQUENCE_VALUE = -1
+
+      # The chain of the chain
+      #
+      # @return [Symbol]
+      #
+      # @api private
+      attr_reader :name
 
       # The processors used in this instance
       #
@@ -43,7 +50,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(processors = EMPTY_ARRAY)
+      def initialize(name = nil, processors = EMPTY_ARRAY)
+        @name = name
         @processors, @index = [], Hash.new { |hash, key| hash[key] = [] }
         @sequence = INITIAL_SEQUENCE_VALUE
         processors.each(&method(:<<))
@@ -67,11 +75,11 @@ module Substation
       # The following const MUST have #initialize and #<< defined already
 
       # An empty instance
-      EMPTY = new(EMPTY_ARRAY).freeze
+      EMPTY = new.freeze
 
       # Replace the failure chain of the processor identified by +name+
       #
-      # @param [Symbol] name
+      # @param [Symbol] processor_name
       #   the name of the processor
       #
       # @param [Chain] failure_chain
@@ -80,8 +88,8 @@ module Substation
       # @return [self]
       #
       # @api private
-      def replace_failure_chain(name, failure_chain)
-        idx = fetch(name)
+      def replace_failure_chain(processor_name, failure_chain)
+        idx = fetch(processor_name)
         processors[idx] = processors[idx].with_failure_chain(failure_chain)
         self
       end
@@ -116,7 +124,7 @@ module Substation
       def prepend(other)
         duplicates = processors & other.processors
         raise_duplicate_processor_error(duplicates) if duplicates.any?
-        self.class.new(other.processors | processors)
+        self.class.new(name, other.processors | processors)
       end
 
       private
@@ -131,9 +139,9 @@ module Substation
       # @raise [UnknownProcessor]
       #
       # @api private
-      def fetch(name)
-        index.fetch(name) {
-          raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % name.inspect
+      def fetch(processor_name)
+        index.fetch(processor_name) {
+          raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % processor_name.inspect
         }.first
       end
 

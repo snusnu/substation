@@ -9,12 +9,13 @@ describe Chain::DSL, '#chain' do
   let(:config)     { Chain::DSL::Config.new(registry, dsl_module) }
   let(:registry)   { double('registry') }
   let(:dsl_module) { Module.new }
+  let(:name)       { double('name') }
 
-  let(:definition) { Chain::Definition.new(processors) }
+  let(:definition) { Chain::Definition.new(name, processors) }
   let(:processors) { [processor] }
   let(:processor)  { double('processor', :name => :processor) }
 
-  let(:other_definition) { Chain::Definition.new(other_processors) }
+  let(:other_definition) { Chain::Definition.new(name, other_processors) }
   let(:other_processors) { [other_processor] }
   let(:other_processor)  { double('other_processor', :name => :other_processor) }
 

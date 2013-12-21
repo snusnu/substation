@@ -5,7 +5,8 @@ require 'spec_helper'
 describe Chain::Definition, '#each' do
   subject { object.each(&block) }
 
-  let(:object)     { described_class.new(processors) }
+  let(:object)     { described_class.new(chain_name, processors) }
+  let(:chain_name) { double('chain_name') }
   let(:processors) { [ processor ] }
   let(:processor)  { double('processor', :name => name) }
   let(:name)       { double('name') }

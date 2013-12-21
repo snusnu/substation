@@ -5,7 +5,8 @@ require 'spec_helper'
 describe Chain::Definition, '#replace_failure_chain' do
   subject { object.replace_failure_chain(name, failure_chain) }
 
-  let(:object)             { described_class.new(processors) }
+  let(:object)             { described_class.new(chain_name, processors) }
+  let(:chain_name)         { double('chain_name') }
   let(:processor)          { double('processor', :name => name) }
   let(:name)               { double('name') }
   let(:other_processor)    { double('other_processor', :name => other_name) }

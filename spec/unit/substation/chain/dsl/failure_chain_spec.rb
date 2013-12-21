@@ -9,7 +9,7 @@ describe Chain::DSL, '#failure_chain' do
   let(:config)        { Chain::DSL::Config.new(registry, dsl_module) }
   let(:registry)      { double('registry') }
   let(:dsl_module)    { Module.new }
-  let(:definition)    { double('definition') }
+  let(:definition)    { double('definition', :name => double('chain_name')) }
   let(:name)          { double('name') }
   let(:failure_chain) { double('failure_chain') }
 

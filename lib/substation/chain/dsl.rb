@@ -23,6 +23,13 @@ module Substation
 
       include Equalizer.new(:registry, :definition)
 
+      # The chain's name
+      #
+      # @return [#to_sym]
+      #
+      # @api public
+      attr_reader :name
+
       # The config for this instance
       #
       # @return [Config]
@@ -62,11 +69,15 @@ module Substation
         @config     = config
         @definition = definition
         @registry   = @config.registry
+        @name       = @definition.name
 
         extend(@config.dsl_module)
       end
 
       # Build a new {Chain} based on +other+, a +failure_chain+ and a block
+      #
+      # @param [#to_sym] name
+      #   the name of the chain to build
       #
       # @param [Enumerable<#call>] other
       #   the processors to prepend
@@ -80,11 +91,11 @@ module Substation
       # @return [Chain]
       #
       # @api private
-      def build(other, exception_chain, &block)
-        Chain.new(__call__(Definition.new(other), &block), exception_chain)
+      def build(name = nil, other, exception_chain, &block)
+        Chain.new(__call__(Definition.new(name, other), &block), exception_chain)
       end
 
-      # Nest the given chain within another one
+      # Append the given chain
       #
       # @param [Enumerable<#call>] processors
       #   other processors to be nested within a {Definition}
@@ -97,6 +108,20 @@ module Substation
         self
       end
 
+      # Nest the given chain at the end of the current one
+      #
+      # @param [#to_sym] name
+      #   the name of the nested chain
+      #
+      # @param [Enumerable<#call>] chain
+      #   the chain to nest
+      #
+      # @param [Processor::Executor] executor
+      #   the executor used for nesting
+      #
+      # @return [Processor::Nest::Incoming]
+      #
+      # @api private
       def nest(name, chain, executor)
         config = Processor::Config.new(executor, EMPTY_ARRAY, EMPTY_ARRAY)
         use(Processor::Nest::Incoming.new(name, chain, config))

@@ -7,7 +7,7 @@ describe Chain::DSL, '#build' do
 
   let(:failure_chain)       { Chain::EMPTY }
   let(:block)               { ->(_) { test(Spec::FAKE_HANDLER) } }
-  let(:expected_definition) { Chain::Definition.new(expected_processors) }
+  let(:expected_definition) { Chain::Definition.new(chain_name, expected_processors) }
   let(:expected)            { Chain.new(expected_definition, failure_chain) }
 
   let(:new_processors)      { [new_processor] }
@@ -31,7 +31,7 @@ describe Chain::DSL, '#build' do
   end
 
   context 'when a block is given' do
-    subject { chain_dsl.build(new_processors, failure_chain, &block) }
+    subject { chain_dsl.build(chain_name, new_processors, failure_chain, &block) }
 
     context 'and all processors are disjoint' do
       let(:expected_processors) { [processor, new_processor, Spec::FAKE_PROCESSOR] }
@@ -45,7 +45,7 @@ describe Chain::DSL, '#build' do
   end
 
   context 'when no block is given' do
-    subject { chain_dsl.build(new_processors, failure_chain) }
+    subject { chain_dsl.build(chain_name, new_processors, failure_chain) }
 
     context 'and all processors are disjoint' do
       let(:expected_processors) { [processor, new_processor] }

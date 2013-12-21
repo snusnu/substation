@@ -5,9 +5,10 @@ require 'spec_helper'
 describe Chain::Definition, '#<<' do
   subject { object << processor }
 
-  let(:object)    { described_class.new(processors) }
-  let(:processor) { double('processor', :name => name) }
-  let(:name)      { double('name') }
+  let(:object)     { described_class.new(chain_name, processors) }
+  let(:chain_name) { double('chain_name') }
+  let(:processor)  { double('processor', :name => name) }
+  let(:name)       { double('name') }
 
   context 'when the given processor is not currently present in object' do
     let(:processors) { [] }

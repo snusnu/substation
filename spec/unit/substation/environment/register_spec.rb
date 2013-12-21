@@ -9,7 +9,7 @@ describe Environment, '#register' do
   let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
   let(:block)     { ->(_) { register(:test, Spec::Processor) } }
 
-  let(:chain)       { chain_dsl.build(other, failure_chain, &chain_block) }
+  let(:chain)       { chain_dsl.build(name, other, failure_chain, &chain_block) }
   let(:chain_block) { ->(_) { test(Spec::FAKE_HANDLER) } }
 
   let(:name)          { double('name', :to_sym => :test) }

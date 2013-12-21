@@ -16,27 +16,29 @@ describe Substation::Environment, '#chain' do
   let(:failure_chain) { double('failure_chain') }
   let(:block)         { ->(_) { test Spec::FAKE_HANDLER, Chain::EMPTY } }
 
-  context 'when other, failure_chain and block are given' do
-    subject { object.chain(other, failure_chain, &block) }
+  let(:name)     { double('name') }
 
-    it { should eql(dsl.build(other, failure_chain, &block)) }
+  context 'when other, failure_chain and block are given' do
+    subject { object.chain(name, other, failure_chain, &block) }
+
+    it { should eql(dsl.build(name, other, failure_chain, &block)) }
   end
 
   context 'when other, failure_chain and no block are given' do
-    subject { object.chain(other, failure_chain) }
+    subject { object.chain(name, other, failure_chain) }
 
-    it { should eql(dsl.build(other, failure_chain)) }
+    it { should eql(dsl.build(name, other, failure_chain)) }
   end
 
   context 'when other, no failure_chain and no block are given' do
-    subject { object.chain(other) }
+    subject { object.chain(name, other) }
 
-    it { should eql(dsl.build(other, Chain::EMPTY)) }
+    it { should eql(dsl.build(name, other, Chain::EMPTY)) }
   end
 
   context 'when no parameters are given' do
     subject { object.chain }
 
-    it { should eql(dsl.build(Chain::EMPTY, Chain::EMPTY)) }
+    it { should eql(dsl.build(nil, Chain::EMPTY, Chain::EMPTY)) }
   end
 end

@@ -23,6 +23,7 @@ DuplicateMethodCall:
   - !ruby/regexp /^Substation::DSL::Registry#\[\]=$/ # reek won't emit this anymore soon
   - Substation::Chain::Definition#prepend # reek won't emit this anymore soon
   - Substation::Chain::Definition#replace_failure_chain # replaces object at given idx inside an array
+  - Substation::Processor::Nest::Incoming#call # calls a private method in a case expression
   max_calls: 1
   allow_calls: []
 FeatureEnvy:
@@ -41,12 +42,7 @@ LongParameterList:
   enabled: true
   exclude:
   - Substation::Dispatcher#call
-  - Substation::Chain#self.exception_response # 3
-  - Substation::Chain#on_exception # 3
-  - Substation::Environment::DSL#register
-  - Substation::Environment#register # 3
-  - Substation::Processor::Builder#call # 3
-  max_params: 2
+  max_params: 3
 LongYieldList:
   enabled: true
   exclude: []
@@ -70,6 +66,8 @@ TooManyInstanceVariables:
   - Substation::Response
   - Substation::Processor::Evaluator
   - Substation::Environment # 4
+  - Substation::Chain::Definition # 4
+  - Substation::Chain::DSL # 4
   max_instance_variables: 3
 TooManyMethods:
   enabled: true
@@ -88,6 +86,12 @@ TooManyStatements:
   - Substation::Environment#self.build # ~5
   - Substation::Environment::DSL#register # 4
   - Substation::Chain::Definition#<< # 4
+  - Substation::Chain::Definition#initialize # 4
+  - Substation::Chain::DSL#initialize # 5
+  - Substation::Environment#initialize # 4
+  - Substation::Processor#initialize # 6
+  - Substation::Processor::Nest::Incoming#call # 4
+  - Substation::Response#initialize # 4
   max_statements: 3
 UncommunicativeMethodName:
   enabled: true

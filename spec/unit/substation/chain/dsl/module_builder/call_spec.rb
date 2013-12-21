@@ -12,7 +12,8 @@ describe Chain::DSL::ModuleBuilder, '#dsl_module' do
   let(:failure_chain)     { double('failure_chain') }
   let(:observers)         { EMPTY_ARRAY }
 
-  let(:definition)  { Chain::Definition.new(processors) }
+  let(:definition)  { Chain::Definition.new(name, processors) }
+  let(:name)        { double('chain_name') }
   let(:processors)  { [processor_1] }
   let(:processor_1) { double('processor_1', :name => :processor_1) }
   let(:processor_2) { double('processor_2', :name => :processor_2) }

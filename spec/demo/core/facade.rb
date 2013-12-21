@@ -15,7 +15,7 @@ class Demo
         authenticate Handler::Authenticator, AUTHENTICATION_ERROR
       end
 
-      AUTHORIZE = Core::ENV.chain(AUTHENTICATE) do
+      AUTHORIZE = Core::ENV.chain(nil, AUTHENTICATE) do
         authorize Handler::Authorizer, AUTHORIZATION_ERROR
       end
 

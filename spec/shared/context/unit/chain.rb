@@ -6,7 +6,8 @@ shared_context 'Chain::DSL#initialize' do
   let(:env_block)      { ->(_) { register(:test, Spec::Processor) } }
   let(:processor_name) { :test }
 
-  let(:definition)     { Chain::Definition.new(processors) }
+  let(:definition)     { Chain::Definition.new(chain_name, processors) }
+  let(:chain_name)     { double('chain_name') }
   let(:processors)     { [processor] }
   let(:processor)      { double('processor', :name => :processor) }
 end
