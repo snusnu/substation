@@ -67,42 +67,6 @@ module Substation
       fetch(name).call(Request.new(name, env, input))
     end
 
-    # The names of all registered actions
-    #
-    # @example
-    #
-    #   module App
-    #     class Environment
-    #       def initialize(storage, logger)
-    #         @storage, @logger = storage, logger
-    #       end
-    #     end
-    #
-    #     class SomeUseCase
-    #       def self.call(request)
-    #         data = perform_work
-    #         request.success(data)
-    #       end
-    #     end
-    #   end
-    #
-    #   storage    = SomeStorageAbstraction.new
-    #   env        = App::Environment.new(storage, Logger.new($stdout))
-    #   config     = { :some_use_case => { :action => App::SomeUseCase } }
-    #   dispatcher = Substation::Dispatcher.coerce(config, env)
-    #
-    #   dispatcher.action_names # => #<Set: {:some_use_case}>
-    #
-    # @return [Set<Symbol>]
-    #   the set of registered action names
-    #
-    # @api public
-    def action_names
-      Set.new(actions.keys)
-    end
-
-    memoize :action_names
-
     private
 
     # The action registered with +name+
