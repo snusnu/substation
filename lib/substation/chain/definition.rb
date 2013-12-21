@@ -51,8 +51,8 @@ module Substation
       #
       # @api private
       def initialize(name = nil, processors = EMPTY_ARRAY)
-        @name = name
-        @processors, @index = [], Hash.new { |hash, key| hash[key] = [] }
+        @name, @processors = name, []
+        @index    = Hash.new { |hash, key| hash[key] = [] }
         @sequence = INITIAL_SEQUENCE_VALUE
         processors.each(&method(:<<))
       end
