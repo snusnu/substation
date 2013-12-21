@@ -19,7 +19,7 @@ module Substation
       # Initial array index to start incrementing from
       INITIAL_SEQUENCE_VALUE = -1
 
-      # The chain of the chain
+      # The name of the chain
       #
       # @return [Symbol]
       #
