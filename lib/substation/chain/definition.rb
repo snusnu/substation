@@ -90,7 +90,7 @@ module Substation
       # @api private
       def replace_failure_chain(processor_name, failure_chain)
         idx = fetch(processor_name)
-        processors[idx] = processors[idx].with_failure_chain(failure_chain)
+        processors[idx] = processors.at(idx).with_failure_chain(failure_chain)
         self
       end
 
