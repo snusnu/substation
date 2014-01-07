@@ -67,6 +67,18 @@ module Substation
       fetch(name).call(Request.new(name, env, input))
     end
 
+    # Test wether a chain with the given +name+ is registered
+    #
+    # @param [Symbol] name
+    #   the name of the chain to test for
+    #
+    # @return [Boolean]
+    #
+    # @api private
+    def include?(name)
+      actions.include?(name)
+    end
+
     private
 
     # The action registered with +name+
