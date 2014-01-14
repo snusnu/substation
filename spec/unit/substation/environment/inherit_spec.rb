@@ -31,23 +31,38 @@ describe Environment, '#inherit' do
     }
   }
 
-  context 'when no actions are given' do
+  context 'when no app_env and actions are given' do
     subject { object.inherit(&block) }
 
     let(:new_actions) { Dispatcher.new_registry }
 
     it { should eql(expected) }
 
+    its(:app_env) { should eql(app_env) }
     its(:actions) { should eql(new_actions) }
   end
 
-  context 'when actions are given' do
-    subject { object.inherit(new_actions, &block) }
+  context 'when app_env is given' do
+    subject { object.inherit(new_app_env, &block) }
+
+    let(:expected)    { described_class.build(new_app_env, actions, &expected_block) }
+    let(:new_app_env) { double('new_app_env') }
+    let(:new_actions) { Dispatcher.new_registry }
+
+    it { should eql(expected) }
+
+    its(:app_env) { should eql(new_app_env) }
+    its(:actions) { should eql(new_actions) }
+  end
+
+  context 'when app_env and actions are given' do
+    subject { object.inherit(app_env, new_actions, &block) }
 
     let(:new_actions) { double('new_actions') }
 
     it { should eql(expected) }
 
+    its(:app_env) { should eql(app_env) }
     its(:actions) { should be(new_actions) }
   end
 end
