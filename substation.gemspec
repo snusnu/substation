@@ -17,9 +17,9 @@ Gem::Specification.new do |gem|
   gem.test_files       = `git ls-files -- {spec}/*`.split("\n")
   gem.extra_rdoc_files = %w[LICENSE README.md TODO.md]
 
-  gem.add_dependency 'adamantium',          '~> 0.1.0'
-  gem.add_dependency 'equalizer',           '~> 0.0.7'
-  gem.add_dependency 'abstract_type',       '~> 0.0.6'
+  gem.add_dependency 'adamantium',          '~> 0.2.0'
+  gem.add_dependency 'equalizer',           '~> 0.0.9'
+  gem.add_dependency 'abstract_type',       '~> 0.0.7'
   gem.add_dependency 'concord',             '~> 0.1.4'
 
   gem.add_development_dependency 'bundler', '~> 1.3.5'
