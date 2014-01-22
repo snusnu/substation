@@ -103,8 +103,9 @@ module Substation
       # @return [self]
       #
       # @api private
-      def chain(processors)
+      def chain(processors, &block)
         processors.each(&method(:use))
+        instance_eval(&block) if block
         self
       end
 
