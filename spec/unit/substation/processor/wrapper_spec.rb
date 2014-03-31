@@ -2,22 +2,23 @@
 
 require 'spec_helper'
 
-describe Processor::Wrapper, '#call' do
-  it_behaves_like 'Processor::Call::Incoming#call' do
-    before do
-      expect(handler).to receive(:new).with(decomposed).and_return(handler_result)
-    end
+describe Processor::Wrapper do
+  describe '#call' do
+    it_behaves_like 'Processor::Call::Incoming#call' do
+      before do
+        expect(handler).to receive(:new).with(decomposed).and_return(handler_result)
+      end
 
-    let(:klass) {
-      Class.new {
-        include Processor::Incoming
-        include Processor::Wrapper
+      let(:klass) {
+        Class.new {
+          include Processor::Incoming
+          include Processor::Wrapper
 
-        def call(request)
-          request.success(execute(request))
-        end
+          def call(request)
+            request.success(execute(request))
+          end
+        }
       }
-    }
+    end
   end
 end
-

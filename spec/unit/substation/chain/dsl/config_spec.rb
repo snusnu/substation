@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'spec_helper'
+
 describe Chain::DSL::Config, '.build' do
   subject { described_class.build(registry) }
 

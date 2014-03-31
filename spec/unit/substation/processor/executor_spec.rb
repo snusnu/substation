@@ -3,33 +3,32 @@
 require 'spec_helper'
 
 describe Processor::Executor, '#compose' do
-  subject { executor.compose(input, output) }
+  describe '#compose' do
+    subject { executor.compose(input, output) }
 
-  include_context 'Processor::Executor#initialize'
+    include_context 'Processor::Executor#initialize'
 
-  let(:input)  { double('input') }
-  let(:output) { double('output') }
+    let(:input)  { double('input') }
+    let(:output) { double('output') }
 
-  before do
-    expect(composer).to receive(:call).with(input, output).and_return(composed)
+    before do
+      expect(composer).to receive(:call).with(input, output).and_return(composed)
+    end
+
+    it { should be(composed) }
   end
 
-  it { should be(composed) }
-end
-# encoding: utf-8
+  describe '#decompose' do
+    subject { executor.decompose(input) }
 
-require 'spec_helper'
+    include_context 'Processor::Executor#initialize'
 
-describe Processor::Executor, '#decompose' do
-  subject { executor.decompose(input) }
+    let(:input) { double('input') }
 
-  include_context 'Processor::Executor#initialize'
+    before do
+      expect(decomposer).to receive(:call).with(input).and_return(decomposed)
+    end
 
-  let(:input) { double('input') }
-
-  before do
-    expect(decomposer).to receive(:call).with(input).and_return(decomposed)
+    it { should be(decomposed) }
   end
-
-  it { should be(decomposed) }
 end

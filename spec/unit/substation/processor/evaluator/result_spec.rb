@@ -2,10 +2,12 @@
 
 require 'spec_helper'
 
-describe Processor::Evaluator::Result, '.new' do
-  subject { object.new(output) }
+describe Processor::Evaluator::Result do
+  describe '.new' do
+    subject { object.new(output) }
 
-  let(:output) { double }
+    let(:output) { double }
 
-  it_behaves_like 'an abstract type'
+    it_behaves_like 'an abstract type'
+  end
 end

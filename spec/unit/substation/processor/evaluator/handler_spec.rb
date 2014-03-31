@@ -2,23 +2,22 @@
 
 require 'spec_helper'
 
-describe Processor::Evaluator::Handler, '#error' do
-  subject { object.error(output) }
+describe Processor::Evaluator::Handler do
+  describe '#error' do
+    subject { object.error(output) }
 
-  let(:object) { Class.new { include Processor::Evaluator::Handler }.new }
-  let(:output) { double }
+    let(:object) { Class.new { include Processor::Evaluator::Handler }.new }
+    let(:output) { double }
 
-  it { should eql(Processor::Evaluator::Result::Failure.new(output)) }
-end
-# encoding: utf-8
+    it { should eql(Processor::Evaluator::Result::Failure.new(output)) }
+  end
 
-require 'spec_helper'
+  describe '#success' do
+    subject { object.success(output) }
 
-describe Processor::Evaluator::Handler, '#success' do
-  subject { object.success(output) }
+    let(:object) { Class.new { include Processor::Evaluator::Handler }.new }
+    let(:output) { double }
 
-  let(:object) { Class.new { include Processor::Evaluator::Handler }.new }
-  let(:output) { double }
-
-  it { should eql(Processor::Evaluator::Result::Success.new(output)) }
+    it { should eql(Processor::Evaluator::Result::Success.new(output)) }
+  end
 end

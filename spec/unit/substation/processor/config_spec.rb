@@ -2,43 +2,36 @@
 
 require 'spec_helper'
 
-describe Processor::Config, '#executor' do
-  subject { processor_config.executor }
+describe Processor::Config do
+  describe '#executor' do
+    subject { processor_config.executor }
 
-  include_context 'Processor::Config#initialize'
+    include_context 'Processor::Config#initialize'
 
-  it { should be(executor) }
-end
-# encoding: utf-8
+    it { should be(executor) }
+  end
 
-require 'spec_helper'
+  describe '#failure_chain' do
+    subject { processor_config.failure_chain }
 
-describe Processor::Config, '#failure_chain' do
-  subject { processor_config.failure_chain }
+    include_context 'Processor::Config#initialize'
 
-  include_context 'Processor::Config#initialize'
+    it { should be(failure_chain) }
+  end
 
-  it { should be(failure_chain) }
-end
-# encoding: utf-8
+  describe '#observers' do
+    subject { processor_config.observers }
 
-require 'spec_helper'
+    include_context 'Processor::Config#initialize'
 
-describe Processor::Config, '#observers' do
-  subject { processor_config.observers }
+    it { should be(observers) }
+  end
 
-  include_context 'Processor::Config#initialize'
+  describe '#with_failure_chain' do
+    subject { processor_config.with_failure_chain(failure_chain) }
 
-  it { should be(observers) }
-end
-# encoding: utf-8
+    include_context 'Processor::Config#initialize'
 
-require 'spec_helper'
-
-describe Processor::Config, '#with_failure_chain' do
-  subject { processor_config.with_failure_chain(failure_chain) }
-
-  include_context 'Processor::Config#initialize'
-
-  it { should eql(processor_config) }
+    it { should eql(processor_config) }
+  end
 end
