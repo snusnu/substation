@@ -37,15 +37,6 @@ module Substation
           @data, @exception = data, exception
         end
 
-        # Return the hash value
-        #
-        # @return [Fixnum]
-        #
-        # @api private
-        def hash
-          super ^ exception.class.hash
-        end
-
         private
 
         # Tests wether +other+ is comparable using +comparator+
