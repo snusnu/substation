@@ -3,13 +3,13 @@
 require 'spec_helper'
 
 describe Response, '#env' do
+  let(:object) { Class.new(described_class).new(request, output) }
+  let(:output) { double }
+
   describe '#env' do
     subject { object.env }
 
     include_context 'Request#initialize'
-
-    let(:object) { Class.new(described_class).new(request, output) }
-    let(:output) { double }
 
     it { should be(env) }
   end
@@ -19,9 +19,6 @@ describe Response, '#env' do
 
     include_context 'Request#initialize'
 
-    let(:object)  { Class.new(described_class).new(request, output) }
-    let(:output)  { double }
-
     it { should be(false) }
   end
 
@@ -29,9 +26,6 @@ describe Response, '#env' do
     subject { object.input }
 
     include_context 'Request#initialize'
-
-    let(:object) { Class.new(described_class).new(request, output) }
-    let(:output) { double }
 
     it { should be(input) }
   end
@@ -41,9 +35,6 @@ describe Response, '#env' do
 
     include_context 'Request#initialize'
 
-    let(:object) { Class.new(described_class).new(request, output) }
-    let(:output) { double }
-
     it { should equal(output) }
   end
 
@@ -51,9 +42,6 @@ describe Response, '#env' do
     subject { object.request }
 
     include_context 'Request#initialize'
-
-    let(:object) { Class.new(described_class).new(request, output) }
-    let(:output) { double }
 
     it { should be(request) }
   end

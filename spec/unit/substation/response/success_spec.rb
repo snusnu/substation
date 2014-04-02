@@ -3,13 +3,13 @@
 require 'spec_helper'
 
 describe Response::Success do
+  let(:object)  { described_class.new(request, output) }
+  let(:output)  { double }
+
   describe '#exception?' do
     subject { object.exception? }
 
     include_context 'Request#initialize'
-
-    let(:object)  { described_class.new(request, output) }
-    let(:output)  { double }
 
     it { should be(false) }
   end
@@ -18,9 +18,6 @@ describe Response::Success do
     subject { object.success? }
 
     include_context 'Request#initialize'
-
-    let(:object) { described_class.new(request, output) }
-    let(:output) { double }
 
     it { should be(true) }
   end

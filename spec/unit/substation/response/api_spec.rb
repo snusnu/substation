@@ -6,16 +6,17 @@ describe Response::API::Failure do
   describe '#success?' do
     subject { object.success? }
 
-    let(:object) { Class.new { include Response::API::Failure }.new }
+    context 'in case of failure' do
 
-    it { should be(false) }
-  end
+      let(:object) { Class.new { include Response::API::Failure }.new }
 
-  describe '#success?' do
-    subject { object.success? }
+      it { should be(false) }
+    end
 
-    let(:object) { Class.new { include Response::API::Success }.new }
+    context 'in case of success' do
+      let(:object) { Class.new { include Response::API::Success }.new }
 
-    it { should be(true) }
+      it { should be(true) }
+    end
   end
 end

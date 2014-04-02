@@ -3,14 +3,15 @@
 require 'spec_helper'
 
 describe Environment do
+  let(:object)   { described_class.new(app_env, actions, chain_dsl) }
+  let(:app_env)  { double('app_env') }
+  let(:actions)  { Dispatcher.new_registry }
+  let(:registry) { double('registry') }
+
   describe '#actions' do
     subject { object.actions }
 
-    let(:object)    { Environment.new(app_env, actions, chain_dsl) }
-    let(:app_env)   { double('app_env') }
-    let(:actions)   { double('actions') }
     let(:chain_dsl) { double('app_env', :registry => registry) }
-    let(:registry)  { double('registry') }
 
     it { should be(actions) }
   end
@@ -18,24 +19,15 @@ describe Environment do
   describe '#app_env' do
     subject { object.app_env }
 
-    let(:object)    { Environment.new(app_env, actions, chain_dsl) }
-    let(:app_env)   { double('app_env') }
-    let(:actions)   { double('actions') }
     let(:chain_dsl) { double('app_env', :registry => registry) }
-    let(:registry)  { double('registry') }
 
     it { should be(app_env) }
   end
 
   describe '#chain' do
-
-    let(:object)   { described_class.new(app_env, actions, dsl) }
-    let(:app_env)  { double('app_env') }
-    let(:actions)  { double('actions') }
-
-    let(:dsl)      { Chain::DSL.build(registry) }
-    let(:registry) { described_class::DSL.registry(&r_block) }
-    let(:r_block)  { ->(_) { register(:test, Spec::Processor) } }
+    let(:chain_dsl) { Chain::DSL.build(registry) }
+    let(:registry)  { described_class::DSL.registry(&r_block) }
+    let(:r_block)   { ->(_) { register(:test, Spec::Processor) } }
 
     let(:other)         { double('other', :each => EMPTY_ARRAY) }
     let(:failure_chain) { double('failure_chain') }
@@ -46,36 +38,32 @@ describe Environment do
     context 'when other, failure_chain and block are given' do
       subject { object.chain(name, other, failure_chain, &block) }
 
-      it { should eql(dsl.build(name, other, failure_chain, &block)) }
+      it { should eql(chain_dsl.build(name, other, failure_chain, &block)) }
     end
 
     context 'when other, failure_chain and no block are given' do
       subject { object.chain(name, other, failure_chain) }
 
-      it { should eql(dsl.build(name, other, failure_chain)) }
+      it { should eql(chain_dsl.build(name, other, failure_chain)) }
     end
 
     context 'when other, no failure_chain and no block are given' do
       subject { object.chain(name, other) }
 
-      it { should eql(dsl.build(name, other, Chain::EMPTY)) }
+      it { should eql(chain_dsl.build(name, other, Chain::EMPTY)) }
     end
 
     context 'when no parameters are given' do
       subject { object.chain }
 
-      it { should eql(dsl.build(nil, Chain::EMPTY, Chain::EMPTY)) }
+      it { should eql(chain_dsl.build(nil, Chain::EMPTY, Chain::EMPTY)) }
     end
   end
 
   describe '#dispatcher' do
     subject { object.dispatcher }
 
-    let(:object)      { described_class.new(app_env, actions, chain_dsl) }
-    let(:app_env)     { double('app_env') }
-    let(:actions)     { double('actions') }
     let(:chain_dsl)   { double('chain_dsl', :registry => registry) }
-    let(:registry)    { double('registry') }
 
     let(:expected)    { Dispatcher.new(actions, app_env) }
 
@@ -86,9 +74,6 @@ describe Environment do
     subject { object[name] }
 
     let(:name)      { double('name', :to_sym => :test) }
-    let(:object)    { Environment.new(app_env, actions, chain_dsl) }
-    let(:app_env)   { double('app_env') }
-    let(:actions)   { Dispatcher.new_registry }
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
     let(:block)     { ->(_) { register(:test, Spec::Processor) } }
 
@@ -115,12 +100,8 @@ describe Environment do
   describe 'equalizer behavior' do
     subject { object == other }
 
-    let(:object) { described_class.new(app_env, actions, chain_dsl) }
-    let(:app_env) { double('app_env') }
-    let(:actions) { double('actions') }
 
     let(:chain_dsl) { double('chain_dsl', :registry => registry) }
-    let(:registry)  { double('registry') }
 
     let(:other)  { described_class.new(app_env, actions, other_chain_dsl) }
     let(:other_chain_dsl) {
@@ -142,9 +123,6 @@ describe Environment do
 
   describe '#inherit' do
 
-    let(:object)    { described_class.new(app_env, actions, chain_dsl) }
-    let(:actions)   { double('actions') }
-    let(:app_env)   { double('app_env') }
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&env_block)) }
     let(:env_block) {
       ->(_) {
@@ -206,9 +184,6 @@ describe Environment do
   end
 
   describe '#register' do
-    let(:object)    { Environment.new(app_env, actions, chain_dsl) }
-    let(:app_env)   { double('app_env') }
-    let(:actions)   { Dispatcher.new_registry }
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
     let(:block)     { ->(_) { register(:test, Spec::Processor) } }
 
@@ -249,8 +224,7 @@ describe Environment do
 
   describe '.build' do
 
-    let(:expected)  { Environment.new(app_env, actions, chain_dsl) }
-    let(:app_env)   { double('app_env') }
+    let(:expected)  { described_class.new(app_env, actions, chain_dsl) }
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
     let(:block)     { ->(_) { register(:test, Substation) } }
 
@@ -263,7 +237,6 @@ describe Environment do
     context 'when no actions are given' do
       subject { described_class.build(app_env, &block) }
 
-      let(:actions) { Dispatcher.new_registry }
 
       it_behaves_like 'Environment.build'
 
@@ -272,8 +245,6 @@ describe Environment do
 
     context 'when actions are given' do
       subject { described_class.build(app_env, actions, &block) }
-
-      let(:actions) { double('actions') }
 
       it_behaves_like 'Environment.build'
 

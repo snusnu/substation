@@ -8,11 +8,12 @@ describe Chain::Definition do
 
   it { should be_kind_of(Enumerable) }
 
+  let(:object)     { described_class.new(chain_name, processors) }
+  let(:chain_name) { double('chain_name') }
+
   describe '#each' do
     subject { object.each(&block) }
 
-    let(:object)     { described_class.new(chain_name, processors) }
-    let(:chain_name) { double('chain_name') }
     let(:processors) { [ processor ] }
     let(:processor)  { double('processor', :name => name) }
     let(:name)       { double('name') }
@@ -28,8 +29,6 @@ describe Chain::Definition do
   describe '#<<' do
     subject { object << processor }
 
-    let(:object)     { described_class.new(chain_name, processors) }
-    let(:chain_name) { double('chain_name') }
     let(:processor)  { double('processor', :name => name) }
     let(:name)       { double('name') }
 
@@ -83,8 +82,6 @@ describe Chain::Definition do
   describe '#replace_failure_chain' do
     subject { object.replace_failure_chain(name, failure_chain) }
 
-    let(:object)             { described_class.new(chain_name, processors) }
-    let(:chain_name)         { double('chain_name') }
     let(:processor)          { double('processor', :name => name) }
     let(:name)               { double('name') }
     let(:other_processor)    { double('other_processor', :name => other_name) }
