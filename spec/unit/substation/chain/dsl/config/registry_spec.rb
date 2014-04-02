@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'spec_helper'
+
 describe Chain::DSL::Config, '#registry' do
   subject { object.registry }
 
