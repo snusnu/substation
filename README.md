@@ -4,7 +4,7 @@
 [![Build Status](https://secure.travis-ci.org/snusnu/substation.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/snusnu/substation.png)][gemnasium]
 [![Code Climate](https://codeclimate.com/github/snusnu/substation.png)][codeclimate]
-[![Inline docs](http://inch-pages.github.io/github/snusnu/substation.png)](http://inch-pages.github.io/github/snusnu/substation)
+[![Inline docs](http://inch-ci.org/github/snusnu/substation.png)](http://inch-ci.org/github/snusnu/substation)
 [![Coverage Status](https://coveralls.io/repos/snusnu/substation/badge.png?branch=master)][coveralls]
 
 [gem]: https://rubygems.org/gems/substation
