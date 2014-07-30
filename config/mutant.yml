@@ -1,4 +1,3 @@
 ---
 name: substation
 namespace: Substation
-strategy: rspec
