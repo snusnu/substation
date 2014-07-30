@@ -1,4 +1,4 @@
 ---
 name: substation
 namespace: Substation
-strategy: --rspec
+strategy: rspec
