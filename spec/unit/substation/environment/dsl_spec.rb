@@ -86,7 +86,7 @@ describe Substation::Environment::DSL do
 
     context 'when the given name is valid' do
 
-      share_examples_for 'name is valid' do
+      shared_examples 'name is valid' do
         its(:registry) { should eql(expected) }
 
         it_behaves_like 'a command method'

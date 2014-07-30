@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'rspec/its'
+
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
   require 'coveralls'

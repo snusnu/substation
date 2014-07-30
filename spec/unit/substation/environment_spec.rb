@@ -194,7 +194,7 @@ describe Environment do
     let(:other)         { Chain::EMPTY }
     let(:failure_chain) { Chain::EMPTY }
 
-    share_examples_for 'Environment#register' do
+    shared_examples 'Environment#register' do
       it_behaves_like 'a command method'
 
       it 'registers the chain under the given name' do
@@ -228,7 +228,7 @@ describe Environment do
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
     let(:block)     { ->(_) { register(:test, Substation) } }
 
-    share_examples_for 'Environment.build' do
+    shared_examples 'Environment.build' do
       it { should eql(expected) }
 
       its(:app_env) { should be(app_env) }

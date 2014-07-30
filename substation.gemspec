@@ -22,5 +22,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'abstract_type',       '~> 0.0.7'
   gem.add_dependency 'concord',             '~> 0.1.5'
 
-  gem.add_development_dependency 'bundler', '~> 1.5', '>= 1.5.2'
+  gem.add_development_dependency 'bundler', '~> 1.6', '>= 1.6.5'
 end
