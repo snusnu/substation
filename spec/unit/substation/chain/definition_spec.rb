@@ -11,6 +11,36 @@ describe Chain::Definition do
   let(:object)     { described_class.new(chain_name, processors) }
   let(:chain_name) { double('chain_name') }
 
+  describe '#initialize' do
+    context 'when with default arguments' do
+      it 'does not have a name' do
+        expect(subject.name).to be(nil)
+      end
+
+      it 'has no processors' do
+        expect(subject.each.count).to be(0)
+      end
+    end
+
+    context 'when with a name' do
+      let(:chain_name) { 'chain name' }
+      let(:processors) { [] }
+
+      it 'assigns the name' do
+        expect(object.name).to eq('chain name')
+      end
+    end
+
+    context 'when with processors' do
+      let(:name) { nil }
+      let(:processors) { [Object.new, Object.new] }
+
+      it 'has given processors' do
+        expect(object.each.count).to be(2)
+      end
+    end
+  end
+
   describe '#each' do
     subject { object.each(&block) }
 
