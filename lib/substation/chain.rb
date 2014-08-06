@@ -135,7 +135,7 @@ module Substation
     #
     # @api public
     def call(request)
-      processors.reduce(request) { |result, processor|
+      reduce(request) { |result, processor|
         begin
           response = processor.call(result)
           return response unless processor.success?(response)
