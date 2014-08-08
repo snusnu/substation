@@ -30,7 +30,7 @@ module Substation
           when Response::Failure
             request.error(compose(request, state))
           else
-            raise RuntimeError, 'Illegal state returned from the invoked handler'
+            raise 'Illegal state returned from the invoked handler'
           end
         end
 
