@@ -21,6 +21,15 @@ describe Processor::Nest::Incoming do
     end
 
     context 'with a request' do
+      let(:state)      { Request.new(:test, double, data) }
+      let(:data)       { double('data') }
+      let(:first_pass) { request.success(data) }
+
+      before do
+        allow(composer).to receive(:call).with(request, first_pass) { composed_state }
+      end
+
+      it { should eql(request.success(composed_state)) }
     end
 
     context 'with a successful response' do
