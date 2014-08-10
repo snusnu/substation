@@ -10,7 +10,8 @@ ClassVariable:
   exclude: []
 ControlParameter:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::DSL::Guard#raise_if_already_registered
 DataClump:
   enabled: true
   exclude:
@@ -58,7 +59,8 @@ NilCheck:
   exclude: []
 RepeatedConditional:
   enabled: true
-  exclude: []
+  exclude:
+  - Substation::Chain::DSL
   max_ifs: 1
 TooManyInstanceVariables:
   enabled: true
