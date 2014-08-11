@@ -1,8 +1,25 @@
-# v0.0.10 (not yet released)
+# v0.0.10 2014-08-11
 
-*
+* This release is full of breaking changes and new features. The README is still out of
+  date too, but I need to get this out of the door. For a complete list of changes, have
+  a look at the diffs linked at the end of this section.
 
-[Compare v0.0.9..master](https://github.com/snusnu/substation/compare/v0.0.9...master)
+* Add the possibility to nest chains inside others
+* Support decomposing/composing state before/after it is sent to handlers
+* Make all handlers observable
+* Support building on top of existing environments
+* Rename Chain#{failure_chain => exception_chain}
+* Store a chain's name in its definition
+* Expose Dispatcher#include?(name)
+* Make Chain::DSL accept an optional block
+
+  This allows for easy and syntactically nice
+  failure chain replacement when its desired
+  to replace/augment any of the failure chains
+  registered for processors within the chain to
+  merge.
+
+[Compare v0.0.9..v0.0.10](https://github.com/snusnu/substation/compare/v0.0.9...v0.0.10)
 
 # v0.0.9 2013-07-10
 
