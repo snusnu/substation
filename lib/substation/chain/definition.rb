@@ -16,9 +16,6 @@ module Substation
       # The message for {DuplicateProcessorError} exceptions
       DUPLICATE_PROCESSOR_MSG = 'The following processors already exist within this chain: %s'
 
-      # Initial array index to start incrementing from
-      INITIAL_SEQUENCE_VALUE = -1
-
       # The name of the chain
       #
       # @return [Symbol]
@@ -34,14 +31,6 @@ module Substation
       attr_reader :processors
       protected   :processors
 
-      # The index tracking indices in {#processors} by processor name
-      #
-      # @return [Hash<Symbol, Array<Integer>>]
-      #
-      # @api private
-      attr_reader :index
-      private     :index
-
       # Initialize a new instance
       #
       # @param [Enumerable<#call>] processors
@@ -50,10 +39,8 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(name = nil, processors = EMPTY_ARRAY)
+      def initialize(name, processors)
         @name, @processors = name, []
-        @index    = Hash.new { |hash, key| hash[key] = [] }
-        @sequence = INITIAL_SEQUENCE_VALUE
         processors.each(&method(:<<))
       end
 
@@ -68,14 +55,13 @@ module Substation
       def <<(processor)
         raise_duplicate_processor_error([processor]) if include?(processor)
         processors << processor
-        index[processor.name] << next_index
         self
       end
 
       # The following const MUST have #initialize and #<< defined already
 
       # An empty instance
-      EMPTY = new.freeze
+      EMPTY = new(nil, []).freeze
 
       # Replace the failure chain of the processor identified by +name+
       #
@@ -129,7 +115,7 @@ module Substation
 
       private
 
-      # Return the first index for a processor with the given +name+
+      # Return the index for a processor with the given +name+
       #
       # @param [Symbol] name
       #   the processor's name
@@ -140,9 +126,8 @@ module Substation
       #
       # @api private
       def fetch(processor_name)
-        index.fetch(processor_name) {
-          raise UnknownProcessor, UNKNOWN_PROCESSOR_MSG % processor_name.inspect
-        }.first
+        processors.index {|processor| processor.name == processor_name} ||
+          raise(UnknownProcessor, UNKNOWN_PROCESSOR_MSG % processor_name.inspect)
       end
 
       # Raise {DuplicateProcessorError} with a message tailored for +dupes+
@@ -155,15 +140,6 @@ module Substation
       # @api private
       def raise_duplicate_processor_error(dupes)
         raise DuplicateProcessorError, DUPLICATE_PROCESSOR_MSG % dupes.inspect
-      end
-
-      # Return the next available index in {#processors}
-      #
-      # @return [Integer]
-      #
-      # @api private
-      def next_index
-        @sequence += 1
       end
 
     end # class Definition

@@ -91,7 +91,7 @@ module Substation
       # @return [Chain]
       #
       # @api private
-      def build(name = nil, other, exception_chain, &block)
+      def build(name, other, exception_chain, &block)
         Chain.new(__call__(Definition.new(name, other), &block), exception_chain)
       end
 
@@ -151,11 +151,13 @@ module Substation
       # @param [#call] processor
       #   a processor to use within a chain
       #
-      # @return [undefined]
+      # @return [#call]
+      #   the added processor
       #
       # @api private
       def use(processor)
         definition << processor
+        processor
       end
 
       # Return a new definition

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Response::Exception::Output, 'equalizer behavior' do
+describe Response::Exception::Output do
   subject { object == other }
 
   let(:object)    { described_class.new(data, exception) }

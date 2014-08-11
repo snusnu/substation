@@ -3,16 +3,26 @@
 require 'spec_helper'
 
 describe Chain::DSL do
+  describe '#name' do
+    subject { chain_dsl.name }
+
+    include_context 'Chain::DSL#initialize'
+
+    it { should eql(chain_name) }
+  end
+
   describe '#build' do
     include_context 'Chain::DSL#initialize'
 
     let(:failure_chain)       { Chain::EMPTY }
     let(:block)               { ->(_) { test(Spec::FAKE_HANDLER) } }
-    let(:expected_definition) { Chain::Definition.new(chain_name, expected_processors) }
+    let(:expected_definition) { Chain::Definition.new(new_chain_name, expected_processors) }
     let(:expected)            { Chain.new(expected_definition, failure_chain) }
 
     let(:new_processors)      { [new_processor] }
     let(:new_processor)       { double('new_processor', :name => :new_processor) }
+
+    let(:new_chain_name)      { double('new_chain_name') }
 
     shared_examples_for 'duplicate processors' do
       let(:new_processor) { processor }
@@ -32,7 +42,7 @@ describe Chain::DSL do
     end
 
     context 'when a block is given' do
-      subject { chain_dsl.build(chain_name, new_processors, failure_chain, &block) }
+      subject { chain_dsl.build(new_chain_name, new_processors, failure_chain, &block) }
 
       context 'and all processors are disjoint' do
         let(:expected_processors) { [processor, new_processor, Spec::FAKE_PROCESSOR] }
@@ -46,7 +56,7 @@ describe Chain::DSL do
     end
 
     context 'when no block is given' do
-      subject { chain_dsl.build(chain_name, new_processors, failure_chain) }
+      subject { chain_dsl.build(new_chain_name, new_processors, failure_chain) }
 
       context 'and all processors are disjoint' do
         let(:expected_processors) { [processor, new_processor] }
@@ -61,26 +71,51 @@ describe Chain::DSL do
   end
 
   describe '#chain' do
-    subject { object.chain(other_processors) }
+    include_context 'Chain::DSL#initialize'
 
-    let(:object)     { described_class.new(config, definition) }
-    let(:config)     { Chain::DSL::Config.new(registry, dsl_module) }
-    let(:registry)   { double('registry') }
-    let(:dsl_module) { Module.new }
-    let(:name)       { double('name') }
+    let(:other_processor)     { double('other_processor', :name => :other_processor) }
+    let(:expected_definition) { Chain::Definition.new(chain_name, expected_processors) }
+    let(:expected)            { described_class.build(registry, expected_definition) }
 
-    let(:definition) { Chain::Definition.new(name, processors) }
-    let(:processors) { [processor] }
-    let(:processor)  { double('processor', :name => :processor) }
+    context 'when no block is given' do
+      subject { chain_dsl.chain([other_processor]) }
 
-    let(:other_definition) { Chain::Definition.new(name, other_processors) }
-    let(:other_processors) { [other_processor] }
-    let(:other_processor)  { double('other_processor', :name => :other_processor) }
+      let(:expected_processors) { [processor, other_processor] }
 
-    let(:expected)            { described_class.new(config, expected_definition) }
-    let(:expected_definition) { other_definition.prepend(definition) }
+      it { should eql(expected) }
+    end
+
+    context 'when block is given' do
+      subject { chain_dsl.chain([other_processor], &block) }
+
+      let(:block) { ->(_) { test(Spec::FAKE_HANDLER) } }
+
+      let(:expected_processors) { [processor, other_processor, Spec::FAKE_PROCESSOR] }
+
+      it { should eql(expected) }
+    end
+  end
+
+  describe '#nest' do
+    subject { object.nest(nested_name, chain_to_nest, executor) }
+
+    include_context 'Chain::DSL#initialize'
+
+    let(:object) { chain_dsl }
+
+    let(:chain_to_nest) { double('chain to nest') }
+    let(:nested_name)   { double('nested name', :to_sym => 'neste name') }
+    let(:executor)      { double }
+
+    let(:config)        { Processor::Config.new(executor, EMPTY_ARRAY, EMPTY_ARRAY) }
+    let(:expected)      { Processor::Nest::Incoming.new(nested_name, chain_to_nest, config) }
 
     it { should eql(expected) }
+
+    it 'adds the chain to the definition' do
+      subject
+      expect(object.definition).to include(subject)
+    end
   end
 
   describe '#definition' do

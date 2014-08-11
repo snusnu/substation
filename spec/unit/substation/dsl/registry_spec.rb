@@ -33,7 +33,14 @@ describe DSL::Registry do
     let(:coerced_name)   { double('coerced_name') }
 
     context 'when name is not yet registered' do
-      it { should be(expected) }
+      it 'returns registered object' do
+        should be(expected)
+      end
+
+      it 'registers given object' do
+        subject
+        expect(object.fetch(name)).to be(expected)
+      end
     end
 
     context 'when name is already registered' do

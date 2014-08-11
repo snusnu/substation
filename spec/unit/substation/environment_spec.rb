@@ -187,12 +187,11 @@ describe Environment do
     let(:chain_dsl) { Chain::DSL.build(described_class::DSL.registry(&block)) }
     let(:block)     { ->(_) { register(:test, Spec::Processor) } }
 
-    let(:chain)       { chain_dsl.build(name, other, failure_chain, &chain_block) }
     let(:chain_block) { ->(_) { test(Spec::FAKE_HANDLER) } }
 
     let(:name)          { double('name', :to_sym => :test) }
     let(:other)         { Chain::EMPTY }
-    let(:failure_chain) { Chain::EMPTY }
+    let(:failure_chain) { double }
 
     shared_examples 'Environment#register' do
       it_behaves_like 'a command method'
@@ -206,17 +205,23 @@ describe Environment do
     context 'when other and failure_chain are not given' do
       subject { object.register(name, &chain_block) }
 
+      let(:chain) { chain_dsl.build(name, Chain::EMPTY, Chain::EMPTY, &chain_block) }
+
       it_behaves_like 'Environment#register'
     end
 
     context 'when other is given and failure_chain is not given' do
       subject { object.register(name, other, &chain_block) }
 
+      let(:chain) { chain_dsl.build(name, other, Chain::EMPTY, &chain_block) }
+
       it_behaves_like 'Environment#register'
     end
 
     context 'when both other and failure_chain are given' do
       subject { object.register(name, other, failure_chain, &chain_block) }
+
+      let(:chain) { chain_dsl.build(name, other, failure_chain, &chain_block) }
 
       it_behaves_like 'Environment#register'
     end

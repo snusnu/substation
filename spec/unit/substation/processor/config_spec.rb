@@ -28,10 +28,13 @@ describe Processor::Config do
   end
 
   describe '#with_failure_chain' do
-    subject { processor_config.with_failure_chain(failure_chain) }
+    subject { processor_config.with_failure_chain(other_failure_chain) }
+
+    let(:other_failure_chain) { double('other failure chain') }
+    let(:object) { described_class.new(executor, other_failure_chain, observers) }
 
     include_context 'Processor::Config#initialize'
 
-    it { should eql(processor_config) }
+    it { should eql(object) }
   end
 end

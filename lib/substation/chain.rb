@@ -135,16 +135,12 @@ module Substation
     #
     # @api public
     def call(request)
-      processors.reduce(request) { |result, processor|
+      reduce(request) { |result, processor|
         begin
           response = processor.call(result)
           return response unless processor.success?(response)
           processor.result(response)
         rescue => exception
-          if ENV['DEBUG_SUBSTATION']
-            puts exception.message
-            pp exception.backtrace
-          end
           return on_exception(request, result.data, exception)
         end
       }

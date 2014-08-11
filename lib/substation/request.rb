@@ -79,7 +79,7 @@ module Substation
     #
     # @api private
     def to_request(new_input = Undefined)
-      new_input == Undefined ? self : self.class.new(name, env, new_input)
+      new_input.equal?(Undefined) ? self : self.class.new(name, env, new_input)
     end
 
     private

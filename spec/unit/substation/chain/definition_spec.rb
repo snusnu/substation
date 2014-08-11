@@ -4,12 +4,25 @@ require 'spec_helper'
 
 describe Chain::Definition do
 
-  subject { described_class.new }
+  subject { described_class.new(nil, []) }
 
   it { should be_kind_of(Enumerable) }
 
   let(:object)     { described_class.new(chain_name, processors) }
   let(:chain_name) { double('chain_name') }
+
+  describe '#initialize' do
+    let(:chain_name) { 'chain name' }
+    let(:processors) { [Object.new, Object.new] }
+
+    it 'assigns the name' do
+      expect(object.name).to eq('chain name')
+    end
+
+    it 'has given processors' do
+      expect(object.each.count).to be(2)
+    end
+  end
 
   describe '#each' do
     subject { object.each(&block) }
