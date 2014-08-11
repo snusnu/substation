@@ -39,7 +39,7 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(name = nil, processors = EMPTY_ARRAY)
+      def initialize(name, processors)
         @name, @processors = name, []
         processors.each(&method(:<<))
       end
@@ -61,7 +61,7 @@ module Substation
       # The following const MUST have #initialize and #<< defined already
 
       # An empty instance
-      EMPTY = new.freeze
+      EMPTY = new(nil, []).freeze
 
       # Replace the failure chain of the processor identified by +name+
       #
