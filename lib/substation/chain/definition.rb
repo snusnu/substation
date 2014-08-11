@@ -61,7 +61,7 @@ module Substation
       # The following const MUST have #initialize and #<< defined already
 
       # An empty instance
-      EMPTY = new(nil, []).freeze
+      EMPTY = new(nil, EMPTY_ARRAY).freeze
 
       # Replace the failure chain of the processor identified by +name+
       #
