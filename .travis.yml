@@ -15,3 +15,4 @@ matrix:
       env: JRUBY_OPTS="$JRUBY_OPTS --debug"
   allow_failures:
     - rvm: ruby-head
+    - rvm: jruby-head
