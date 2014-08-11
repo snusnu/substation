@@ -750,6 +750,7 @@ Finally it's all hooked up behind a few
 
 * [snusnu](https://github.com/snusnu)
 * [mbj](https://github.com/mbj)
+* [indrekj](https://github.com/indrekj)
 
 ## Contributing
 
