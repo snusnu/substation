@@ -10,12 +10,6 @@ module Substation
       include Equalizer.new(:name, :processors)
       include Enumerable
 
-      # The message for {UnknownProcessor} exceptions
-      UNKNOWN_PROCESSOR_MSG = 'No processor named %s is registered'.freeze
-
-      # The message for {DuplicateProcessorError} exceptions
-      DUPLICATE_PROCESSOR_MSG = 'The following processors already exist within this chain: %s'
-
       # The name of the chain
       #
       # @return [Symbol]
@@ -127,7 +121,7 @@ module Substation
       # @api private
       def fetch(processor_name)
         processors.index {|processor| processor.name == processor_name} ||
-          raise(UnknownProcessor, UNKNOWN_PROCESSOR_MSG % processor_name.inspect)
+          raise(UnknownProcessor.new(processor_name))
       end
 
       # Raise {DuplicateProcessorError} with a message tailored for +dupes+
@@ -139,7 +133,7 @@ module Substation
       #
       # @api private
       def raise_duplicate_processor_error(dupes)
-        raise DuplicateProcessorError, DUPLICATE_PROCESSOR_MSG % dupes.inspect
+        raise DuplicateProcessorError.new(dupes)
       end
 
     end # class Definition

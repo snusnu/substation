@@ -25,9 +25,10 @@ describe Dispatcher do
 
     context 'when the action is not registered' do
       let(:name) { :unknown }
+      let(:msg)  { UnknownActionError.msg(name) }
 
       specify do
-        expect { subject }.to raise_error(described_class::UnknownActionError)
+        expect { subject }.to raise_error(UnknownActionError, msg)
       end
     end
   end

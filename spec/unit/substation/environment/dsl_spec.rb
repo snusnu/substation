@@ -108,7 +108,7 @@ describe Substation::Environment::DSL do
 
     context 'when the given name is reserved' do
       let(:name) { Chain::DSL::BASE_METHODS.first }
-      let(:msg)  { DSL::Guard::RESERVED_NAME_MSG % name.inspect }
+      let(:msg)  { ReservedNameError.msg(name) }
 
       it 'raises ReservedNameError' do
         expect { subject }.to raise_error(ReservedNameError, msg)
@@ -117,7 +117,7 @@ describe Substation::Environment::DSL do
 
     context 'when the given name is already registered' do
       let(:name) { :test }
-      let(:msg)  { DSL::Guard::ALREADY_REGISTERED_MSG % name.inspect }
+      let(:msg)  { AlreadyRegisteredError.msg(name) }
 
       before do
         object.register(name, processor)

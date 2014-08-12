@@ -26,7 +26,7 @@ describe Chain::DSL do
 
     shared_examples_for 'duplicate processors' do
       let(:new_processor) { processor }
-      let(:msg)           { Chain::Definition::DUPLICATE_PROCESSOR_MSG % [processor].inspect }
+      let(:msg)           { DuplicateProcessorError::MSG % [processor].inspect }
 
       it 'should raise DuplicateProcessorError' do
         expect { subject }.to raise_error(DuplicateProcessorError, msg)

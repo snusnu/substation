@@ -94,7 +94,7 @@ module Substation
     #
     # @api private
     def fetch(name)
-      actions.fetch(name) { raise(UnknownActionError) }
+      actions.fetch(name) { raise(UnknownActionError.new(name)) }
     end
 
   end # class Dispatcher

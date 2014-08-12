@@ -9,12 +9,6 @@ module Substation
       include Equalizer.new(:reserved_names)
       include Adamantium::Flat
 
-      # Message for ReservedNameError
-      RESERVED_NAME_MSG = '%s is a reserved name'.freeze
-
-      # Message for AlreadyRegisteredError
-      ALREADY_REGISTERED_MSG = '%s is already registered'.freeze
-
       # The list of reserved names
       #
       # @return [Enumerable<Symbol>]
@@ -71,7 +65,7 @@ module Substation
       # @api private
       def raise_if_already_registered(name, registry)
         if registry.include?(name)
-          raise AlreadyRegisteredError, ALREADY_REGISTERED_MSG % name.inspect
+          raise AlreadyRegisteredError.new(name)
         end
       end
 
@@ -87,7 +81,7 @@ module Substation
       # @api private
       def raise_if_reserved(name)
         if reserved_names.include?(name)
-          raise ReservedNameError, RESERVED_NAME_MSG % name.inspect
+          raise ReservedNameError.new(name)
         end
       end
 

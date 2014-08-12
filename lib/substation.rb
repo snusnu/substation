@@ -43,21 +43,42 @@ module Substation
   # An empty frozen hash useful for (default) parameters
   EMPTY_HASH = {}.freeze
 
+  # Base class for substation errors
+  class Error < StandardError
+    def self.msg(object)
+      self::MSG % object.inspect
+    end
+
+    def initialize(object)
+      super(self.class.msg(object))
+    end
+  end # Error
+
   # Error raised when trying to access an unknown processor
-  UnknownProcessor = Class.new(StandardError)
+  class UnknownProcessor < Error
+    MSG = 'No processor named %s is registered'.freeze
+  end # UnknownProcessor
 
   # Raised when trying to dispatch to an unregistered action
-  UnknownActionError = Class.new(StandardError)
+  class UnknownActionError < Error
+    MSG = 'No action named %s is registered'.freeze
+  end # UnknownActionError
 
   # Raised when an object is already registered under the a given name
-  AlreadyRegisteredError = Class.new(StandardError)
+  class AlreadyRegisteredError < Error
+    MSG = '%s is already registered'.freeze
+  end # AlreadyRegisteredError
 
   # Raised when a reserved method is being given
-  ReservedNameError = Class.new(StandardError)
+  class ReservedNameError < Error
+    MSG = '%s is a reserved name'.freeze
+  end # ReservedNameError
 
   # Raised when a duplicate {Processor} should be registered within a {Chain}
-  DuplicateProcessorError = Class.new(StandardError)
-end
+  class DuplicateProcessorError < Error
+    MSG = 'The following processors already exist within this chain: %s'.freeze
+  end # DuplicateProcessorError
+end # Substation
 
 require 'substation/request'
 require 'substation/response'

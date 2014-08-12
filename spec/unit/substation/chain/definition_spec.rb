@@ -57,7 +57,7 @@ describe Chain::Definition do
 
     context 'when the given processor is already present in object' do
       let(:processors) { [processor] }
-      let(:msg)        { Chain::Definition::DUPLICATE_PROCESSOR_MSG % [processor].inspect }
+      let(:msg)        { DuplicateProcessorError.msg([processor]) }
 
       it 'raises DuplicateProcessorError' do
         expect { subject }.to raise_error(DuplicateProcessorError, msg)
@@ -84,7 +84,7 @@ describe Chain::Definition do
 
     context 'and the processors contain duplicates' do
       let(:processor_2) { processor_1 }
-      let(:msg)         { Chain::Definition::DUPLICATE_PROCESSOR_MSG % [processor_2].inspect }
+      let(:msg)         { DuplicateProcessorError.msg([processor_2]) }
 
       it 'raises DuplicateProcessorError' do
         expect { subject }.to raise_error(DuplicateProcessorError, msg)
@@ -132,9 +132,10 @@ describe Chain::Definition do
 
     context 'when no processor is registered under the given name' do
       let(:processors) { [] }
+      let(:msg) { UnknownProcessor.msg(name) }
 
       it 'raises an UnknownProcessorError' do
-        expect { subject }.to raise_error(UnknownProcessor, "No processor named #{name.inspect} is registered")
+        expect { subject }.to raise_error(UnknownProcessor, msg)
       end
     end
   end

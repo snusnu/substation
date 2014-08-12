@@ -44,7 +44,7 @@ describe DSL::Registry do
     end
 
     context 'when name is already registered' do
-      let(:msg) { DSL::Guard::ALREADY_REGISTERED_MSG % coerced_name.inspect }
+      let(:msg) { AlreadyRegisteredError.msg(coerced_name) }
 
       before { object[name] = expected }
 
@@ -52,7 +52,7 @@ describe DSL::Registry do
     end
 
     context 'when name is reserved' do
-      let(:msg)            { DSL::Guard::RESERVED_NAME_MSG % coerced_name.inspect }
+      let(:msg)            { ReservedNameError.msg(coerced_name) }
       let(:reserved_names) { [coerced_name] }
 
       specify { expect { subject }.to raise_error(ReservedNameError, msg) }

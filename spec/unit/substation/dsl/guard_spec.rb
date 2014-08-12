@@ -26,7 +26,7 @@ describe DSL::Guard do
 
       context 'when the given name is already registered' do
         let(:name) { :test }
-        let(:msg)  { described_class::ALREADY_REGISTERED_MSG % name.inspect }
+        let(:msg)  { AlreadyRegisteredError.msg(name) }
 
         before do
           expect(registry).to receive(:include?).with(name).and_return(true)
@@ -57,7 +57,7 @@ describe DSL::Guard do
       end
 
       context 'when the given name is reserved' do
-        let(:msg)  { described_class::RESERVED_NAME_MSG % name.inspect }
+        let(:msg)  { ReservedNameError.msg(name) }
 
         before do
           expect(reserved_names).to receive(:include?).with(name).and_return(true)
