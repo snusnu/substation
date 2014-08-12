@@ -40,20 +40,10 @@ module Substation
   class Response
 
     include AbstractType
-    include Equalizer.new(:request, :output)
+    include Concord::Public.new(:request, :output)
     include Adamantium::Flat
 
-    # The request that lead to this response
-    #
-    # @example
-    #
-    #   response = dispatcher.call(:successful_action, :some_input)
-    #   response.request # => request passed to action named :successful_action
-    #
-    # @return [Request]
-    #
-    # @api public
-    attr_reader :request
+    alias_method :data, :output
 
     # The application environment used within an action
     #
@@ -81,20 +71,6 @@ module Substation
     # @api public
     attr_reader :input
 
-    # The data wrapped inside an action {Response}
-    #
-    # @example
-    #
-    #   response = dispatcher.call(:successful_action, :some_input)
-    #   response.output # => data passed to request.success(data)
-    #
-    # @return [Object]
-    #
-    # @api public
-    attr_reader :output
-
-    alias_method :data, :output
-
     # Initialize a new instance
     #
     # @param [Request] request
@@ -107,10 +83,9 @@ module Substation
     #
     # @api private
     def initialize(request, output)
-      @request = request
-      @env     = @request.env
-      @input   = @request.input
-      @output  = output
+      super
+      @env   = request.env
+      @input = request.input
     end
 
     # Indicates wether this is a successful response or not
