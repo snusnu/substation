@@ -66,8 +66,8 @@ module Substation
   #
   class Chain
 
-    include Enumerable
     include Concord.new(:processors, :exception_chain)
+    include Lupo.enumerable(:processors)
     include Adamantium::Flat
 
     # Empty chain
@@ -144,25 +144,6 @@ module Substation
           return on_exception(request, result.data, exception)
         end
       }
-    end
-
-    # Iterate over all processors
-    #
-    # @param [Proc] block
-    #   a block passed to {#handlers} each method
-    #
-    # @yield [processor]
-    #
-    # @yieldparam [#call] processor
-    #   each processor in the chain
-    #
-    # @return [self]
-    #
-    # @api private
-    def each(&block)
-      return to_enum unless block
-      processors.each(&block)
-      self
     end
 
     private

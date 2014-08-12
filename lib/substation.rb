@@ -7,6 +7,7 @@ require 'adamantium'
 require 'equalizer'
 require 'abstract_type'
 require 'concord'
+require 'lupo'
 
 # Substation can be thought of as a domain level request router. It assumes
 # that every usecase in your application has a name and is implemented in a
