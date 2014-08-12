@@ -8,7 +8,7 @@ module Substation
     class Definition
 
       include Equalizer.new(:name, :processors)
-      include Enumerable
+      include Lupo.enumerable(:processors)
 
       # The name of the chain
       #
@@ -71,25 +71,6 @@ module Substation
       def replace_failure_chain(processor_name, failure_chain)
         idx = fetch(processor_name)
         processors[idx] = processors.at(idx).with_failure_chain(failure_chain)
-        self
-      end
-
-      # Iterate over all processors
-      #
-      # @param [Proc] block
-      #   a block passed to #{processors} each method
-      #
-      # @yield [processor]
-      #
-      # @yieldparam [#call] processor
-      #   each processor in this instance
-      #
-      # @return [self]
-      #
-      # @api private
-      def each(&block)
-        return to_enum unless block
-        processors.each(&block)
         self
       end
 
