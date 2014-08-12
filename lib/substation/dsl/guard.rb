@@ -6,16 +6,8 @@ module Substation
     # A guard used for rejecting invalid names in {DSL}
     class Guard
 
-      include Equalizer.new(:reserved_names)
+      include Concord.new(:reserved_names)
       include Adamantium::Flat
-
-      # The list of reserved names
-      #
-      # @return [Enumerable<Symbol>]
-      #
-      # @api private
-      attr_reader :reserved_names
-      private     :reserved_names
 
       # Initialize a new instance
       #
@@ -26,7 +18,7 @@ module Substation
       #
       # @api private
       def initialize(reserved_names = EMPTY_ARRAY)
-        @reserved_names = reserved_names
+        super
       end
 
       # Raise if {#name} is either reserved or already registered
