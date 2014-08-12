@@ -101,8 +101,8 @@ module Substation
       #
       # @api private
       def fetch(processor_name)
-        processors.index {|processor| processor.name == processor_name} ||
-          raise(UnknownProcessor.new(processor_name))
+        idx = processors.index {|processor| processor.name == processor_name}
+        idx or raise(UnknownProcessor.new(processor_name))
       end
 
       # Raise {DuplicateProcessorError} with a message tailored for +dupes+
