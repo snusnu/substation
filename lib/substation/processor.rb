@@ -5,7 +5,7 @@ module Substation
   # Namespace for chain processors
   module Processor
 
-    include Equalizer.new(:name, :handler, :config)
+    include Concord.new(:name, :handler, :config)
 
     # FIXME: include this once the bug with deep freezing
     # is resolved (currently this deep freezes and thus
@@ -25,12 +25,10 @@ module Substation
     #
     # @api private
     def initialize(name, handler, config)
-      @name          = name
-      @handler       = handler
-      @config        = config
-      @executor      = @config.executor
-      @observers     = @config.observers
-      @failure_chain = @config.failure_chain
+      super
+      @executor      = config.executor
+      @observers     = config.observers
+      @failure_chain = config.failure_chain
     end
 
     # This processor's name
@@ -38,23 +36,7 @@ module Substation
     # @return [Symbol]
     #
     # @api private
-    attr_reader :name
-
-    # This processor's config
-    #
-    # @return [Builder::Config]
-    #
-    # @api private
-    attr_reader :config
-    protected   :config
-
-    # Return handler
-    #
-    # @return [#call]
-    #
-    # @api private
-    attr_reader :handler
-    protected   :handler
+    public :name
 
     # Return failure chain
     #
