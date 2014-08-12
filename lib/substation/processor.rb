@@ -24,7 +24,7 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(name, handler, config)
+    def initialize(_name, _handler, _config)
       super
       @executor      = config.executor
       @observers     = config.observers

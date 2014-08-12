@@ -17,7 +17,7 @@ module Substation
       # @return [undefined]
       #
       # @api private
-      def initialize(reserved_names = EMPTY_ARRAY)
+      def initialize(_reserved_names = EMPTY_ARRAY)
         super
       end
 

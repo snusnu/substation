@@ -82,7 +82,7 @@ module Substation
     # @return [undefined]
     #
     # @api private
-    def initialize(request, output)
+    def initialize(_request, _output)
       super
       @env   = request.env
       @input = request.input
