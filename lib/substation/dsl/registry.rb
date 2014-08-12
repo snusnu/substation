@@ -6,8 +6,8 @@ module Substation
     # A mutable registry for objects collected with DSL classes
     class Registry
 
-      include Equalizer.new(:guard, :entries)
-      include Enumerable
+      include Concord.new(:guard, :items)
+      include Lupo.enumerable(:items)
 
       # Coerce +name+ into a Symbol
       #
@@ -21,57 +21,19 @@ module Substation
         name.to_sym
       end
 
-      # The guard responsible for rejecting invalid entries
-      #
-      # @return [Guard]
-      #
-      # @api private
-      attr_reader :guard
-      protected   :guard
-
-      # The entries this registry stores
-      #
-      # @return [Hash<Symbol, Object>]
-      #
-      # @api private
-      attr_reader :entries
-      protected   :entries
-
       # Initialize a new instance
       #
       # @param [Guard] guard
       #   the guard to use for rejecting invalid entries
       #
-      # @param [Hash<Symbol, Object>] entires
-      #   the entries this registry stores
+      # @param [Hash<Symbol, Object>] items
+      #   the items this registry stores
       #
       # @return [undefined]
       #
       # @api private
-      def initialize(guard, entries = EMPTY_HASH)
-        @guard, @entries = guard, entries.dup
-      end
-
-      # Iterate over all entries
-      #
-      # @param [Proc] block
-      #   the block passed to #{entries}.each
-      #
-      # @yield [name, object]
-      #
-      # @yieldparam [Symbol] name
-      #   the name of the current entry
-      #
-      # @yieldparam [Object] object
-      #   the object registered by name
-      #
-      # @return [self]
-      #
-      # @api private
-      def each(&block)
-        return to_enum unless block
-        entries.each(&block)
-        self
+      def initialize(guard, items = EMPTY_HASH)
+        super(guard, items.dup)
       end
 
       # Return a new instance with +other+ merged in
@@ -113,8 +75,8 @@ module Substation
       # @api private
       def []=(name, object)
         coerced_name = coerce_name(name)
-        guard.call(coerced_name, entries)
-        entries[coerced_name] = object
+        guard.call(coerced_name, items)
+        items[coerced_name] = object
       end
 
       # Test wether an object is registered by +name+
@@ -127,7 +89,7 @@ module Substation
       #
       # @api private
       def include?(name)
-        entries.include?(coerce_name(name))
+        items.include?(coerce_name(name))
       end
 
       # Return the object registered by +name+ or the value returned from +block+
@@ -142,7 +104,7 @@ module Substation
       #
       # @api private
       def fetch(name, &block)
-        entries.fetch(coerce_name(name), &block)
+        items.fetch(coerce_name(name), &block)
       end
 
       # Return all names by which objects are registered
@@ -151,7 +113,7 @@ module Substation
       #
       # @api private
       def keys
-        entries.keys
+        items.keys
       end
 
       private
@@ -174,7 +136,7 @@ module Substation
       #
       # @api private
       def new
-        self.class.new(guard, entries)
+        self.class.new(guard, items)
       end
     end # class Registry
   end # module DSL
