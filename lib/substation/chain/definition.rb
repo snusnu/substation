@@ -101,7 +101,7 @@ module Substation
       #
       # @api private
       def fetch(processor_name)
-        idx = processors.index {|processor| processor.name == processor_name}
+        idx = processors.index {|processor| processor.name.equal?(processor_name)}
         idx or raise(UnknownProcessor.new(processor_name))
       end
 
