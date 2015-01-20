@@ -1,3 +1,10 @@
+# v0.0.11 2015-01-20
+
+* Added missing specs to reach 100% mutation coverage
+* Refactored a few internals without changing any API
+
+[Compare v0.0.10..v0.0.11](https://github.com/snusnu/substation/compare/v0.0.10...v0.0.11)
+
 # v0.0.10 2014-08-11
 
 * This release is full of breaking changes and new features. The README is still out of
