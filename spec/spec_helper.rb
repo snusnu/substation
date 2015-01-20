@@ -4,12 +4,8 @@ require 'rspec/its'
 
 if ENV['COVERAGE'] == 'true'
   require 'simplecov'
-  require 'coveralls'
 
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-  ]
+  SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 
   SimpleCov.start do
     command_name     'spec:unit'
