@@ -1,7 +1,7 @@
 language: ruby
 sudo: false
 cache: bundler
-script: "bundle exec rake metrics:mutant"
+script: "bundle exec rake spec"
 rvm:
   - 1.9
   - 2.0
