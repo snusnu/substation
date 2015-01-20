@@ -51,7 +51,7 @@ module Substation
         #
         # @api private
         def cmp?(comparator, other)
-          super && exception.class.send(comparator, other.exception.class)
+          super && exception.class.public_send(comparator, other.exception.class)
         end
       end # class Output
     end # class Exception
