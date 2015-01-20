@@ -1,3 +1,4 @@
 ---
 name: substation
 namespace: Substation
+expect_coverage: 100

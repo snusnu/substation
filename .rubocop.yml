@@ -1,0 +1,6 @@
+AllCops:
+  Include:
+    - 'Gemfile'
+  Exclude:
+    - 'vendor/**/*'
+    - 'benchmarks/**/*'
