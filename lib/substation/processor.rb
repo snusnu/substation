@@ -152,7 +152,7 @@ module Substation
     #
     # @api private
     def notify_observers(response)
-      observers.each { |observer| observer.call(response) }
+      observers.each { |observer| observer.call(name, response) }
       response
     end
 
