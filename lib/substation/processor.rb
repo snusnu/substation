@@ -62,6 +62,10 @@ module Substation
     attr_reader :observers
     private     :observers
 
+    def run(state)
+      notify_observers(call(state))
+    end
+
     # Test wether chain processing should continue
     #
     # @param [Response] response
@@ -111,7 +115,7 @@ module Substation
     #
     # @api private
     def invoke(state)
-      notify_observers(handler.call(state))
+      handler.call(state)
     end
 
     # Decompose +input+ before processing

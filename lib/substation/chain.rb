@@ -137,7 +137,7 @@ module Substation
     def call(request)
       reduce(request) { |result, processor|
         begin
-          response = processor.call(result)
+          response = processor.run(result)
           return response unless processor.success?(response)
           processor.result(response)
         rescue => exception
