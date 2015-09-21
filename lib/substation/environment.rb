@@ -88,7 +88,7 @@ module Substation
     # @return [Environment]
     #
     # @api private
-    def inherit(app_env = app_env, actions = Dispatcher.new_registry, &block)
+    def inherit(app_env = self.app_env, actions = Dispatcher.new_registry, &block)
       self.class.new(app_env, actions, merged_chain_dsl(&block))
     end
 
